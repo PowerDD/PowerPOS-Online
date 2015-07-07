@@ -24,6 +24,7 @@ namespace PowerPOS_Online
         private void Main_Load(object sender, EventArgs e)
         {
             Param.mainPanel = pnlMain;
+            lblStatus.Text = "กำลังโหลดข้อมูลการตั้งค่าระบบ";
 
             Util.GetApiConfig();
             if (Param.apiChecked)
@@ -49,16 +50,10 @@ namespace PowerPOS_Online
             }
             else
             {
-                Param.azureStorageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=" + Param.databaseName + ";AccountKey=" + Param.databasePassword);
-                Param.azureTableClient = Param.azureStorageAccount.CreateCloudTableClient();
-                Util.GetShopName();
-                this.Text = string.Format("Power POS - ร้าน {0} ({1})", Param.shopName, Param.computerName);
-                lblStatus.Text = "";
-                menuStrip1.Enabled = true;
-                toolStrip1.Enabled = true;
-
-                mniSell_Click(sender, e);
+                lblStatus.Text = "กำลังโหลดข้อมูลรายละเอียดของร้านค้า";
+                bwGetShopInfo.RunWorkerAsync();
             }
+
         }
 
         private void mniLogin_Click(object sender, EventArgs e)
@@ -179,6 +174,29 @@ namespace PowerPOS_Online
         {
             Util.ShowScreen(Param.Screen.Config);
             Param.selectedScreen = (int)Param.Screen.Config;
+        }
+
+        private void bwGetShopInfo_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Param.azureStorageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=" + Param.databaseName + ";AccountKey=" + Param.databasePassword);
+            Param.azureTableClient = Param.azureStorageAccount.CreateCloudTableClient();
+            Util.GetShopInfo();
+        }
+
+        private void bwGetShopInfo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            this.Text = string.Format("Power POS - ร้าน {0} ({1})", Param.shopName, Param.computerName);
+            lblStatus.Text = "";
+            menuStrip1.Enabled = true;
+            toolStrip1.Enabled = true;
+
+            lblStatus.Text = "กำลังโหลดข้อมูลการตั้งค่าระบบ";
+            Util.GetConfig();
+            lblStatus.Text = "";
+
+            mniSell_Click(sender, e);
+
+            //Util.GetBarcode();
         }
     }
 }

@@ -95,7 +95,7 @@ namespace PowerPOS_Online
                 }
             }
         }
-        public static void GetShopName()
+        public static void GetShopInfo()
         {
             Param.azureTable = Param.azureTableClient.GetTableReference("Shop");
             TableQuery<ShopEntity> query = new TableQuery<ShopEntity>()
@@ -109,6 +109,60 @@ namespace PowerPOS_Online
             Console.WriteLine(Param.shopName);
 
         }
+
+        public static void GetConfig()
+        {
+            Param.azureTable = Param.azureTableClient.GetTableReference("Shop");
+            TableOperation retrieveOperation = TableOperation.Retrieve<ShopConfigEntity>(Param.shopId, "Config");
+            TableResult retrievedResult = Param.azureTable.Execute(retrieveOperation);
+            ShopConfigEntity data = (ShopConfigEntity)retrievedResult.Result;
+
+            var json = new StringBuilder();
+            if (data != null)
+            {
+                json.Append(data.Name);
+            }
+            Param.systemConfig = JsonConvert.DeserializeObject(json.ToString());
+        }
+
+        public static void GetBarcode()
+        {
+            /*Param.azureTable = Param.azureTableClient.GetTableReference("Barcode");
+            TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(
+                TableQuery.CombineFilters(
+                    TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.shopId),
+                    TableOperators.And,
+                    TableQuery.GenerateFilterCondition("SellNo", QueryComparisons.NotEqual, "7006")
+            ));
+
+            int i = 0;
+            foreach (BarcodeEntity entity in Param.azureTable.ExecuteQuery(query))
+            {
+                Console.WriteLine(entity.RowKey);
+                i++;
+                if (i >= 1000) break;
+                //Param.shopName = entity.RowKey;
+            }*/
+            Parallel.For(0, 1000, i =>
+            {
+                Console.WriteLine(i);
+            });
+        }
+
+        public static void UpdateConfig()
+        {
+            Param.azureTable = Param.azureTableClient.GetTableReference("Shop");
+            TableOperation retrieveOperation = TableOperation.Retrieve<ShopConfigEntity>(Param.shopId, "Config");
+            TableResult retrievedResult = Param.azureTable.Execute(retrieveOperation);
+            ShopConfigEntity data = (ShopConfigEntity)retrievedResult.Result;
+            if (data != null)
+            {
+                data.Name = JsonConvert.SerializeObject(Param.systemConfig);
+                TableOperation updateOperation = TableOperation.Merge(data);
+                Param.azureTable.Execute(updateOperation);
+            }
+        }
+
         public static void ShowScreen(Param.Screen screen)
         {
             if (screen == Param.Screen.Sell && Param.selectedScreen != (int)Param.Screen.Sell)

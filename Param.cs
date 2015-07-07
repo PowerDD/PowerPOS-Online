@@ -46,5 +46,7 @@ namespace PowerPOS_Online
         public static Panel mainPanel;
         public static int selectedScreen = -1;
 
+        public static dynamic systemConfig;
+
     }
 }
