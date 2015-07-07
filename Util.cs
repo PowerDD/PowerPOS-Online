@@ -9,6 +9,9 @@ using System.Management;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using XPTable.Models;
+using XPTable.Renderers;
 
 namespace PowerPOS_Online
 {
@@ -104,6 +107,70 @@ namespace PowerPOS_Online
             }
 
             Console.WriteLine(Param.shopName);
+
+        }
+        public static void ShowScreen(Param.Screen screen)
+        {
+            if (screen == Param.Screen.Sell && Param.selectedScreen != (int)Param.Screen.Sell)
+            {
+                Param.userControl = new UcSell();
+            }
+            else if (screen == Param.Screen.ReceiveProduct && Param.selectedScreen != (int)Param.Screen.ReceiveProduct)
+            {
+                Param.userControl = new UcReceiveProduct();
+            }
+            else if (screen == Param.Screen.Product && Param.selectedScreen != (int)Param.Screen.Product)
+            {
+                Param.userControl = new UcProduct();
+            }
+            else if (screen == Param.Screen.Category && Param.selectedScreen != (int)Param.Screen.Category)
+            {
+                Param.userControl = new UcCategory();
+            }
+            else if (screen == Param.Screen.Brand && Param.selectedScreen != (int)Param.Screen.Brand)
+            {
+                Param.userControl = new UcBrand();
+            }
+            else if (screen == Param.Screen.Customer && Param.selectedScreen != (int)Param.Screen.Customer)
+            {
+                Param.userControl = new UcCustomer();
+            }
+            else if (screen == Param.Screen.User && Param.selectedScreen != (int)Param.Screen.User)
+            {
+                Param.userControl = new UcUser();
+            }
+            else if (screen == Param.Screen.Color && Param.selectedScreen != (int)Param.Screen.Color)
+            {
+                Param.userControl = new UcColor();
+            }
+            else if (screen == Param.Screen.Report && Param.selectedScreen != (int)Param.Screen.Report)
+            {
+                Param.userControl = new UcReport();
+            }
+            else if (screen == Param.Screen.ShopInfo && Param.selectedScreen != (int)Param.Screen.ShopInfo)
+            {
+                Param.userControl = new UcShopInfo();
+            }
+            else if (screen == Param.Screen.Config && Param.selectedScreen != (int)Param.Screen.Config)
+            {
+                Param.userControl = new UcConfig();
+            }
+            Param.userControl.Dock = System.Windows.Forms.DockStyle.Fill;
+
+            if (!Param.mainPanel.Contains(Param.userControl))
+            {
+                Param.mainPanel.Controls.Clear();
+                Param.mainPanel.Controls.Add(Param.userControl);
+            }
+        }
+        public static void InitialTable(XPTable.Models.Table table)
+        {
+
+            table.HeaderRenderer = new GradientHeaderRenderer();
+            table.HeaderRenderer.Alignment = ColumnAlignment.Center;
+            table.HeaderRenderer.Font = new System.Drawing.Font("MS Sans Serif", 10F);
+            table.Font = new System.Drawing.Font("MS Sans Serif", 10F);
+            table.ColumnModel.HeaderHeight = 26;
 
         }
 

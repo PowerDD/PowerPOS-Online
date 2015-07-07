@@ -10,14 +10,14 @@ using System.Windows.Forms;
 
 namespace PowerPOS_Online
 {
-    public partial class UcSell : UserControl
+    public partial class UcReceiveProduct : UserControl
     {
-        public UcSell()
+        public UcReceiveProduct()
         {
             InitializeComponent();
         }
 
-        private void UcSell_Load(object sender, EventArgs e)
+        private void UcReceiveProduct_Load(object sender, EventArgs e)
         {
             Util.InitialTable(table1);
         }

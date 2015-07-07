@@ -10,16 +10,11 @@ using System.Windows.Forms;
 
 namespace PowerPOS_Online
 {
-    public partial class UcSell : UserControl
+    public partial class UcBrand : UserControl
     {
-        public UcSell()
+        public UcBrand()
         {
             InitializeComponent();
-        }
-
-        private void UcSell_Load(object sender, EventArgs e)
-        {
-            Util.InitialTable(table1);
         }
     }
 }

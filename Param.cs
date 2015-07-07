@@ -5,11 +5,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace PowerPOS_Online
 {
     public class Param
     {
+        public enum Screen
+        {
+            Sell,
+            ReceiveProduct,
+            Product,
+            Customer,
+            User,
+            Brand,
+            Category,
+            Color,
+            Report,
+            ShopInfo,
+            Config
+        };
+
         public static string apiUrl;
         public static string apiKey;
         public static bool apiChecked;
@@ -24,5 +40,11 @@ namespace PowerPOS_Online
         public static CloudStorageAccount azureStorageAccount;
         public static CloudTableClient azureTableClient;
         public static CloudTable azureTable;
+
+
+        public static UserControl userControl;
+        public static Panel mainPanel;
+        public static int selectedScreen = -1;
+
     }
 }

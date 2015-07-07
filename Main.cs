@@ -15,6 +15,7 @@ namespace PowerPOS_Online
 {
     public partial class Main : Form
     {
+
         public Main()
         {
             InitializeComponent();
@@ -22,6 +23,8 @@ namespace PowerPOS_Online
 
         private void Main_Load(object sender, EventArgs e)
         {
+            Param.mainPanel = pnlMain;
+
             Util.GetApiConfig();
             if (Param.apiChecked)
             {
@@ -53,12 +56,9 @@ namespace PowerPOS_Online
                 lblStatus.Text = "";
                 menuStrip1.Enabled = true;
                 toolStrip1.Enabled = true;
+
+                mniSell_Click(sender, e);
             }
-            /*CloudStorageAccount storageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=powerddtest;AccountKey=6b+dBUr/E6uC1l+jVFT4ZgXgQSXGJwrqlF1UR3NFTcpyScMLZgCGV9C2612oZB+/DvVH0R1QrhUdooiLprgSxQ==");
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-            CloudTable table = tableClient.GetTableReference("people");
-            table.CreateIfNotExists();*/
-            //Console.WriteLine( Properties.Settings.Default.ApiUrl );
         }
 
         private void mniLogin_Click(object sender, EventArgs e)
@@ -78,52 +78,62 @@ namespace PowerPOS_Online
 
         private void mniProduct_Click(object sender, EventArgs e)
         {
-
+            Util.ShowScreen(Param.Screen.Product);
+            Param.selectedScreen = (int)Param.Screen.Product;
         }
 
         private void mniCategory_Click(object sender, EventArgs e)
         {
-
+            Util.ShowScreen(Param.Screen.Category);
+            Param.selectedScreen = (int)Param.Screen.Category;
         }
 
         private void mniBrand_Click(object sender, EventArgs e)
         {
-
+            Util.ShowScreen(Param.Screen.Brand);
+            Param.selectedScreen = (int)Param.Screen.Brand;
         }
 
         private void mniColor_Click(object sender, EventArgs e)
         {
-
+            Util.ShowScreen(Param.Screen.Color);
+            Param.selectedScreen = (int)Param.Screen.Color;
         }
 
         private void mniCustomer_Click(object sender, EventArgs e)
         {
-
+            Util.ShowScreen(Param.Screen.Customer);
+            Param.selectedScreen = (int)Param.Screen.Customer;
         }
 
         private void mniUser_Click(object sender, EventArgs e)
         {
-
+            Util.ShowScreen(Param.Screen.User);
+            Param.selectedScreen = (int)Param.Screen.User;
         }
 
         private void mniShop_Click(object sender, EventArgs e)
         {
-
+            Util.ShowScreen(Param.Screen.ShopInfo);
+            Param.selectedScreen = (int)Param.Screen.ShopInfo;
         }
 
         private void mniReceive_Click(object sender, EventArgs e)
         {
-
+            Util.ShowScreen(Param.Screen.ReceiveProduct);
+            Param.selectedScreen = (int)Param.Screen.ReceiveProduct;
         }
 
         private void mniSell_Click(object sender, EventArgs e)
         {
-
+            Util.ShowScreen(Param.Screen.Sell);
+            Param.selectedScreen = (int)Param.Screen.Sell;
         }
 
         private void mniReportSell_Click(object sender, EventArgs e)
         {
-
+            Util.ShowScreen(Param.Screen.Report);
+            Param.selectedScreen = (int)Param.Screen.Report;
         }
 
         private void mniRegister_Click(object sender, EventArgs e)
@@ -158,6 +168,17 @@ namespace PowerPOS_Online
         private void mniImportExcel_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void mniChangePassword_Click(object sender, EventArgs e)
+        {
+            new FmChangePassword().ShowDialog(this);
+        }
+
+        private void mniConfig_Click(object sender, EventArgs e)
+        {
+            Util.ShowScreen(Param.Screen.Config);
+            Param.selectedScreen = (int)Param.Screen.Config;
         }
     }
 }

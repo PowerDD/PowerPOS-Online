@@ -30,12 +30,15 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.mniFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.mniData = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.mniProducts = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniData = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.mniReport = new System.Windows.Forms.ToolStripMenuItem();
             this.mniHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -43,9 +46,7 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
-            this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
+            this.pnlMain = new System.Windows.Forms.Panel();
             this.btnSell = new System.Windows.Forms.ToolStripButton();
             this.btnAddProduct = new System.Windows.Forms.ToolStripButton();
             this.btnProduct = new System.Windows.Forms.ToolStripButton();
@@ -56,10 +57,12 @@
             this.btnSetting = new System.Windows.Forms.ToolStripButton();
             this.btnExit = new System.Windows.Forms.ToolStripButton();
             this.mniLogin = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniChangePassword = new System.Windows.Forms.ToolStripMenuItem();
             this.mniLogout = new System.Windows.Forms.ToolStripMenuItem();
             this.mniImportData = new System.Windows.Forms.ToolStripMenuItem();
             this.mniImportBarcode = new System.Windows.Forms.ToolStripMenuItem();
             this.mniImportExcel = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniConfig = new System.Windows.Forms.ToolStripMenuItem();
             this.mniExit = new System.Windows.Forms.ToolStripMenuItem();
             this.mniSell = new System.Windows.Forms.ToolStripMenuItem();
             this.mniReceive = new System.Windows.Forms.ToolStripMenuItem();
@@ -73,7 +76,6 @@
             this.mniReportSell = new System.Windows.Forms.ToolStripMenuItem();
             this.mniRegister = new System.Windows.Forms.ToolStripMenuItem();
             this.mniAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this.pnlMain = new System.Windows.Forms.Panel();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -88,6 +90,12 @@
             this.statusStrip1.Size = new System.Drawing.Size(837, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(100, 17);
+            this.lblStatus.Text = "กำลังตรวจสอบข้อมูล";
             // 
             // menuStrip1
             // 
@@ -109,19 +117,35 @@
             // 
             this.mniFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniLogin,
+            this.mniChangePassword,
             this.mniLogout,
             this.toolStripMenuItem5,
             this.mniImportData,
+            this.mniConfig,
             this.toolStripMenuItem2,
             this.mniExit});
             this.mniFile.Name = "mniFile";
             this.mniFile.Size = new System.Drawing.Size(39, 20);
             this.mniFile.Text = "ไ&ฟล์";
             // 
+            // toolStripMenuItem5
+            // 
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(196, 6);
+            // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(196, 6);
+            // 
+            // mniProducts
+            // 
+            this.mniProducts.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniSell,
+            this.mniReceive});
+            this.mniProducts.Name = "mniProducts";
+            this.mniProducts.Size = new System.Drawing.Size(46, 20);
+            this.mniProducts.Text = "&สินค้า";
             // 
             // mniData
             // 
@@ -139,19 +163,15 @@
             this.mniData.Size = new System.Drawing.Size(46, 20);
             this.mniData.Text = "&ข้อมูล";
             // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(149, 6);
+            // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
             this.toolStripMenuItem3.Size = new System.Drawing.Size(149, 6);
-            // 
-            // mniProducts
-            // 
-            this.mniProducts.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mniSell,
-            this.mniReceive});
-            this.mniProducts.Name = "mniProducts";
-            this.mniProducts.Size = new System.Drawing.Size(46, 20);
-            this.mniProducts.Text = "&สินค้า";
             // 
             // mniReport
             // 
@@ -217,21 +237,13 @@
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 86);
             // 
-            // toolStripMenuItem4
+            // pnlMain
             // 
-            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(149, 6);
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(100, 17);
-            this.lblStatus.Text = "กำลังตรวจสอบข้อมูล";
-            // 
-            // toolStripMenuItem5
-            // 
-            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(196, 6);
+            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlMain.Location = new System.Drawing.Point(0, 110);
+            this.pnlMain.Name = "pnlMain";
+            this.pnlMain.Size = new System.Drawing.Size(837, 334);
+            this.pnlMain.TabIndex = 3;
             // 
             // btnSell
             // 
@@ -286,6 +298,7 @@
             this.btnReport.Size = new System.Drawing.Size(68, 83);
             this.btnReport.Text = "รายงาน";
             this.btnReport.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnReport.Click += new System.EventHandler(this.mniReportSell_Click);
             // 
             // btnUpdateData
             // 
@@ -306,6 +319,7 @@
             this.btnChangePassword.Size = new System.Drawing.Size(83, 83);
             this.btnChangePassword.Text = "เปลี่ยนรหัสผ่าน";
             this.btnChangePassword.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnChangePassword.Click += new System.EventHandler(this.mniChangePassword_Click);
             // 
             // btnSetting
             // 
@@ -316,6 +330,7 @@
             this.btnSetting.Size = new System.Drawing.Size(68, 83);
             this.btnSetting.Text = "การตั้งค่า";
             this.btnSetting.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnSetting.Click += new System.EventHandler(this.mniConfig_Click);
             // 
             // btnExit
             // 
@@ -336,6 +351,14 @@
             this.mniLogin.Size = new System.Drawing.Size(199, 22);
             this.mniLogin.Text = "เข้าระบบ";
             this.mniLogin.Click += new System.EventHandler(this.mniLogin_Click);
+            // 
+            // mniChangePassword
+            // 
+            this.mniChangePassword.Image = global::PowerPOS_Online.Properties.Resources.key1;
+            this.mniChangePassword.Name = "mniChangePassword";
+            this.mniChangePassword.Size = new System.Drawing.Size(199, 22);
+            this.mniChangePassword.Text = "เปลี่ยนรหัสผ่าน";
+            this.mniChangePassword.Click += new System.EventHandler(this.mniChangePassword_Click);
             // 
             // mniLogout
             // 
@@ -371,6 +394,14 @@
             this.mniImportExcel.Size = new System.Drawing.Size(152, 22);
             this.mniImportExcel.Text = "ใช้ไฟล์ Excel";
             this.mniImportExcel.Click += new System.EventHandler(this.mniImportExcel_Click);
+            // 
+            // mniConfig
+            // 
+            this.mniConfig.Image = global::PowerPOS_Online.Properties.Resources.gear;
+            this.mniConfig.Name = "mniConfig";
+            this.mniConfig.Size = new System.Drawing.Size(199, 22);
+            this.mniConfig.Text = "การตั้งค่าระบบ";
+            this.mniConfig.Click += new System.EventHandler(this.mniConfig_Click);
             // 
             // mniExit
             // 
@@ -482,14 +513,6 @@
             this.mniAbout.Text = "เกี่ยวกับโปรแกรม";
             this.mniAbout.Click += new System.EventHandler(this.mniAbout_Click);
             // 
-            // pnlMain
-            // 
-            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 110);
-            this.pnlMain.Name = "pnlMain";
-            this.pnlMain.Size = new System.Drawing.Size(837, 334);
-            this.pnlMain.TabIndex = 3;
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -564,6 +587,8 @@
         private System.Windows.Forms.ToolStripMenuItem mniImportBarcode;
         private System.Windows.Forms.ToolStripMenuItem mniImportExcel;
         private System.Windows.Forms.Panel pnlMain;
+        private System.Windows.Forms.ToolStripMenuItem mniChangePassword;
+        private System.Windows.Forms.ToolStripMenuItem mniConfig;
     }
 }
 
