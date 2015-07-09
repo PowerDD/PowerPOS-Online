@@ -32,6 +32,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.gbxBill = new System.Windows.Forms.GroupBox();
+            this.btnSaveBill = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.cbxPrinter = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -50,7 +51,6 @@
             this.rdbPrint = new System.Windows.Forms.RadioButton();
             this.rdbAlert = new System.Windows.Forms.RadioButton();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.btnSaveBill = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.gbxBill.SuspendLayout();
@@ -113,6 +113,21 @@
             this.gbxBill.TabIndex = 0;
             this.gbxBill.TabStop = false;
             this.gbxBill.Text = "ใบเสร็จรับเงิน";
+            // 
+            // btnSaveBill
+            // 
+            this.btnSaveBill.Enabled = false;
+            this.btnSaveBill.Image = global::PowerPOS_Online.Properties.Resources.disk_return_black;
+            this.btnSaveBill.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnSaveBill.Location = new System.Drawing.Point(205, 334);
+            this.btnSaveBill.Name = "btnSaveBill";
+            this.btnSaveBill.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.btnSaveBill.Size = new System.Drawing.Size(99, 28);
+            this.btnSaveBill.TabIndex = 14;
+            this.btnSaveBill.Text = "บันทึกข้อมูล";
+            this.btnSaveBill.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnSaveBill.UseVisualStyleBackColor = true;
+            this.btnSaveBill.Click += new System.EventHandler(this.btnSaveBill_Click);
             // 
             // groupBox4
             // 
@@ -326,21 +341,6 @@
             this.backgroundWorker1.WorkerSupportsCancellation = true;
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
-            // 
-            // btnSaveBill
-            // 
-            this.btnSaveBill.Enabled = false;
-            this.btnSaveBill.Image = global::PowerPOS_Online.Properties.Resources.disk_return_black;
-            this.btnSaveBill.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnSaveBill.Location = new System.Drawing.Point(205, 334);
-            this.btnSaveBill.Name = "btnSaveBill";
-            this.btnSaveBill.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.btnSaveBill.Size = new System.Drawing.Size(99, 28);
-            this.btnSaveBill.TabIndex = 14;
-            this.btnSaveBill.Text = "บันทึกข้อมูล";
-            this.btnSaveBill.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnSaveBill.UseVisualStyleBackColor = true;
-            this.btnSaveBill.Click += new System.EventHandler(this.btnSaveBill_Click);
             // 
             // UcConfig
             // 

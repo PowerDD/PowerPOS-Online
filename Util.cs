@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -110,6 +111,30 @@ namespace PowerPOS_Online
 
         }
 
+        public static void GetBarcode()
+        {
+            Param.azureTable = Param.azureTableClient.GetTableReference("Barcode3");
+            TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(
+                TableQuery.CombineFilters(
+                    TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.shopId),
+                    TableOperators.And,
+                    TableQuery.GenerateFilterCondition("SellNo", QueryComparisons.Equal, "7006")
+            ));
+
+            int i = 0;
+            foreach (BarcodeEntity entity in Param.azureTable.ExecuteQuery(query))
+            {
+                Console.WriteLine(entity.RowKey);
+                i++;
+                //if (i >= 1000) break;
+                //Param.shopName = entity.RowKey;
+            }
+            /*Parallel.For(0, 1000, i =>
+            {
+                Console.WriteLine(i);
+            });*/
+        }
+
         public static void GetConfig()
         {
             Param.azureTable = Param.azureTableClient.GetTableReference("Shop");
@@ -125,30 +150,6 @@ namespace PowerPOS_Online
             Param.systemConfig = JsonConvert.DeserializeObject(json.ToString());
         }
 
-        public static void GetBarcode()
-        {
-            /*Param.azureTable = Param.azureTableClient.GetTableReference("Barcode");
-            TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(
-                TableQuery.CombineFilters(
-                    TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.shopId),
-                    TableOperators.And,
-                    TableQuery.GenerateFilterCondition("SellNo", QueryComparisons.NotEqual, "7006")
-            ));
-
-            int i = 0;
-            foreach (BarcodeEntity entity in Param.azureTable.ExecuteQuery(query))
-            {
-                Console.WriteLine(entity.RowKey);
-                i++;
-                if (i >= 1000) break;
-                //Param.shopName = entity.RowKey;
-            }*/
-            Parallel.For(0, 1000, i =>
-            {
-                Console.WriteLine(i);
-            });
-        }
-
         public static void UpdateConfig()
         {
             Param.azureTable = Param.azureTableClient.GetTableReference("Shop");
@@ -161,6 +162,36 @@ namespace PowerPOS_Online
                 TableOperation updateOperation = TableOperation.Merge(data);
                 Param.azureTable.Execute(updateOperation);
             }
+        }
+        public static void GetUserGroup()
+        {
+            Param.azureTable = Param.azureTableClient.GetTableReference("User");
+            TableOperation retrieveOperation = TableOperation.Retrieve<UserGroupEntity>(Param.shopId, "Group");
+            TableResult retrievedResult = Param.azureTable.Execute(retrieveOperation);
+            UserGroupEntity data = (UserGroupEntity)retrievedResult.Result;
+            var json = new StringBuilder();
+            if (data != null)
+            {
+                json.Append(data.Data);
+            }
+            Param.userGroup = JsonConvert.DeserializeObject(json.ToString());
+
+        }
+
+        public static void UpdateUserGroup()
+        {
+            UserGroupEntity data = new UserGroupEntity(Param.shopId);
+            data.Data = JsonConvert.SerializeObject(Param.userGroup);
+            Param.azureTable = Param.azureTableClient.GetTableReference("User");
+            TableOperation updateOperation = TableOperation.InsertOrMerge(data);
+            Param.azureTable.Execute(updateOperation);
+        }
+
+        public static void AddUser(UserEntity data)
+        {
+            Param.azureTable = Param.azureTableClient.GetTableReference("User");
+            TableOperation updateOperation = TableOperation.InsertOrMerge(data);
+            Param.azureTable.Execute(updateOperation);
         }
 
         public static void ShowScreen(Param.Screen screen)
@@ -209,6 +240,10 @@ namespace PowerPOS_Online
             {
                 Param.userControl = new UcConfig();
             }
+            else if (screen == Param.Screen.Claim && Param.selectedScreen != (int)Param.Screen.Claim)
+            {
+                Param.userControl = new UcClaim();
+            }
             Param.userControl.Dock = System.Windows.Forms.DockStyle.Fill;
 
             if (!Param.mainPanel.Contains(Param.userControl))
@@ -226,6 +261,34 @@ namespace PowerPOS_Online
             table.Font = new System.Drawing.Font("MS Sans Serif", 10F);
             table.ColumnModel.HeaderHeight = 26;
 
+        }
+
+        public static InputLanguage GetInputLanguageByName(string inputName)
+        {
+            foreach (InputLanguage lang in InputLanguage.InstalledInputLanguages)
+            {
+                if (lang.Culture.EnglishName.ToLower().StartsWith(inputName.ToLower()))
+                    return lang;
+            }
+            return null;
+        }
+
+
+        public static void SetKeyboardLayout(InputLanguage layout)
+        {
+            InputLanguage.CurrentInputLanguage = layout;
+        }
+
+        public static void SetStatusMessage(string message)
+        {
+            Param.lblStatus.Text = message;
+        }
+
+        public static string EncodeString(string message)
+        {
+            byte[] encodedPassword = new UTF8Encoding().GetBytes(message);
+            byte[] hash = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword);
+            return BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
         }
 
 

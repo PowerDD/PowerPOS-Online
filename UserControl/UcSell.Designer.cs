@@ -28,15 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            XPTable.Models.DataSourceColumnBinder dataSourceColumnBinder2 = new XPTable.Models.DataSourceColumnBinder();
-            XPTable.Renderers.DragDropRenderer dragDropRenderer2 = new XPTable.Renderers.DragDropRenderer();
+            XPTable.Models.DataSourceColumnBinder dataSourceColumnBinder1 = new XPTable.Models.DataSourceColumnBinder();
+            XPTable.Renderers.DragDropRenderer dragDropRenderer1 = new XPTable.Renderers.DragDropRenderer();
             this.lblStatus = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
             this.lblPrice = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.btnSearch = new System.Windows.Forms.Button();
             this.lblCustomerName = new System.Windows.Forms.Label();
             this.btnAge6 = new System.Windows.Forms.Button();
             this.clNo = new XPTable.Models.TextColumn();
@@ -70,6 +69,7 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.panel4.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.table1)).BeginInit();
@@ -147,15 +147,6 @@
             this.panel2.Size = new System.Drawing.Size(233, 67);
             this.panel2.TabIndex = 7;
             // 
-            // btnSearch
-            // 
-            this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.btnSearch.Location = new System.Drawing.Point(196, 24);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(31, 26);
-            this.btnSearch.TabIndex = 2;
-            this.btnSearch.UseVisualStyleBackColor = true;
-            // 
             // lblCustomerName
             // 
             this.lblCustomerName.AutoSize = true;
@@ -174,6 +165,7 @@
             this.btnAge6.TabIndex = 10;
             this.btnAge6.Text = "61 ปี ขึ้นไป";
             this.btnAge6.UseVisualStyleBackColor = true;
+            this.btnAge6.Click += new System.EventHandler(this.btnAge6_Click);
             // 
             // clNo
             // 
@@ -212,6 +204,7 @@
             this.btnAge5.TabIndex = 9;
             this.btnAge5.Text = "41-60 ปี";
             this.btnAge5.UseVisualStyleBackColor = true;
+            this.btnAge5.Click += new System.EventHandler(this.btnAge5_Click);
             // 
             // btnAge4
             // 
@@ -222,6 +215,7 @@
             this.btnAge4.TabIndex = 8;
             this.btnAge4.Text = "26-40 ปี";
             this.btnAge4.UseVisualStyleBackColor = true;
+            this.btnAge4.Click += new System.EventHandler(this.btnAge4_Click);
             // 
             // btnAge3
             // 
@@ -232,6 +226,7 @@
             this.btnAge3.TabIndex = 7;
             this.btnAge3.Text = "19-25 ปี";
             this.btnAge3.UseVisualStyleBackColor = true;
+            this.btnAge3.Click += new System.EventHandler(this.btnAge3_Click);
             // 
             // btnAge2
             // 
@@ -242,6 +237,7 @@
             this.btnAge2.TabIndex = 6;
             this.btnAge2.Text = "13-18 ปี";
             this.btnAge2.UseVisualStyleBackColor = true;
+            this.btnAge2.Click += new System.EventHandler(this.btnAge2_Click);
             // 
             // btnAge1
             // 
@@ -252,6 +248,7 @@
             this.btnAge1.TabIndex = 5;
             this.btnAge1.Text = "1-12 ปี";
             this.btnAge1.UseVisualStyleBackColor = true;
+            this.btnAge1.Click += new System.EventHandler(this.btnAge1_Click);
             // 
             // btnWoman
             // 
@@ -262,6 +259,7 @@
             this.btnWoman.TabIndex = 4;
             this.btnWoman.Text = "หญิง";
             this.btnWoman.UseVisualStyleBackColor = true;
+            this.btnWoman.Click += new System.EventHandler(this.btnWoman_Click);
             // 
             // btnMan
             // 
@@ -274,6 +272,7 @@
             this.btnMan.TabIndex = 3;
             this.btnMan.Text = "ชาย";
             this.btnMan.UseVisualStyleBackColor = false;
+            this.btnMan.Click += new System.EventHandler(this.btnMan_Click);
             // 
             // clPrice
             // 
@@ -332,10 +331,10 @@
             this.table1.BorderColor = System.Drawing.Color.Black;
             this.table1.ColumnModel = this.columnModel1;
             this.table1.DataMember = null;
-            this.table1.DataSourceColumnBinder = dataSourceColumnBinder2;
+            this.table1.DataSourceColumnBinder = dataSourceColumnBinder1;
             this.table1.Dock = System.Windows.Forms.DockStyle.Fill;
-            dragDropRenderer2.ForeColor = System.Drawing.Color.Red;
-            this.table1.DragDropRenderer = dragDropRenderer2;
+            dragDropRenderer1.ForeColor = System.Drawing.Color.Red;
+            this.table1.DragDropRenderer = dragDropRenderer1;
             this.table1.EnableHeaderContextMenu = false;
             this.table1.FullRowSelect = true;
             this.table1.GridLines = XPTable.Models.GridLines.Both;
@@ -373,6 +372,9 @@
             this.txtBarcode.Size = new System.Drawing.Size(233, 29);
             this.txtBarcode.TabIndex = 1;
             this.txtBarcode.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtBarcode.Click += new System.EventHandler(this.txtBarcode_Enter);
+            this.txtBarcode.Enter += new System.EventHandler(this.txtBarcode_Enter);
+            this.txtBarcode.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtBarcode_KeyDown);
             // 
             // pnlBarcode
             // 
@@ -522,6 +524,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(802, 39);
             this.panel1.TabIndex = 10;
+            // 
+            // btnSearch
+            // 
+            this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.btnSearch.Image = global::PowerPOS_Online.Properties.Resources.magnifier_left;
+            this.btnSearch.Location = new System.Drawing.Point(196, 24);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(31, 26);
+            this.btnSearch.TabIndex = 2;
+            this.btnSearch.UseVisualStyleBackColor = true;
             // 
             // UcSell
             // 

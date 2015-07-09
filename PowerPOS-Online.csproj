@@ -110,30 +110,42 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BarcodeEntity.cs" />
-    <Compile Include="FmAbout.cs">
+    <Compile Include="Entity\BarcodeEntity.cs" />
+    <Compile Include="Form\FmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FmAbout.Designer.cs">
+    <Compile Include="Form\FmAbout.Designer.cs">
       <DependentUpon>FmAbout.cs</DependentUpon>
     </Compile>
-    <Compile Include="FmChangePassword.cs">
+    <Compile Include="Form\FmAddUser.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FmChangePassword.Designer.cs">
+    <Compile Include="Form\FmAddUser.Designer.cs">
+      <DependentUpon>FmAddUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\FmChangePassword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmChangePassword.Designer.cs">
       <DependentUpon>FmChangePassword.cs</DependentUpon>
     </Compile>
-    <Compile Include="FmLicense.cs">
+    <Compile Include="Form\FmLicense.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FmLicense.Designer.cs">
+    <Compile Include="Form\FmLicense.Designer.cs">
       <DependentUpon>FmLicense.cs</DependentUpon>
     </Compile>
-    <Compile Include="FmLogin.cs">
+    <Compile Include="Form\FmLogin.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FmLogin.Designer.cs">
+    <Compile Include="Form\FmLogin.Designer.cs">
       <DependentUpon>FmLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\FmUserDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmUserDetail.Designer.cs">
+      <DependentUpon>FmUserDetail.cs</DependentUpon>
     </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
@@ -142,85 +154,104 @@
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
     <Compile Include="Param.cs" />
+    <Compile Include="Entity\ProductEntity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShopConfigEntity.cs" />
-    <Compile Include="ShopEntity.cs" />
-    <Compile Include="UcBrand.cs">
+    <Compile Include="Entity\ShopConfigEntity.cs" />
+    <Compile Include="Entity\ShopEntity.cs" />
+    <Compile Include="UserControl\UcBrand.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UcBrand.Designer.cs">
+    <Compile Include="UserControl\UcBrand.Designer.cs">
       <DependentUpon>UcBrand.cs</DependentUpon>
     </Compile>
-    <Compile Include="UcCategory.cs">
+    <Compile Include="UserControl\UcCategory.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UcCategory.Designer.cs">
+    <Compile Include="UserControl\UcCategory.Designer.cs">
       <DependentUpon>UcCategory.cs</DependentUpon>
     </Compile>
-    <Compile Include="UcColor.cs">
+    <Compile Include="UserControl\UcClaim.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UcColor.Designer.cs">
+    <Compile Include="UserControl\UcClaim.Designer.cs">
+      <DependentUpon>UcClaim.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\UcColor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControl\UcColor.Designer.cs">
       <DependentUpon>UcColor.cs</DependentUpon>
     </Compile>
-    <Compile Include="UcConfig.cs">
+    <Compile Include="UserControl\UcConfig.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UcConfig.Designer.cs">
+    <Compile Include="UserControl\UcConfig.Designer.cs">
       <DependentUpon>UcConfig.cs</DependentUpon>
     </Compile>
-    <Compile Include="UcCustomer.cs">
+    <Compile Include="UserControl\UcCustomer.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UcCustomer.Designer.cs">
+    <Compile Include="UserControl\UcCustomer.Designer.cs">
       <DependentUpon>UcCustomer.cs</DependentUpon>
     </Compile>
-    <Compile Include="UcReport.cs">
+    <Compile Include="UserControl\UcReport.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UcReport.Designer.cs">
+    <Compile Include="UserControl\UcReport.Designer.cs">
       <DependentUpon>UcReport.cs</DependentUpon>
     </Compile>
-    <Compile Include="UcShopInfo.cs">
+    <Compile Include="UserControl\UcShopInfo.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UcShopInfo.Designer.cs">
+    <Compile Include="UserControl\UcShopInfo.Designer.cs">
       <DependentUpon>UcShopInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="UcUser.cs">
+    <Compile Include="UserControl\UcUser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UcUser.Designer.cs">
+    <Compile Include="UserControl\UcUser.Designer.cs">
       <DependentUpon>UcUser.cs</DependentUpon>
     </Compile>
-    <Compile Include="UcProduct.cs">
+    <Compile Include="UserControl\UcProduct.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UcProduct.Designer.cs">
+    <Compile Include="UserControl\UcProduct.Designer.cs">
       <DependentUpon>UcProduct.cs</DependentUpon>
     </Compile>
-    <Compile Include="UcReceiveProduct.cs">
+    <Compile Include="UserControl\UcReceiveProduct.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UcReceiveProduct.Designer.cs">
+    <Compile Include="UserControl\UcReceiveProduct.Designer.cs">
       <DependentUpon>UcReceiveProduct.cs</DependentUpon>
     </Compile>
-    <Compile Include="UcSell.cs">
+    <Compile Include="UserControl\UcSell.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UcSell.Designer.cs">
+    <Compile Include="UserControl\UcSell.Designer.cs">
       <DependentUpon>UcSell.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entity\UserEntity.cs" />
+    <Compile Include="Entity\UserGroupEntity.cs" />
+    <Compile Include="Entity\UserUpdateEntity.cs" />
     <Compile Include="Util.cs" />
-    <EmbeddedResource Include="FmAbout.resx">
+    <EmbeddedResource Include="Form\FmAbout.resx">
       <DependentUpon>FmAbout.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FmChangePassword.resx">
+    <EmbeddedResource Include="Form\FmAddUser.resx">
+      <DependentUpon>FmAddUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmChangePassword.resx">
       <DependentUpon>FmChangePassword.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FmLicense.resx">
+    <EmbeddedResource Include="Form\FmLicense.resx">
       <DependentUpon>FmLicense.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmLogin.resx">
+      <DependentUpon>FmLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmUserDetail.resx">
+      <DependentUpon>FmUserDetail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
@@ -235,37 +266,40 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="UcBrand.resx">
+    <EmbeddedResource Include="UserControl\UcBrand.resx">
       <DependentUpon>UcBrand.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UcCategory.resx">
+    <EmbeddedResource Include="UserControl\UcCategory.resx">
       <DependentUpon>UcCategory.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UcColor.resx">
+    <EmbeddedResource Include="UserControl\UcClaim.resx">
+      <DependentUpon>UcClaim.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControl\UcColor.resx">
       <DependentUpon>UcColor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UcConfig.resx">
+    <EmbeddedResource Include="UserControl\UcConfig.resx">
       <DependentUpon>UcConfig.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UcCustomer.resx">
+    <EmbeddedResource Include="UserControl\UcCustomer.resx">
       <DependentUpon>UcCustomer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UcReport.resx">
+    <EmbeddedResource Include="UserControl\UcReport.resx">
       <DependentUpon>UcReport.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UcShopInfo.resx">
+    <EmbeddedResource Include="UserControl\UcShopInfo.resx">
       <DependentUpon>UcShopInfo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UcUser.resx">
+    <EmbeddedResource Include="UserControl\UcUser.resx">
       <DependentUpon>UcUser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UcProduct.resx">
+    <EmbeddedResource Include="UserControl\UcProduct.resx">
       <DependentUpon>UcProduct.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UcReceiveProduct.resx">
+    <EmbeddedResource Include="UserControl\UcReceiveProduct.resx">
       <DependentUpon>UcReceiveProduct.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UcSell.resx">
+    <EmbeddedResource Include="UserControl\UcSell.resx">
       <DependentUpon>UcSell.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
@@ -301,6 +335,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <None Include="Resources\wrench-screwdriver.png" />
+    <None Include="Resources\Fix.png" />
+    <None Include="Resources\exclamation.png" />
+    <None Include="Resources\accept.png" />
+    <None Include="Resources\plus-circle.png" />
+    <None Include="Resources\minus-circle.png" />
+    <None Include="Resources\arrow-circle-225-left.png" />
+    <None Include="Resources\plus-white.png" />
+    <None Include="Resources\magnifier-left.png" />
     <None Include="Resources\disk-return-black.png" />
     <None Include="Resources\gear.png" />
     <None Include="Resources\key1.png" />

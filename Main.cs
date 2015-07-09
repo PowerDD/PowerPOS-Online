@@ -24,7 +24,8 @@ namespace PowerPOS_Online
         private void Main_Load(object sender, EventArgs e)
         {
             Param.mainPanel = pnlMain;
-            lblStatus.Text = "กำลังโหลดข้อมูลการตั้งค่าระบบ";
+            Param.lblStatus = lblStatus;
+            Util.SetStatusMessage("กำลังโหลดข้อมูลการตั้งค่าระบบ");
 
             Util.GetApiConfig();
             if (Param.apiChecked)
@@ -50,7 +51,7 @@ namespace PowerPOS_Online
             }
             else
             {
-                lblStatus.Text = "กำลังโหลดข้อมูลรายละเอียดของร้านค้า";
+                Util.SetStatusMessage("กำลังโหลดข้อมูลรายละเอียดของร้านค้า");
                 bwGetShopInfo.RunWorkerAsync();
             }
 
@@ -176,6 +177,12 @@ namespace PowerPOS_Online
             Param.selectedScreen = (int)Param.Screen.Config;
         }
 
+        private void mniClaim_Click(object sender, EventArgs e)
+        {
+            Util.ShowScreen(Param.Screen.Claim);
+            Param.selectedScreen = (int)Param.Screen.Claim;
+        }
+
         private void bwGetShopInfo_DoWork(object sender, DoWorkEventArgs e)
         {
             Param.azureStorageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=" + Param.databaseName + ";AccountKey=" + Param.databasePassword);
@@ -190,7 +197,7 @@ namespace PowerPOS_Online
             menuStrip1.Enabled = true;
             toolStrip1.Enabled = true;
 
-            lblStatus.Text = "กำลังโหลดข้อมูลการตั้งค่าระบบ";
+            Util.SetStatusMessage("กำลังโหลดข้อมูลการตั้งค่าระบบ");
             Util.GetConfig();
             lblStatus.Text = "";
 

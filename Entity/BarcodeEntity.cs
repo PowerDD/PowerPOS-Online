@@ -24,8 +24,8 @@ namespace PowerPOS_Online
 
         public string SellNo { get; set; }
         public string Product { get; set; }
-        public string ReceivedDate { get; set; }
-        public string SellDate { get; set; }
+        public DateTime ReceivedDate { get; set; }
+        public DateTime SellDate { get; set; }
         public string DocNo { get; set; }
         public string OrderNo { get; set; }
         public string Customer { get; set; }
