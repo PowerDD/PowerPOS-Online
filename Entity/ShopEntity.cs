@@ -24,6 +24,9 @@ namespace PowerPOS_Online
 
         public string Name { get; set; }
         public string Type { get; set; }
+        public string ShopCustomer { get; set; }
+        public string ShopParent { get; set; }
+        public int ShopCost { get; set; }
 
     }
 }

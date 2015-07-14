@@ -21,8 +21,8 @@ namespace PowerPOS_Online
         private ProductEntity productEntity;
         private string barcode;
         private bool downloading;
-        private Hashtable shop = new Hashtable();
         private List<string> shopList;
+        private List<string> customerList;
 
         public UcClaim()
         {
@@ -71,13 +71,13 @@ namespace PowerPOS_Online
 
         private void bwSearch_DoWork(object sender, DoWorkEventArgs e)
         {
-            Param.azureTable = Param.azureTableClient.GetTableReference("Barcode2");
+            var azureTable = Param.AzureTableClient.GetTableReference("Barcode");
             TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(
                 TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, barcode)
             );
 
             barcodeEntityList = new List<BarcodeEntity>();
-            foreach (BarcodeEntity entity in Param.azureTable.ExecuteQuery(query))
+            foreach (BarcodeEntity entity in azureTable.ExecuteQuery(query))
             {
                 barcodeEntityList.Add(entity);
             }
@@ -103,21 +103,24 @@ namespace PowerPOS_Online
                 tableModel1.Rows.Clear();
                 tableModel1.RowHeight = 22;
                 shopList = new List<string>();
+                customerList = new List<string>();
                 for (int i = 0; i < barcodeEntityList.Count; i++)
                 {
                     tableModel1.Rows.Add(new Row(
                         new Cell[] {
                     new Cell("" + (i+1)),
                     new Cell(barcodeEntityList[i].SellDate),
-                    new Cell(shop.Contains(barcodeEntityList[i].PartitionKey) ? shop[barcodeEntityList[i].PartitionKey].ToString() : barcodeEntityList[i].PartitionKey),
+                    new Cell(Param.SshopNameHashtable.Contains(barcodeEntityList[i].PartitionKey) ? Param.SshopNameHashtable[barcodeEntityList[i].PartitionKey].ToString() : barcodeEntityList[i].PartitionKey),
                     new Cell(barcodeEntityList[i].ReceivedDate),
-                    new Cell(barcodeEntityList[i].Customer)
+                    new Cell(Param.CustomerNameHashtable.Contains(barcodeEntityList[i].Customer) ? Param.CustomerNameHashtable[barcodeEntityList[i].Customer].ToString() : barcodeEntityList[i].Customer)
                     //,
                     //new Cell(Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy") == "01/01/0544" ? "-" : Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy hh:mm:ss")),
                     })
                     );
-                    if (!shop.Contains(barcodeEntityList[i].PartitionKey))
+                    if (!Param.SshopNameHashtable.Contains(barcodeEntityList[i].PartitionKey))
                         shopList.Add(barcodeEntityList[i].PartitionKey);
+                    if (!Param.CustomerNameHashtable.Contains(barcodeEntityList[i].Customer))
+                        customerList.Add(barcodeEntityList[i].Customer);
                 }
                 table1.EndUpdate();
                 bwGetProduct.RunWorkerAsync();
@@ -128,12 +131,12 @@ namespace PowerPOS_Online
         {
             var index = barcodeEntityList.Count - 1;
 
-            Param.azureTable = Param.azureTableClient.GetTableReference("Product");
-            TableOperation retrieveOperation = TableOperation.Retrieve<ProductEntity>(barcodeEntityList[index].PartitionKey, barcodeEntityList[index].Product.PadLeft(8, '0'));
-            TableResult retrievedResult = Param.azureTable.Execute(retrieveOperation);
+            var azureTable = Param.AzureTableClient.GetTableReference("Product");
+            TableOperation retrieveOperation = TableOperation.Retrieve<ProductEntity>(barcodeEntityList[index].PartitionKey, barcodeEntityList[index].Product);
+            TableResult retrievedResult = azureTable.Execute(retrieveOperation);
             productEntity = (ProductEntity)retrievedResult.Result;
             
-            var filename = @"Resource/Images/Product/" + barcodeEntityList[index].PartitionKey + "-" + barcodeEntityList[index].Product.PadLeft(8, '0') + ".jpg";
+            var filename = @"Resource/Images/Product/" + barcodeEntityList[index].PartitionKey + "-" + barcodeEntityList[index].Product + ".jpg";
             if (!File.Exists(filename))
             {
                 downloading = true;
@@ -147,6 +150,10 @@ namespace PowerPOS_Online
             if (shopList.Count > 0)
             {
                 bwGetShopName.RunWorkerAsync();
+            }
+            if (customerList.Count > 0)
+            {
+                bwGetCustomerName.RunWorkerAsync();
             }
 
         }
@@ -172,15 +179,25 @@ namespace PowerPOS_Online
                 ptbProduct.Image = null;
 
                 var index = barcodeEntityList.Count - 1;
-                var filename = @"Resource/Images/Product/" + barcodeEntityList[index].PartitionKey + "-" + barcodeEntityList[index].Product.PadLeft(8, '0') + ".jpg";
+                var filename = @"Resource/Images/Product/" + barcodeEntityList[index].PartitionKey + "-" + barcodeEntityList[index].Product + ".jpg";
                 if (File.Exists(filename) && !downloading)
                 {
-                    ptbProduct.Image = Image.FromFile(filename);
-                    ptbProduct.Visible = true;
+                    try
+                    {
+                        ptbProduct.Image = Image.FromFile(filename);
+                        ptbProduct.Visible = true;
+                    }
+                    catch
+                    {
+                        downloading = true;
+                        bwDownloadImage.RunWorkerAsync();
+                    }
                 }
-                else
+                if (downloading)
                 {
-                    var sp = productEntity.CoverImage.Split('|');
+                    ptbProduct.ImageLocation = productEntity.CoverImage;
+                    ptbProduct.Visible = true;
+                    /*var sp = productEntity.CoverImage.Split('|');
                     if (sp.Length > 2)
                     {
                         ptbProduct.ImageLocation = sp[1];
@@ -189,7 +206,7 @@ namespace PowerPOS_Online
                     else
                     {
                         ptbProduct.Visible = false;
-                    }
+                    }*/
                 }
             }
         }
@@ -197,35 +214,43 @@ namespace PowerPOS_Online
         private void bwDownloadImage_DoWork(object sender, DoWorkEventArgs e)
         {
             var index = barcodeEntityList.Count - 1;
-            var filename = @"Resource/Images/Product/" + barcodeEntityList[index].PartitionKey + "-" + barcodeEntityList[index].Product.PadLeft(8, '0') + ".jpg";
-            var sp = productEntity.CoverImage.Split('|');
-            if (sp.Length > 2)
-            {
+            var filename = @"Resource/Images/Product/" + barcodeEntityList[index].PartitionKey + "-" + barcodeEntityList[index].Product + ".jpg";
+            //var sp = productEntity.CoverImage.Split('|');
+            //if (sp.Length > 2)
+            //{
                 if (!Directory.Exists("Resource/Images/Product")) Directory.CreateDirectory("Resource/Images/Product");
+                if (File.Exists(filename)) File.Delete(filename);
                 using (var client = new WebClient())
                 {
-                    client.DownloadFile(sp[2], filename);
+                    //client.DownloadFile(sp[2], filename);
+                    client.DownloadFile(productEntity.CoverImage, filename);
+                    
                 }
-            }
+            //}
 
         }
 
         private void btnClaim_Click(object sender, EventArgs e)
         {
+            FmClaim fm = new FmClaim();
+            var result = fm.ShowDialog(this);
+            if (result == DialogResult.OK)
+            {
 
+            }
         }
 
         private void bwGetShopName_DoWork(object sender, DoWorkEventArgs e)
         {
-            Param.azureTable = Param.azureTableClient.GetTableReference("Shop");
+            var azureTable = Param.AzureTableClient.GetTableReference("Shop");
             for (int i = 0; i < shopList.Count; i++)
             {
                 TableQuery<ShopEntity> query = new TableQuery<ShopEntity>().Where(
                     TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, shopList[i])
                 );
-                foreach (ShopEntity entity in Param.azureTable.ExecuteQuery(query))
+                foreach (ShopEntity entity in azureTable.ExecuteQuery(query))
                 {
-                    shop[shopList[i]] = entity.Name;
+                    Param.SshopNameHashtable[shopList[i]] = entity.Name;
                 }
             }
         }
@@ -234,7 +259,38 @@ namespace PowerPOS_Online
         {
             for (int i = 0; i < tableModel1.Rows.Count; i++)
             {
-                tableModel1.Rows[i].Cells[2].Text = shop[tableModel1.Rows[i].Cells[2].Text].ToString();
+                try
+                {
+                    tableModel1.Rows[i].Cells[2].Text = Param.SshopNameHashtable[tableModel1.Rows[i].Cells[2].Text].ToString();
+                }
+                catch { }
+            }
+        }
+
+        private void bwGetCustomerName_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var azureTable = Param.AzureTableClient.GetTableReference("Customer");
+            for (int i = 0; i < customerList.Count; i++)
+            {
+                TableQuery<CustomerEntity> query = new TableQuery<CustomerEntity>().Where(
+                    TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, customerList[i])
+                );
+                foreach (CustomerEntity entity in azureTable.ExecuteQuery(query))
+                {
+                    Param.CustomerNameHashtable[customerList[i]] = entity.Name;
+                }
+            }
+        }
+
+        private void bwGetCustomerName_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            for (int i = 0; i < tableModel1.Rows.Count; i++)
+            {
+                try
+                {
+                    tableModel1.Rows[i].Cells[4].Text = Param.CustomerNameHashtable[tableModel1.Rows[i].Cells[4].Text].ToString();
+                }
+                catch { }
             }
         }
     }

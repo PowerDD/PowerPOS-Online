@@ -19,30 +19,25 @@ namespace PowerPOS_Online
 
         private void FmLicense_Load(object sender, EventArgs e)
         {
-            txtApiKey.Text = Properties.Settings.Default.ApiKey;
             txtLicenseKey.Text = Properties.Settings.Default.LicenseKey;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            Param.apiKey = txtApiKey.Text.Trim();
-            Param.licenseKey = txtLicenseKey.Text.Trim();
-            Properties.Settings.Default.ApiKey = Param.apiKey;
-            Properties.Settings.Default.LicenseKey = Param.licenseKey;
+            Param.LicenseKey = txtLicenseKey.Text.Trim();
+            Properties.Settings.Default.LicenseKey = Param.LicenseKey;
             Properties.Settings.Default.Save();
             Properties.Settings.Default.Upgrade();
 
             btnSave.Enabled = false;
             btnCancel.Enabled = false;
-            txtApiKey.Enabled = false;
             txtLicenseKey.Enabled = false;
-            dynamic jsonObject = Util.DownloadAppConfig();
+            dynamic jsonObject = Util.LoadAppConfig();
             if (!jsonObject.success)
             {
                 MessageBox.Show(jsonObject.errorMessage, "Error " + jsonObject.error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 btnSave.Enabled = true;
                 btnCancel.Enabled = true;
-                txtApiKey.Enabled = true;
                 txtLicenseKey.Enabled = true;
             }
             else

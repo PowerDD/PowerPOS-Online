@@ -32,7 +32,7 @@
             XPTable.Renderers.DragDropRenderer dragDropRenderer2 = new XPTable.Renderers.DragDropRenderer();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
-            this.panel3 = new System.Windows.Forms.Panel();
+            this.pnlLeft = new System.Windows.Forms.Panel();
             this.pnlBarcode = new System.Windows.Forms.Panel();
             this.ptbProduct = new System.Windows.Forms.PictureBox();
             this.txtBarcode = new System.Windows.Forms.TextBox();
@@ -44,9 +44,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.gbOrderNo = new System.Windows.Forms.GroupBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.cbOrderNo = new System.Windows.Forms.ComboBox();
+            this.cbbOrderNo = new System.Windows.Forms.ComboBox();
             this.table1 = new XPTable.Models.Table();
-            this.tableModel1 = new XPTable.Models.TableModel();
             this.columnModel1 = new XPTable.Models.ColumnModel();
             this.clNo = new XPTable.Models.TextColumn();
             this.clSku = new XPTable.Models.TextColumn();
@@ -54,8 +53,9 @@
             this.clQty = new XPTable.Models.TextColumn();
             this.clReceived = new XPTable.Models.TextColumn();
             this.clProgress = new XPTable.Models.ProgressBarColumn();
+            this.tableModel1 = new XPTable.Models.TableModel();
             this.panel1.SuspendLayout();
-            this.panel3.SuspendLayout();
+            this.pnlLeft.SuspendLayout();
             this.pnlBarcode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbProduct)).BeginInit();
             this.gbCost.SuspendLayout();
@@ -86,17 +86,17 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "รับสินค้าเข้าระบบ";
             // 
-            // panel3
+            // pnlLeft
             // 
-            this.panel3.Controls.Add(this.pnlBarcode);
-            this.panel3.Controls.Add(this.gbCost);
-            this.panel3.Controls.Add(this.gbOrderNo);
-            this.panel3.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel3.Location = new System.Drawing.Point(0, 39);
-            this.panel3.Name = "panel3";
-            this.panel3.Padding = new System.Windows.Forms.Padding(7, 10, 7, 0);
-            this.panel3.Size = new System.Drawing.Size(247, 709);
-            this.panel3.TabIndex = 6;
+            this.pnlLeft.Controls.Add(this.pnlBarcode);
+            this.pnlLeft.Controls.Add(this.gbCost);
+            this.pnlLeft.Controls.Add(this.gbOrderNo);
+            this.pnlLeft.Dock = System.Windows.Forms.DockStyle.Left;
+            this.pnlLeft.Location = new System.Drawing.Point(0, 39);
+            this.pnlLeft.Name = "pnlLeft";
+            this.pnlLeft.Padding = new System.Windows.Forms.Padding(7, 10, 7, 0);
+            this.pnlLeft.Size = new System.Drawing.Size(247, 709);
+            this.pnlLeft.TabIndex = 6;
             // 
             // pnlBarcode
             // 
@@ -116,6 +116,7 @@
             this.ptbProduct.Location = new System.Drawing.Point(0, 83);
             this.ptbProduct.Name = "ptbProduct";
             this.ptbProduct.Size = new System.Drawing.Size(233, 233);
+            this.ptbProduct.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.ptbProduct.TabIndex = 7;
             this.ptbProduct.TabStop = false;
             // 
@@ -129,6 +130,7 @@
             this.txtBarcode.Size = new System.Drawing.Size(204, 29);
             this.txtBarcode.TabIndex = 1;
             this.txtBarcode.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtBarcode.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtBarcode_KeyDown);
             // 
             // label2
             // 
@@ -183,11 +185,15 @@
             // 
             // btnSave
             // 
+            this.btnSave.Image = global::PowerPOS_Online.Properties.Resources.disk_return_black;
+            this.btnSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnSave.Location = new System.Drawing.Point(143, 36);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.btnSave.Size = new System.Drawing.Size(75, 31);
             this.btnSave.TabIndex = 5;
-            this.btnSave.Text = "บันทึกข้อมูล";
+            this.btnSave.Text = "บันทึก";
+            this.btnSave.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnSave.UseVisualStyleBackColor = true;
             // 
             // label3
@@ -203,7 +209,7 @@
             // gbOrderNo
             // 
             this.gbOrderNo.Controls.Add(this.progressBar1);
-            this.gbOrderNo.Controls.Add(this.cbOrderNo);
+            this.gbOrderNo.Controls.Add(this.cbbOrderNo);
             this.gbOrderNo.Dock = System.Windows.Forms.DockStyle.Top;
             this.gbOrderNo.Location = new System.Drawing.Point(7, 10);
             this.gbOrderNo.Name = "gbOrderNo";
@@ -220,17 +226,18 @@
             this.progressBar1.Step = 1;
             this.progressBar1.TabIndex = 9;
             // 
-            // cbOrderNo
+            // cbbOrderNo
             // 
-            this.cbOrderNo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbOrderNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.cbOrderNo.FormattingEnabled = true;
-            this.cbOrderNo.Items.AddRange(new object[] {
+            this.cbbOrderNo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbbOrderNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.cbbOrderNo.FormattingEnabled = true;
+            this.cbbOrderNo.Items.AddRange(new object[] {
             "เลขที่ใบสั่งซื้อ"});
-            this.cbOrderNo.Location = new System.Drawing.Point(14, 30);
-            this.cbOrderNo.Name = "cbOrderNo";
-            this.cbOrderNo.Size = new System.Drawing.Size(204, 24);
-            this.cbOrderNo.TabIndex = 0;
+            this.cbbOrderNo.Location = new System.Drawing.Point(14, 30);
+            this.cbbOrderNo.Name = "cbbOrderNo";
+            this.cbbOrderNo.Size = new System.Drawing.Size(204, 24);
+            this.cbbOrderNo.TabIndex = 0;
+            this.cbbOrderNo.SelectedIndexChanged += new System.EventHandler(this.cbbOrderNo_SelectedIndexChanged);
             // 
             // table1
             // 
@@ -245,7 +252,6 @@
             this.table1.FullRowSelect = true;
             this.table1.GridLines = XPTable.Models.GridLines.Both;
             this.table1.GridLinesContrainedToData = false;
-            this.table1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.table1.Location = new System.Drawing.Point(247, 39);
             this.table1.Name = "table1";
             this.table1.NoItemsText = "";
@@ -255,6 +261,7 @@
             this.table1.TableModel = this.tableModel1;
             this.table1.Text = "table1";
             this.table1.UnfocusedBorderColor = System.Drawing.Color.Black;
+            this.table1.EndSort += new XPTable.Events.ColumnEventHandler(this.table1_EndSort);
             // 
             // columnModel1
             // 
@@ -281,7 +288,7 @@
             this.clSku.Alignment = XPTable.Models.ColumnAlignment.Center;
             this.clSku.Editable = false;
             this.clSku.IsTextTrimmed = false;
-            this.clSku.Text = "SKU";
+            this.clSku.Text = "รหัสสินค้า";
             this.clSku.Width = 80;
             // 
             // clName
@@ -293,19 +300,19 @@
             // 
             // clQty
             // 
-            this.clQty.Alignment = XPTable.Models.ColumnAlignment.Right;
+            this.clQty.Alignment = XPTable.Models.ColumnAlignment.Center;
             this.clQty.Editable = false;
             this.clQty.IsTextTrimmed = false;
             this.clQty.Text = "จำนวน";
-            this.clQty.Width = 50;
+            this.clQty.Width = 70;
             // 
             // clReceived
             // 
-            this.clReceived.Alignment = XPTable.Models.ColumnAlignment.Right;
+            this.clReceived.Alignment = XPTable.Models.ColumnAlignment.Center;
             this.clReceived.Editable = false;
             this.clReceived.IsTextTrimmed = false;
             this.clReceived.Text = "รับแล้ว";
-            this.clReceived.Width = 50;
+            this.clReceived.Width = 70;
             // 
             // clProgress
             // 
@@ -319,14 +326,14 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.table1);
-            this.Controls.Add(this.panel3);
+            this.Controls.Add(this.pnlLeft);
             this.Controls.Add(this.panel1);
             this.Name = "UcReceiveProduct";
             this.Size = new System.Drawing.Size(999, 748);
             this.Load += new System.EventHandler(this.UcReceiveProduct_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.panel3.ResumeLayout(false);
+            this.pnlLeft.ResumeLayout(false);
             this.pnlBarcode.ResumeLayout(false);
             this.pnlBarcode.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbProduct)).EndInit();
@@ -342,7 +349,7 @@
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Panel pnlLeft;
         private System.Windows.Forms.Panel pnlBarcode;
         private System.Windows.Forms.PictureBox ptbProduct;
         private System.Windows.Forms.TextBox txtBarcode;
@@ -354,7 +361,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox gbOrderNo;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.ComboBox cbOrderNo;
+        private System.Windows.Forms.ComboBox cbbOrderNo;
         private XPTable.Models.Table table1;
         private XPTable.Models.ColumnModel columnModel1;
         private XPTable.Models.TextColumn clNo;

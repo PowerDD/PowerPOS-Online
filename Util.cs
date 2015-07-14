@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Data;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Management;
@@ -21,15 +23,17 @@ namespace PowerPOS_Online
 
         public static void GetApiConfig()
         {
-            Param.apiKey = Properties.Settings.Default.ApiKey;
-            Param.apiUrl = Properties.Settings.Default.ApiUrl;
-            Param.licenseKey = Properties.Settings.Default.LicenseKey;
-            Param.apiChecked = Properties.Settings.Default.ApiChecked;
-            Param.cpuId = GetCpuId();
-            Param.computerName = System.Environment.MachineName;
-            Param.databaseName = Properties.Settings.Default.DatabaseName;
-            Param.databasePassword = Properties.Settings.Default.DatabasePassword;
-            Param.shopId = Properties.Settings.Default.ShopId;
+            Param.ApiUrl = Properties.Settings.Default.ApiUrl;
+            Param.LicenseKey = Properties.Settings.Default.LicenseKey;
+            Param.ApiChecked = Properties.Settings.Default.ApiChecked;
+            Param.CpuId = GetCpuId();
+            Param.ComputerName = System.Environment.MachineName;
+            Param.DatabaseName = Properties.Settings.Default.DatabaseName;
+            Param.DatabasePassword = Properties.Settings.Default.DatabasePassword;
+            Param.ShopId = Properties.Settings.Default.ShopId;
+            Param.ShopName = Properties.Settings.Default.ShopName;
+            Param.ShopParent = Properties.Settings.Default.ShopParent;
+            Param.ShopCustomer = Properties.Settings.Default.ShopCustomer;
         }
 
         public static string GetCpuId()
@@ -48,20 +52,62 @@ namespace PowerPOS_Online
             }
             catch (Exception) { return cpuid; }
         }
-        public static dynamic DownloadAppConfig()
+
+        public static void ConnectSQLiteDatabase()
+        {
+            if (!File.Exists(Param.SQLiteFileName))
+            {
+                SQLiteConnection.CreateFile(Param.SQLiteFileName);
+            }
+            Param.SQLiteConnection = new SQLiteConnection("Data Source=" + Param.SQLiteFileName + ";Version=3;New=True;Compress=True;");
+            Param.SQLiteConnection.Open();
+        }
+
+        public static DataTable DBQuery(string sql)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql, Param.SQLiteConnection);
+                adapter.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                WriteErrorLog(ex.Message);
+                WriteErrorLog(ex.StackTrace);
+            }
+            return dt;
+        }
+        public static void DBExecute(string sql)
+        {
+            try
+            {
+                SQLiteCommand command = new SQLiteCommand(sql, Param.SQLiteConnection);
+                command.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                WriteErrorLog(ex.Message);
+                WriteErrorLog(ex.StackTrace);
+            }
+        }
+
+
+        public static dynamic LoadAppConfig()
         {
             using (WebClient wc = new WebClient())
             {
                 var values = new NameValueCollection();
-                values["apiKey"] = Param.apiKey;
-                values["licenseKey"] = Param.licenseKey;
-                values["deviceId"] = Param.cpuId;
-                values["deviceName"] = Param.computerName;
+                values["apiKey"] = Param.ApiKey;
+                values["licenseKey"] = Param.LicenseKey;
+                values["deviceId"] = Param.CpuId;
+                values["deviceName"] = Param.ComputerName;
 
                 try
                 {
                     wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                    var json = Encoding.UTF8.GetString(wc.UploadValues(Param.apiUrl + "/shop-application/info", values));
+                    var json = Encoding.UTF8.GetString(wc.UploadValues(Param.ApiUrl + "/shop-application/info", values));
 
                     var structure = new { success = false };
                     dynamic jsonObject = new JsonSerializer().Deserialize(new StringReader(json), structure.GetType());
@@ -70,13 +116,20 @@ namespace PowerPOS_Online
                         var structureSuccess = new { success = false, shopId = "1234", databaseName = "", databasePassword = "" };
                         jsonObject = new JsonSerializer().Deserialize(new StringReader(json), structureSuccess.GetType());
 
-                        Param.databaseName = jsonObject.databaseName;
-                        Param.databasePassword = jsonObject.databasePassword;
-                        Param.shopId = jsonObject.shopId;
-                        Param.apiChecked = true;
-                        Properties.Settings.Default.DatabaseName = Param.databaseName;
-                        Properties.Settings.Default.DatabasePassword = Param.databasePassword;
-                        Properties.Settings.Default.ShopId = Param.shopId;
+                        if (Param.ShopId != jsonObject.shopId)
+                        {
+                            Param.ShopName = "";
+                            Param.ShopParent = "";
+                            Param.ShopCustomer = "";
+                        }
+
+                        Param.DatabaseName = jsonObject.databaseName;
+                        Param.DatabasePassword = jsonObject.databasePassword;
+                        Param.ShopId = jsonObject.shopId;
+                        Param.ApiChecked = true;
+                        Properties.Settings.Default.DatabaseName = Param.DatabaseName;
+                        Properties.Settings.Default.DatabasePassword = Param.DatabasePassword;
+                        Properties.Settings.Default.ShopId = Param.ShopId;
                         Properties.Settings.Default.ApiChecked = true;
                         Properties.Settings.Default.Save();
                         Properties.Settings.Default.Upgrade();
@@ -96,160 +149,152 @@ namespace PowerPOS_Online
                 }
             }
         }
-        public static void GetShopInfo()
+        public static void LoadShopInfo()
         {
-            Param.azureTable = Param.azureTableClient.GetTableReference("Shop");
-            TableQuery<ShopEntity> query = new TableQuery<ShopEntity>()
-                .Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, Param.shopId));
-
-            foreach (ShopEntity entity in Param.azureTable.ExecuteQuery(query))
+            if (Util.CanConnectInternet() && (Param.ShopName == "" || Param.ShopParent == "" || Param.ShopCustomer == ""))
             {
-                Param.shopName = entity.Name;
+                var azureTable = Param.AzureTableClient.GetTableReference("Shop");
+                TableQuery<ShopEntity> query = new TableQuery<ShopEntity>()
+                    .Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, Param.ShopId));
+
+                foreach (ShopEntity entity in azureTable.ExecuteQuery(query))
+                {
+                    Param.ShopName = entity.Name;
+                    Param.ShopParent = entity.ShopParent;
+                    Param.ShopCustomer = entity.ShopCustomer;
+
+                    Properties.Settings.Default.ShopName = Param.ShopName;
+                    Properties.Settings.Default.ShopParent = Param.ShopParent;
+                    Properties.Settings.Default.ShopCustomer = Param.ShopCustomer;
+                    Properties.Settings.Default.Save();
+                    Properties.Settings.Default.Upgrade();
+
+                    break;
+                }
             }
 
-            Console.WriteLine(Param.shopName);
+            //Console.WriteLine(Param.shopName);
 
         }
 
-        public static void GetBarcode()
+        public static void LoadConfig()
         {
-            Param.azureTable = Param.azureTableClient.GetTableReference("Barcode3");
-            TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(
-                TableQuery.CombineFilters(
-                    TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.shopId),
-                    TableOperators.And,
-                    TableQuery.GenerateFilterCondition("SellNo", QueryComparisons.Equal, "7006")
-            ));
-
-            int i = 0;
-            foreach (BarcodeEntity entity in Param.azureTable.ExecuteQuery(query))
+            if (Util.CanConnectInternet())
             {
-                Console.WriteLine(entity.RowKey);
-                i++;
-                //if (i >= 1000) break;
-                //Param.shopName = entity.RowKey;
+                Param.AzureTable = Param.AzureTableClient.GetTableReference("Shop");
+                TableOperation retrieveOperation = TableOperation.Retrieve<ShopConfigEntity>(Param.ShopId, "Config");
+                TableResult retrievedResult = Param.AzureTable.Execute(retrieveOperation);
+                ShopConfigEntity data = (ShopConfigEntity)retrievedResult.Result;
+
+                var json = new StringBuilder();
+                if (data != null)
+                {
+                    json.Append(data.Value);
+                }
+                Param.SystemConfig = JsonConvert.DeserializeObject(json.ToString());
             }
-            /*Parallel.For(0, 1000, i =>
-            {
-                Console.WriteLine(i);
-            });*/
-        }
-
-        public static void GetConfig()
-        {
-            Param.azureTable = Param.azureTableClient.GetTableReference("Shop");
-            TableOperation retrieveOperation = TableOperation.Retrieve<ShopConfigEntity>(Param.shopId, "Config");
-            TableResult retrievedResult = Param.azureTable.Execute(retrieveOperation);
-            ShopConfigEntity data = (ShopConfigEntity)retrievedResult.Result;
-
-            var json = new StringBuilder();
-            if (data != null)
-            {
-                json.Append(data.Name);
-            }
-            Param.systemConfig = JsonConvert.DeserializeObject(json.ToString());
         }
 
         public static void UpdateConfig()
         {
-            Param.azureTable = Param.azureTableClient.GetTableReference("Shop");
-            TableOperation retrieveOperation = TableOperation.Retrieve<ShopConfigEntity>(Param.shopId, "Config");
-            TableResult retrievedResult = Param.azureTable.Execute(retrieveOperation);
+            Param.AzureTable = Param.AzureTableClient.GetTableReference("Shop");
+            TableOperation retrieveOperation = TableOperation.Retrieve<ShopConfigEntity>(Param.ShopId, "Config");
+            TableResult retrievedResult = Param.AzureTable.Execute(retrieveOperation);
             ShopConfigEntity data = (ShopConfigEntity)retrievedResult.Result;
             if (data != null)
             {
-                data.Name = JsonConvert.SerializeObject(Param.systemConfig);
+                data.Value = JsonConvert.SerializeObject(Param.SystemConfig);
                 TableOperation updateOperation = TableOperation.Merge(data);
-                Param.azureTable.Execute(updateOperation);
+                Param.AzureTable.Execute(updateOperation);
             }
         }
         public static void GetUserGroup()
         {
-            Param.azureTable = Param.azureTableClient.GetTableReference("User");
-            TableOperation retrieveOperation = TableOperation.Retrieve<UserGroupEntity>(Param.shopId, "Group");
-            TableResult retrievedResult = Param.azureTable.Execute(retrieveOperation);
+            Param.AzureTable = Param.AzureTableClient.GetTableReference("User");
+            TableOperation retrieveOperation = TableOperation.Retrieve<UserGroupEntity>(Param.ShopId, "Group");
+            TableResult retrievedResult = Param.AzureTable.Execute(retrieveOperation);
             UserGroupEntity data = (UserGroupEntity)retrievedResult.Result;
             var json = new StringBuilder();
             if (data != null)
             {
                 json.Append(data.Data);
             }
-            Param.userGroup = JsonConvert.DeserializeObject(json.ToString());
+            Param.UserGroup = JsonConvert.DeserializeObject(json.ToString());
 
         }
 
         public static void UpdateUserGroup()
         {
-            UserGroupEntity data = new UserGroupEntity(Param.shopId);
-            data.Data = JsonConvert.SerializeObject(Param.userGroup);
-            Param.azureTable = Param.azureTableClient.GetTableReference("User");
+            UserGroupEntity data = new UserGroupEntity(Param.ShopId);
+            data.Data = JsonConvert.SerializeObject(Param.UserGroup);
+            Param.AzureTable = Param.AzureTableClient.GetTableReference("User");
             TableOperation updateOperation = TableOperation.InsertOrMerge(data);
-            Param.azureTable.Execute(updateOperation);
+            Param.AzureTable.Execute(updateOperation);
         }
 
         public static void AddUser(UserEntity data)
         {
-            Param.azureTable = Param.azureTableClient.GetTableReference("User");
+            Param.AzureTable = Param.AzureTableClient.GetTableReference("User");
             TableOperation updateOperation = TableOperation.InsertOrMerge(data);
-            Param.azureTable.Execute(updateOperation);
+            Param.AzureTable.Execute(updateOperation);
         }
 
         public static void ShowScreen(Param.Screen screen)
         {
-            if (screen == Param.Screen.Sell && Param.selectedScreen != (int)Param.Screen.Sell)
+            if (screen == Param.Screen.Sell && Param.SelectedScreen != (int)Param.Screen.Sell)
             {
-                Param.userControl = new UcSell();
+                Param.UserControl = new UcSell();
             }
-            else if (screen == Param.Screen.ReceiveProduct && Param.selectedScreen != (int)Param.Screen.ReceiveProduct)
+            else if (screen == Param.Screen.ReceiveProduct && Param.SelectedScreen != (int)Param.Screen.ReceiveProduct)
             {
-                Param.userControl = new UcReceiveProduct();
+                Param.UserControl = new UcReceiveProduct();
             }
-            else if (screen == Param.Screen.Product && Param.selectedScreen != (int)Param.Screen.Product)
+            else if (screen == Param.Screen.Product && Param.SelectedScreen != (int)Param.Screen.Product)
             {
-                Param.userControl = new UcProduct();
+                Param.UserControl = new UcProduct();
             }
-            else if (screen == Param.Screen.Category && Param.selectedScreen != (int)Param.Screen.Category)
+            else if (screen == Param.Screen.Category && Param.SelectedScreen != (int)Param.Screen.Category)
             {
-                Param.userControl = new UcCategory();
+                Param.UserControl = new UcCategory();
             }
-            else if (screen == Param.Screen.Brand && Param.selectedScreen != (int)Param.Screen.Brand)
+            else if (screen == Param.Screen.Brand && Param.SelectedScreen != (int)Param.Screen.Brand)
             {
-                Param.userControl = new UcBrand();
+                Param.UserControl = new UcBrand();
             }
-            else if (screen == Param.Screen.Customer && Param.selectedScreen != (int)Param.Screen.Customer)
+            else if (screen == Param.Screen.Customer && Param.SelectedScreen != (int)Param.Screen.Customer)
             {
-                Param.userControl = new UcCustomer();
+                Param.UserControl = new UcCustomer();
             }
-            else if (screen == Param.Screen.User && Param.selectedScreen != (int)Param.Screen.User)
+            else if (screen == Param.Screen.User && Param.SelectedScreen != (int)Param.Screen.User)
             {
-                Param.userControl = new UcUser();
+                Param.UserControl = new UcUser();
             }
-            else if (screen == Param.Screen.Color && Param.selectedScreen != (int)Param.Screen.Color)
+            else if (screen == Param.Screen.Color && Param.SelectedScreen != (int)Param.Screen.Color)
             {
-                Param.userControl = new UcColor();
+                Param.UserControl = new UcColor();
             }
-            else if (screen == Param.Screen.Report && Param.selectedScreen != (int)Param.Screen.Report)
+            else if (screen == Param.Screen.Report && Param.SelectedScreen != (int)Param.Screen.Report)
             {
-                Param.userControl = new UcReport();
+                Param.UserControl = new UcReport();
             }
-            else if (screen == Param.Screen.ShopInfo && Param.selectedScreen != (int)Param.Screen.ShopInfo)
+            else if (screen == Param.Screen.ShopInfo && Param.SelectedScreen != (int)Param.Screen.ShopInfo)
             {
-                Param.userControl = new UcShopInfo();
+                Param.UserControl = new UcShopInfo();
             }
-            else if (screen == Param.Screen.Config && Param.selectedScreen != (int)Param.Screen.Config)
+            else if (screen == Param.Screen.Config && Param.SelectedScreen != (int)Param.Screen.Config)
             {
-                Param.userControl = new UcConfig();
+                Param.UserControl = new UcConfig();
             }
-            else if (screen == Param.Screen.Claim && Param.selectedScreen != (int)Param.Screen.Claim)
+            else if (screen == Param.Screen.Claim && Param.SelectedScreen != (int)Param.Screen.Claim)
             {
-                Param.userControl = new UcClaim();
+                Param.UserControl = new UcClaim();
             }
-            Param.userControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            Param.UserControl.Dock = System.Windows.Forms.DockStyle.Fill;
 
-            if (!Param.mainPanel.Contains(Param.userControl))
+            if (!Param.MainPanel.Contains(Param.UserControl))
             {
-                Param.mainPanel.Controls.Clear();
-                Param.mainPanel.Controls.Add(Param.userControl);
+                Param.MainPanel.Controls.Clear();
+                Param.MainPanel.Controls.Add(Param.UserControl);
             }
         }
         public static void InitialTable(XPTable.Models.Table table)
@@ -279,16 +324,157 @@ namespace PowerPOS_Online
             InputLanguage.CurrentInputLanguage = layout;
         }
 
-        public static void SetStatusMessage(string message)
+        public static void SetStatusMessage(string message, Param.StatusIcon icon)
         {
             Param.lblStatus.Text = message;
+            switch (icon)
+            {
+                case Param.StatusIcon.Loading:
+                    Param.lblStatus.Image = global::PowerPOS_Online.Properties.Resources.loading;
+                    break;
+                case Param.StatusIcon.Success:
+                    Param.lblStatus.Image = global::PowerPOS_Online.Properties.Resources.accept;
+                    break;
+                /*case Param.StatusIcon.Info:
+                    Param.lblStatus.Image = global::PowerPOS_Online.Properties.Resources.accept;
+                    break;*/
+                default :
+                    Param.lblStatus.Image = null;
+                    break;
+            }
         }
 
-        public static string EncodeString(string message)
+        public static string MD5String(string message)
         {
             byte[] encodedPassword = new UTF8Encoding().GetBytes(message);
             byte[] hash = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword);
             return BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
+        }
+        public static bool CanConnectInternet()
+        {
+            try
+            {
+                using (var client = new WebClient())
+                using (var stream = client.OpenRead(Param.ApiUrl))
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static void WriteErrorLog(string message)
+        {
+            string filename = "error-" + DateTime.Now.ToString("yyyyMMdd") + ".txt";
+            StreamWriter sw = new StreamWriter(filename, true);
+            sw.WriteLine(DateTime.Now.ToString("HH:mm:ss") + "\t" + message);
+            sw.Close();
+        }
+
+        public static BarcodeEntity RenderBarcodeData(DataRow dr)
+        {
+            BarcodeEntity data = new BarcodeEntity(Param.ShopId, dr["Barcode"].ToString());
+            data.OrderNo = dr["OrderNo"].ToString();
+            data.Product = dr["Product"].ToString();
+            data.Cost = double.Parse(dr["Cost"].ToString());
+            data.OperationCost = double.Parse(dr["OperationCost"].ToString());
+            data.SellPrice = double.Parse(dr["SellPrice"].ToString());
+            data.ReceivedDate = DateTime.Parse(dr["ReceivedDate"].ToString());
+            data.ReceivedBy = dr["ReceivedBy"].ToString();
+            data.SellNo = dr["SellNo"].ToString();
+            data.SellDate = DateTime.Parse(dr["SellDate"].ToString());
+            data.SellBy = dr["SellBy"].ToString();
+            data.SellFinished = dr["SellFinished"].ToString() == "1" ? true : false;
+            data.Customer = dr["Customer"].ToString();
+            data.ETag = "*";
+            return data;
+        }
+
+        public static BarcodeNoDateEntity RenderBarcodeNoDateData(DataRow dr)
+        {
+            BarcodeNoDateEntity data = new BarcodeNoDateEntity(Param.ShopId, dr["Barcode"].ToString());
+            data.OrderNo = dr["OrderNo"].ToString();
+            data.Product = dr["Product"].ToString();
+            data.Cost = double.Parse(dr["Cost"].ToString());
+            data.OperationCost = double.Parse(dr["OperationCost"].ToString());
+            data.SellPrice = double.Parse(dr["SellPrice"].ToString());
+            data.ReceivedBy = dr["ReceivedBy"].ToString();
+            data.SellNo = dr["SellNo"].ToString();
+            data.SellBy = dr["SellBy"].ToString();
+            data.SellFinished = dr["SellFinished"].ToString() == "1" ? true : false;
+            data.Customer = dr["Customer"].ToString();
+            data.ETag = "*";
+            return data;
+        }
+
+        public static BarcodeNoReceivedDateEntity RenderBarcodeNoReceivedDateData(DataRow dr)
+        {
+            BarcodeNoReceivedDateEntity data = new BarcodeNoReceivedDateEntity(Param.ShopId, dr["Barcode"].ToString());
+            data.OrderNo = dr["OrderNo"].ToString();
+            data.Product = dr["Product"].ToString();
+            data.Cost = double.Parse(dr["Cost"].ToString());
+            data.OperationCost = double.Parse(dr["OperationCost"].ToString());
+            data.SellPrice = double.Parse(dr["SellPrice"].ToString());
+            data.ReceivedBy = dr["ReceivedBy"].ToString();
+            data.SellNo = dr["SellNo"].ToString();
+            data.SellDate = DateTime.Parse(dr["SellDate"].ToString());
+            data.SellBy = dr["SellBy"].ToString();
+            data.SellFinished = dr["SellFinished"].ToString() == "1" ? true : false;
+            data.Customer = dr["Customer"].ToString();
+            data.ETag = "*";
+            return data;
+        }
+
+        public static BarcodeNoSellDateEntity RenderBarcodeNoSellDateData(DataRow dr)
+        {
+            BarcodeNoSellDateEntity data = new BarcodeNoSellDateEntity(Param.ShopId, dr["Barcode"].ToString());
+            data.OrderNo = dr["OrderNo"].ToString();
+            data.Product = dr["Product"].ToString();
+            data.Cost = double.Parse(dr["Cost"].ToString());
+            data.OperationCost = double.Parse(dr["OperationCost"].ToString());
+            data.SellPrice = double.Parse(dr["SellPrice"].ToString());
+            data.ReceivedDate = DateTime.Parse(dr["ReceivedDate"].ToString());
+            data.ReceivedBy = dr["ReceivedBy"].ToString();
+            data.SellNo = dr["SellNo"].ToString();
+            data.SellBy = dr["SellBy"].ToString();
+            data.SellFinished = dr["SellFinished"].ToString() == "1" ? true : false;
+            data.Customer = dr["Customer"].ToString();
+            data.ETag = "*";
+            return data;
+        }
+
+        public static void SyncData()
+        {
+            //## Product ##//
+            DataTable dt = Util.DBQuery("SELECT * FROM Barcode WHERE Sync = 1");
+
+            var azureTable = Param.AzureTableClient.GetTableReference("BarcodeStock");
+            TableBatchOperation batchOperation = new TableBatchOperation();
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                DataRow row = dt.Rows[i];
+                if (row["ReceivedDate"].ToString() == "" && row["SellDate"].ToString() == "")
+                    batchOperation.InsertOrMerge(Util.RenderBarcodeNoDateData(row));
+                else if (row["SellDate"].ToString() == "")
+                    batchOperation.InsertOrMerge(Util.RenderBarcodeNoSellDateData(row));
+                else if (row["ReceivedDate"].ToString() == "")
+                    batchOperation.InsertOrMerge(Util.RenderBarcodeNoReceivedDateData(row));
+                else
+                    batchOperation.InsertOrMerge(Util.RenderBarcodeData(row));
+
+                Util.DBExecute(string.Format("UPDATE Barcode SET Sync = 0 WHERE Barcode = {0}", row["Barcode"].ToString()));
+
+                if (batchOperation.Count == 100)
+                {
+                    azureTable.ExecuteBatch(batchOperation);
+                    batchOperation = new TableBatchOperation();
+                }
+            }
+            if (batchOperation.Count > 0)
+                azureTable.ExecuteBatch(batchOperation);
         }
 
 

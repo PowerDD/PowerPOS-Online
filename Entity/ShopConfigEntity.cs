@@ -19,6 +19,6 @@ namespace PowerPOS_Online
             this.PartitionKey = shopId;
             this.RowKey = "Config";
         }
-        public string Name { get; set; }
+        public string Value { get; set; }
     }
 }

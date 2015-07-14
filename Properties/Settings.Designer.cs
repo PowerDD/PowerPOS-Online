@@ -35,18 +35,6 @@ namespace PowerPOS_Online.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ApiKey {
-            get {
-                return ((string)(this["ApiKey"]));
-            }
-            set {
-                this["ApiKey"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string LicenseKey {
             get {
                 return ((string)(this["LicenseKey"]));
@@ -101,6 +89,42 @@ namespace PowerPOS_Online.Properties {
             }
             set {
                 this["ShopId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ShopName {
+            get {
+                return ((string)(this["ShopName"]));
+            }
+            set {
+                this["ShopName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ShopParent {
+            get {
+                return ((string)(this["ShopParent"]));
+            }
+            set {
+                this["ShopParent"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ShopCustomer {
+            get {
+                return ((string)(this["ShopCustomer"]));
+            }
+            set {
+                this["ShopCustomer"] = value;
             }
         }
     }

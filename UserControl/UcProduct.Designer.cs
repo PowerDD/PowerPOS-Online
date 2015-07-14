@@ -40,10 +40,10 @@
             this.cbNoPrice = new System.Windows.Forms.CheckBox();
             this.cbNoStock = new System.Windows.Forms.CheckBox();
             this.btnSearch = new System.Windows.Forms.Button();
-            this.cbBrand = new System.Windows.Forms.ComboBox();
-            this.cbCategory = new System.Windows.Forms.ComboBox();
+            this.cbbBrand = new System.Windows.Forms.ComboBox();
+            this.cbbCategory = new System.Windows.Forms.ComboBox();
             this.txtSearch = new System.Windows.Forms.TextBox();
-            this.panel6 = new System.Windows.Forms.Panel();
+            this.pnlPrice = new System.Windows.Forms.Panel();
             this.lblCategory = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnSave = new System.Windows.Forms.Button();
@@ -75,10 +75,10 @@
             this.clNo = new XPTable.Models.TextColumn();
             this.clSku = new XPTable.Models.TextColumn();
             this.clName = new XPTable.Models.TextColumn();
+            this.clQty = new XPTable.Models.NumberColumn();
             this.clCategory = new XPTable.Models.TextColumn();
             this.clBrand = new XPTable.Models.TextColumn();
             this.clWarranty = new XPTable.Models.TextColumn();
-            this.clQty = new XPTable.Models.NumberColumn();
             this.clCost = new XPTable.Models.NumberColumn();
             this.clPrice = new XPTable.Models.NumberColumn();
             this.clPrice1 = new XPTable.Models.NumberColumn();
@@ -91,7 +91,7 @@
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.gbOrderNo.SuspendLayout();
-            this.panel6.SuspendLayout();
+            this.pnlPrice.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrice2)).BeginInit();
@@ -176,8 +176,8 @@
             this.gbOrderNo.Controls.Add(this.cbNoPrice);
             this.gbOrderNo.Controls.Add(this.cbNoStock);
             this.gbOrderNo.Controls.Add(this.btnSearch);
-            this.gbOrderNo.Controls.Add(this.cbBrand);
-            this.gbOrderNo.Controls.Add(this.cbCategory);
+            this.gbOrderNo.Controls.Add(this.cbbBrand);
+            this.gbOrderNo.Controls.Add(this.cbbCategory);
             this.gbOrderNo.Controls.Add(this.txtSearch);
             this.gbOrderNo.Dock = System.Windows.Forms.DockStyle.Top;
             this.gbOrderNo.Location = new System.Drawing.Point(7, 10);
@@ -193,10 +193,11 @@
             this.cbNoPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.cbNoPrice.Location = new System.Drawing.Point(14, 111);
             this.cbNoPrice.Name = "cbNoPrice";
-            this.cbNoPrice.Size = new System.Drawing.Size(189, 20);
+            this.cbNoPrice.Size = new System.Drawing.Size(125, 20);
             this.cbNoPrice.TabIndex = 6;
-            this.cbNoPrice.Text = "เฉพาะสินค้าที่ยังไม่กำหนดราคาขาย";
+            this.cbNoPrice.Text = "ยังไม่กำหนดราคาขาย";
             this.cbNoPrice.UseVisualStyleBackColor = true;
+            this.cbNoPrice.CheckedChanged += new System.EventHandler(this.btnSearch_Click);
             // 
             // cbNoStock
             // 
@@ -204,44 +205,48 @@
             this.cbNoStock.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.cbNoStock.Location = new System.Drawing.Point(14, 133);
             this.cbNoStock.Name = "cbNoStock";
-            this.cbNoStock.Size = new System.Drawing.Size(137, 20);
+            this.cbNoStock.Size = new System.Drawing.Size(103, 20);
             this.cbNoStock.TabIndex = 5;
-            this.cbNoStock.Text = "แสดงสินค้าที่ไม่มีในคลัง";
+            this.cbNoStock.Text = "ไม่มีในคลังสินค้า";
             this.cbNoStock.UseVisualStyleBackColor = true;
+            this.cbNoStock.CheckedChanged += new System.EventHandler(this.btnSearch_Click);
             // 
             // btnSearch
             // 
             this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.btnSearch.Location = new System.Drawing.Point(168, 78);
+            this.btnSearch.Image = global::PowerPOS_Online.Properties.Resources.magnifier_left;
+            this.btnSearch.Location = new System.Drawing.Point(187, 78);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(51, 31);
+            this.btnSearch.Size = new System.Drawing.Size(31, 31);
             this.btnSearch.TabIndex = 4;
-            this.btnSearch.Text = "ค้นหา";
             this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
-            // cbBrand
+            // cbbBrand
             // 
-            this.cbBrand.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.cbBrand.FormattingEnabled = true;
-            this.cbBrand.Items.AddRange(new object[] {
+            this.cbbBrand.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbbBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.cbbBrand.FormattingEnabled = true;
+            this.cbbBrand.Items.AddRange(new object[] {
             "เลขที่ใบสั่งซื้อ"});
-            this.cbBrand.Location = new System.Drawing.Point(14, 49);
-            this.cbBrand.Name = "cbBrand";
-            this.cbBrand.Size = new System.Drawing.Size(204, 24);
-            this.cbBrand.TabIndex = 3;
+            this.cbbBrand.Location = new System.Drawing.Point(14, 49);
+            this.cbbBrand.Name = "cbbBrand";
+            this.cbbBrand.Size = new System.Drawing.Size(204, 24);
+            this.cbbBrand.TabIndex = 3;
+            this.cbbBrand.SelectedIndexChanged += new System.EventHandler(this.btnSearch_Click);
             // 
-            // cbCategory
+            // cbbCategory
             // 
-            this.cbCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbCategory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.cbCategory.FormattingEnabled = true;
-            this.cbCategory.Items.AddRange(new object[] {
+            this.cbbCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbbCategory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.cbbCategory.FormattingEnabled = true;
+            this.cbbCategory.Items.AddRange(new object[] {
             "เลขที่ใบสั่งซื้อ"});
-            this.cbCategory.Location = new System.Drawing.Point(14, 19);
-            this.cbCategory.Name = "cbCategory";
-            this.cbCategory.Size = new System.Drawing.Size(204, 24);
-            this.cbCategory.TabIndex = 0;
+            this.cbbCategory.Location = new System.Drawing.Point(14, 19);
+            this.cbbCategory.Name = "cbbCategory";
+            this.cbbCategory.Size = new System.Drawing.Size(204, 24);
+            this.cbbCategory.TabIndex = 0;
+            this.cbbCategory.SelectedIndexChanged += new System.EventHandler(this.btnSearch_Click);
             // 
             // txtSearch
             // 
@@ -250,22 +255,24 @@
             this.txtSearch.ForeColor = System.Drawing.Color.MidnightBlue;
             this.txtSearch.Location = new System.Drawing.Point(14, 79);
             this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(148, 29);
+            this.txtSearch.Size = new System.Drawing.Size(167, 29);
             this.txtSearch.TabIndex = 1;
             this.txtSearch.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);
             // 
-            // panel6
+            // pnlPrice
             // 
-            this.panel6.Controls.Add(this.lblCategory);
-            this.panel6.Controls.Add(this.groupBox1);
-            this.panel6.Controls.Add(this.panel2);
-            this.panel6.Controls.Add(this.ptbProduct);
-            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel6.Location = new System.Drawing.Point(247, 39);
-            this.panel6.Name = "panel6";
-            this.panel6.Padding = new System.Windows.Forms.Padding(5);
-            this.panel6.Size = new System.Drawing.Size(777, 129);
-            this.panel6.TabIndex = 9;
+            this.pnlPrice.Controls.Add(this.lblCategory);
+            this.pnlPrice.Controls.Add(this.groupBox1);
+            this.pnlPrice.Controls.Add(this.panel2);
+            this.pnlPrice.Controls.Add(this.ptbProduct);
+            this.pnlPrice.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlPrice.Location = new System.Drawing.Point(247, 39);
+            this.pnlPrice.Name = "pnlPrice";
+            this.pnlPrice.Padding = new System.Windows.Forms.Padding(5);
+            this.pnlPrice.Size = new System.Drawing.Size(777, 129);
+            this.pnlPrice.TabIndex = 9;
+            this.pnlPrice.Visible = false;
             // 
             // lblCategory
             // 
@@ -309,7 +316,9 @@
             // 
             // btnSave
             // 
+            this.btnSave.Enabled = false;
             this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.btnSave.Image = global::PowerPOS_Online.Properties.Resources.disk_return_black;
             this.btnSave.Location = new System.Drawing.Point(448, 53);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(29, 24);
@@ -358,15 +367,19 @@
             // 
             // btnConfig
             // 
+            this.btnConfig.Enabled = false;
             this.btnConfig.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.btnConfig.Image = global::PowerPOS_Online.Properties.Resources.gear;
             this.btnConfig.Location = new System.Drawing.Point(448, 83);
             this.btnConfig.Name = "btnConfig";
             this.btnConfig.Size = new System.Drawing.Size(29, 24);
             this.btnConfig.TabIndex = 13;
             this.btnConfig.UseVisualStyleBackColor = true;
+            this.btnConfig.Click += new System.EventHandler(this.btnConfig_Click);
             // 
             // btnUsePercentPrice
             // 
+            this.btnUsePercentPrice.Enabled = false;
             this.btnUsePercentPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.btnUsePercentPrice.Location = new System.Drawing.Point(298, 83);
             this.btnUsePercentPrice.Name = "btnUsePercentPrice";
@@ -374,9 +387,11 @@
             this.btnUsePercentPrice.TabIndex = 13;
             this.btnUsePercentPrice.Text = "ใช้ % กำไรที่กำหนดไว้";
             this.btnUsePercentPrice.UseVisualStyleBackColor = true;
+            this.btnUsePercentPrice.Click += new System.EventHandler(this.btnUsePercentPrice_Click);
             // 
             // btnUseWebPrice
             // 
+            this.btnUseWebPrice.Enabled = false;
             this.btnUseWebPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.btnUseWebPrice.Location = new System.Drawing.Point(298, 53);
             this.btnUseWebPrice.Name = "btnUseWebPrice";
@@ -384,6 +399,7 @@
             this.btnUseWebPrice.TabIndex = 12;
             this.btnUseWebPrice.Text = "ใช้ราคาหน้าเว็บ";
             this.btnUseWebPrice.UseVisualStyleBackColor = true;
+            this.btnUseWebPrice.Click += new System.EventHandler(this.btnUseWebPrice_Click);
             // 
             // label9
             // 
@@ -492,6 +508,7 @@
             // 
             // nudPrice2
             // 
+            this.nudPrice2.Enabled = false;
             this.nudPrice2.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.nudPrice2.Location = new System.Drawing.Point(226, 54);
             this.nudPrice2.Maximum = new decimal(new int[] {
@@ -504,9 +521,11 @@
             this.nudPrice2.TabIndex = 3;
             this.nudPrice2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.nudPrice2.ThousandsSeparator = true;
+            this.nudPrice2.ValueChanged += new System.EventHandler(this.nudPrice2_ValueChanged);
             // 
             // nudPrice1
             // 
+            this.nudPrice1.Enabled = false;
             this.nudPrice1.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.nudPrice1.Location = new System.Drawing.Point(154, 54);
             this.nudPrice1.Maximum = new decimal(new int[] {
@@ -519,9 +538,11 @@
             this.nudPrice1.TabIndex = 2;
             this.nudPrice1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.nudPrice1.ThousandsSeparator = true;
+            this.nudPrice1.ValueChanged += new System.EventHandler(this.nudPrice1_ValueChanged);
             // 
             // nudPrice
             // 
+            this.nudPrice.Enabled = false;
             this.nudPrice.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.nudPrice.Location = new System.Drawing.Point(82, 54);
             this.nudPrice.Maximum = new decimal(new int[] {
@@ -534,6 +555,7 @@
             this.nudPrice.TabIndex = 1;
             this.nudPrice.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.nudPrice.ThousandsSeparator = true;
+            this.nudPrice.ValueChanged += new System.EventHandler(this.nudPrice_ValueChanged);
             // 
             // label4
             // 
@@ -560,6 +582,7 @@
             this.ptbProduct.Location = new System.Drawing.Point(5, 5);
             this.ptbProduct.Name = "ptbProduct";
             this.ptbProduct.Size = new System.Drawing.Size(119, 119);
+            this.ptbProduct.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.ptbProduct.TabIndex = 8;
             this.ptbProduct.TabStop = false;
             // 
@@ -569,10 +592,10 @@
             this.clNo,
             this.clSku,
             this.clName,
+            this.clQty,
             this.clCategory,
             this.clBrand,
             this.clWarranty,
-            this.clQty,
             this.clCost,
             this.clPrice,
             this.clPrice1,
@@ -605,6 +628,15 @@
             this.clName.Text = "ชื่อสินค้า";
             this.clName.Width = 400;
             // 
+            // clQty
+            // 
+            this.clQty.Alignment = XPTable.Models.ColumnAlignment.Center;
+            this.clQty.Editable = false;
+            this.clQty.Format = "#,##0";
+            this.clQty.IsTextTrimmed = false;
+            this.clQty.Text = "จำนวน";
+            this.clQty.Width = 65;
+            // 
             // clCategory
             // 
             this.clCategory.Editable = false;
@@ -625,15 +657,6 @@
             this.clWarranty.IsTextTrimmed = false;
             this.clWarranty.Text = "ประกัน";
             this.clWarranty.Width = 65;
-            // 
-            // clQty
-            // 
-            this.clQty.Alignment = XPTable.Models.ColumnAlignment.Center;
-            this.clQty.Editable = false;
-            this.clQty.Format = "#,##0";
-            this.clQty.IsTextTrimmed = false;
-            this.clQty.Text = "จำนวน";
-            this.clQty.Width = 65;
             // 
             // clCost
             // 
@@ -658,8 +681,7 @@
             this.clPrice1.Editable = false;
             this.clPrice1.Format = "#,###";
             this.clPrice1.IsTextTrimmed = false;
-            this.clPrice1.Text = "ราคาส่ง 1";
-            this.clPrice1.Visible = false;
+            this.clPrice1.Text = "ราคาส่ง";
             // 
             // clPrice2
             // 
@@ -698,7 +720,6 @@
             this.table1.FullRowSelect = true;
             this.table1.GridLines = XPTable.Models.GridLines.Both;
             this.table1.GridLinesContrainedToData = false;
-            this.table1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.table1.Location = new System.Drawing.Point(247, 168);
             this.table1.Name = "table1";
             this.table1.NoItemsText = "";
@@ -708,13 +729,15 @@
             this.table1.TableModel = this.tableModel1;
             this.table1.Text = "table1";
             this.table1.UnfocusedBorderColor = System.Drawing.Color.Black;
+            this.table1.EndSort += new XPTable.Events.ColumnEventHandler(this.table1_EndSort);
+            this.table1.SelectionChanged += new XPTable.Events.SelectionEventHandler(this.table1_SelectionChanged);
             // 
             // UcProduct
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.table1);
-            this.Controls.Add(this.panel6);
+            this.Controls.Add(this.pnlPrice);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
             this.Name = "UcProduct";
@@ -725,7 +748,7 @@
             this.panel3.ResumeLayout(false);
             this.gbOrderNo.ResumeLayout(false);
             this.gbOrderNo.PerformLayout();
-            this.panel6.ResumeLayout(false);
+            this.pnlPrice.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel4.ResumeLayout(false);
@@ -751,10 +774,10 @@
         private System.Windows.Forms.CheckBox cbNoPrice;
         private System.Windows.Forms.CheckBox cbNoStock;
         private System.Windows.Forms.Button btnSearch;
-        private System.Windows.Forms.ComboBox cbBrand;
-        private System.Windows.Forms.ComboBox cbCategory;
+        private System.Windows.Forms.ComboBox cbbBrand;
+        private System.Windows.Forms.ComboBox cbbCategory;
         private System.Windows.Forms.TextBox txtSearch;
-        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.Panel pnlPrice;
         private System.Windows.Forms.Label lblCategory;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnSave;

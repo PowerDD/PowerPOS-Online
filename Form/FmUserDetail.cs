@@ -16,7 +16,7 @@ namespace PowerPOS_Online
         public FmUserDetail()
         {
             InitializeComponent();
-            foreach (var entry in Param.userGroup)
+            foreach (var entry in Param.UserGroup)
             {
                 cbxUserGroup.Items.Add(entry.Name);
             }

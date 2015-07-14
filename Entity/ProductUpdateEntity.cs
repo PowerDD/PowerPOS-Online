@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace PowerPOS_Online
 {
-    class ProductEntity : TableEntity
+    class ProductUpdateEntity : TableEntity
     {
-        public ProductEntity()
+        public ProductUpdateEntity()
         {
         }
 
-        public ProductEntity(string shopId, string productId)
+        public ProductUpdateEntity(string shopId, string productId)
         {
             this.PartitionKey = shopId;
             this.RowKey = productId;

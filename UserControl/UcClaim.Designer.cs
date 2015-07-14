@@ -56,6 +56,7 @@
             this.bwGetProduct = new System.ComponentModel.BackgroundWorker();
             this.bwDownloadImage = new System.ComponentModel.BackgroundWorker();
             this.bwGetShopName = new System.ComponentModel.BackgroundWorker();
+            this.bwGetCustomerName = new System.ComponentModel.BackgroundWorker();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -321,6 +322,11 @@
             this.bwGetShopName.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwGetShopName_DoWork);
             this.bwGetShopName.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwGetShopName_RunWorkerCompleted);
             // 
+            // bwGetCustomerName
+            // 
+            this.bwGetCustomerName.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwGetCustomerName_DoWork);
+            this.bwGetCustomerName.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwGetCustomerName_RunWorkerCompleted);
+            // 
             // UcClaim
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -371,5 +377,6 @@
         private System.ComponentModel.BackgroundWorker bwGetProduct;
         private System.ComponentModel.BackgroundWorker bwDownloadImage;
         private System.ComponentModel.BackgroundWorker bwGetShopName;
+        private System.ComponentModel.BackgroundWorker bwGetCustomerName;
     }
 }

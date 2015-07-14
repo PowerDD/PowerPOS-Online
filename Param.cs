@@ -1,7 +1,9 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,40 +14,56 @@ namespace PowerPOS_Online
     public class Param
     {
         public enum Screen { Sell, ReceiveProduct, Product, Customer, User, Brand, Category, Color, Report, ShopInfo, Config, Claim };
+        public enum StatusIcon { None, Loading, Success, Info };
 
-        public static string apiUrl;
-        public static string apiKey;
-        public static bool apiChecked;
-        public static string licenseKey;
-        public static string cpuId;
-        public static string computerName;
-        public static string databaseName;
-        public static string databasePassword;
-        public static string shopId;
-        public static string shopName;
+        public static string ApiUrl;
+        public const string ApiKey = "LMK6OUB3-7AAY-TNZ4-AX2I-LWWGBICKS00C";
+        public static bool ApiChecked;
+        public static string LicenseKey;
+        public static string CpuId;
+        public static string ComputerName;
+        public static string DatabaseName;
+        public static string DatabasePassword;
+        public static string ShopId;
+        public static string ShopName;
+        public static string ShopParent;
+        public static string ShopCustomer;
+        public static SQLiteConnection SQLiteConnection;
+        public const string SQLiteFileName = "System.dll";
+        public static bool InitialFinished = false;
+
+        public const string LoadingImageLocal = @"Resource/Images/Loading.gif";
+        public const string LoadingImageUrl = "http://a.lnwpic.com/et1xpc.gif";
 
         public static string SelectCustomerId;
         public static string SelectCustomerName;
         public static int SelectCustomerSex;
         public static int SelectCustomerAge;
 
+        public static string ProductId;
+        public static string CategoryName;
 
-        public static CloudStorageAccount azureStorageAccount;
-        public static CloudTableClient azureTableClient;
-        public static CloudTable azureTable;
+        public static CloudStorageAccount AzureStorageAccount;
+        public static CloudTableClient AzureTableClient;
+        public static CloudTable AzureTable;
 
 
-        public static UserControl userControl;
-        public static Panel mainPanel;
-        public static ToolStripStatusLabel lblStatus;
-        public static int selectedScreen = -1;
+        public static UserControl UserControl;
+        public static Panel MainPanel;
+        //public static ToolStripStatusLabel lblStatus;
+        public static Label lblStatus;
+        public static int SelectedScreen = -1;
 
-        public static dynamic systemConfig;
-        public static dynamic userGroup;
+        public static dynamic SystemConfig;
+        public static dynamic UserGroup;
 
-        public static UserEntity userEntity;
-        public static UserUpdateEntity userUpdateEntity;
-        public static List<UserEntity> userEntityList;
+        public static UserEntity UserEntity;
+        public static UserUpdateEntity UserUpdateEntity;
+        public static List<UserEntity> UserEntityList;
+
+
+        public static Hashtable SshopNameHashtable = new Hashtable();
+        public static Hashtable CustomerNameHashtable = new Hashtable();
 
 
     }

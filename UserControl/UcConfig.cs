@@ -22,10 +22,10 @@ namespace PowerPOS_Online
 
         private void UcConfig_Load(object sender, EventArgs e)
         {
-            if( Param.systemConfig.Bill == null ){
-                var json = JsonConvert.SerializeObject(Param.systemConfig);
+            if( Param.SystemConfig.Bill == null ){
+                var json = JsonConvert.SerializeObject(Param.SystemConfig);
                 json = json.Substring(0, json.Length - 1) + ", \"Bill\":{\"PrintCount\":2,\"PrintType\":\"Y\",\"PrintLogo\":\"Y\",\"HeaderName\":\"ใบส่งของ\",\"FooterText\":\"Line Official ID : @RemaxThailand\",\"Printer\":\"Bullzip PDF Printer\"}";
-                Param.systemConfig = JsonConvert.DeserializeObject(json.ToString());
+                Param.SystemConfig = JsonConvert.DeserializeObject(json.ToString());
                 backgroundWorker1.RunWorkerAsync();
                 //var json = "{\"Bill\":{\"PrintCount\":1,\"PrintType\":\"Y\",\"PrintLogo\":\"Y\",\"HeaderName\":\"ใบส่งของ\",\"Line Official ID : @RemaxThailand\":\"H\",\"Printer\":\"\"}";
 
@@ -33,14 +33,14 @@ namespace PowerPOS_Online
                 //Param.systemConfig = Tuple.Create(Param.systemConfig.Item1, Param.systemConfig.Item2);
             }
 
-            nudPrintCount.Value = Param.systemConfig.Bill.PrintCount;
-            rdbPrint.Checked = "" + Param.systemConfig.Bill.PrintType == "Y";
-            rdbNotPrint.Checked = "" + Param.systemConfig.Bill.PrintType == "N";
-            rdbAlert.Checked = "" + Param.systemConfig.Bill.PrintType == "A";
-            rdbLogoPrint.Checked = "" + Param.systemConfig.Bill.PrintLogo == "Y";
-            rdbLogoNotPrint.Checked = "" + Param.systemConfig.Bill.PrintLogo == "N";
-            txtBillHeader.Text = "" + Param.systemConfig.Bill.HeaderName;
-            txtBillFooter.Text = "" + Param.systemConfig.Bill.FooterText;
+            nudPrintCount.Value = Param.SystemConfig.Bill.PrintCount;
+            rdbPrint.Checked = "" + Param.SystemConfig.Bill.PrintType == "Y";
+            rdbNotPrint.Checked = "" + Param.SystemConfig.Bill.PrintType == "N";
+            rdbAlert.Checked = "" + Param.SystemConfig.Bill.PrintType == "A";
+            rdbLogoPrint.Checked = "" + Param.SystemConfig.Bill.PrintLogo == "Y";
+            rdbLogoNotPrint.Checked = "" + Param.SystemConfig.Bill.PrintLogo == "N";
+            txtBillHeader.Text = "" + Param.SystemConfig.Bill.HeaderName;
+            txtBillFooter.Text = "" + Param.SystemConfig.Bill.FooterText;
 
             GetPrinter();
             _FIRST_LOAD = false;
@@ -54,7 +54,7 @@ namespace PowerPOS_Online
             foreach (string printer in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
             {
                 cbxPrinter.Items.Add(printer);
-                if (Param.systemConfig.Bill.Printer == printer) index = i;
+                if (Param.SystemConfig.Bill.Printer == printer) index = i;
                 i++;
             }
             cbxPrinter.SelectedIndex = index;
@@ -69,7 +69,7 @@ namespace PowerPOS_Online
         {
             if (rdbAlert.Checked && !_FIRST_LOAD)
             {
-                Param.systemConfig.Bill.PrintType = "A";
+                Param.SystemConfig.Bill.PrintType = "A";
                 btnSaveBill.Enabled = true;
             }
         }
@@ -78,7 +78,7 @@ namespace PowerPOS_Online
         {
             if (rdbPrint.Checked && !_FIRST_LOAD)
             {
-                Param.systemConfig.Bill.PrintType = "Y";
+                Param.SystemConfig.Bill.PrintType = "Y";
                 btnSaveBill.Enabled = true;
             }
         }
@@ -87,7 +87,7 @@ namespace PowerPOS_Online
         {
             if (rdbNotPrint.Checked && !_FIRST_LOAD)
             {
-                Param.systemConfig.Bill.PrintType = "N";
+                Param.SystemConfig.Bill.PrintType = "N";
                 btnSaveBill.Enabled = true;
             }
         }
@@ -96,7 +96,7 @@ namespace PowerPOS_Online
         {
             if (!_FIRST_LOAD)
             {
-                Param.systemConfig.Bill.PrintCount = (int)nudPrintCount.Value;
+                Param.SystemConfig.Bill.PrintCount = (int)nudPrintCount.Value;
                 btnSaveBill.Enabled = true;
             }
         }
@@ -105,7 +105,7 @@ namespace PowerPOS_Online
         {
             if (rdbLogoPrint.Checked && !_FIRST_LOAD)
             {
-                Param.systemConfig.Bill.PrintLogo = "Y";
+                Param.SystemConfig.Bill.PrintLogo = "Y";
                 btnSaveBill.Enabled = true;
             }
         }
@@ -114,7 +114,7 @@ namespace PowerPOS_Online
         {
             if (rdbLogoNotPrint.Checked && !_FIRST_LOAD)
             {
-                Param.systemConfig.Bill.PrintLogo = "N";
+                Param.SystemConfig.Bill.PrintLogo = "N";
                 btnSaveBill.Enabled = true;
             }
         }
@@ -123,7 +123,7 @@ namespace PowerPOS_Online
         {
             if (!_FIRST_LOAD)
             {
-                Param.systemConfig.Bill.HeaderName = txtBillHeader.Text;
+                Param.SystemConfig.Bill.HeaderName = txtBillHeader.Text;
                 btnSaveBill.Enabled = true;
             }
         }
@@ -132,7 +132,7 @@ namespace PowerPOS_Online
         {
             if (!_FIRST_LOAD)
             {
-                Param.systemConfig.Bill.FooterText = txtBillFooter.Text;
+                Param.SystemConfig.Bill.FooterText = txtBillFooter.Text;
                 btnSaveBill.Enabled = true;
             }
         }
@@ -141,7 +141,7 @@ namespace PowerPOS_Online
         {
             if (!_FIRST_LOAD)
             {
-                Param.systemConfig.Bill.Printer = cbxPrinter.SelectedItem.ToString();
+                Param.SystemConfig.Bill.Printer = cbxPrinter.SelectedItem.ToString();
                 btnSaveBill.Enabled = true;
             }
         }

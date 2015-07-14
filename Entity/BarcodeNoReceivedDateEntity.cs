@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace PowerPOS_Online
 {
-    public class BarcodeEntity : TableEntity
+    public class BarcodeNoReceivedDateEntity : TableEntity
     {
-        public BarcodeEntity() { }
+        public BarcodeNoReceivedDateEntity() { }
 
-        public BarcodeEntity(string shopId)
+        public BarcodeNoReceivedDateEntity(string shopId)
         {
             this.PartitionKey = shopId;
         }
 
-        public BarcodeEntity(string shopId, string barcode)
+        public BarcodeNoReceivedDateEntity(string shopId, string barcode)
         {
             this.PartitionKey = shopId;
             this.RowKey = barcode;
@@ -24,7 +24,6 @@ namespace PowerPOS_Online
 
         public string SellNo { get; set; }
         public string Product { get; set; }
-        public DateTime ReceivedDate { get; set; }
         public string ReceivedBy { get; set; }
         public DateTime SellDate { get; set; }
         public string SellBy { get; set; }

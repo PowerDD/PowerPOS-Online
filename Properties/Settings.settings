@@ -5,9 +5,6 @@
     <Setting Name="ApiUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://power-api-test.azurewebsites.net</Value>
     </Setting>
-    <Setting Name="ApiKey" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="LicenseKey" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -21,6 +18,15 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ShopId" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ShopName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ShopParent" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ShopCustomer" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

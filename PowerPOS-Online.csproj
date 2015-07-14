@@ -30,6 +30,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>725f64c1</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -66,6 +67,14 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Data.Edm, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Data.Edm.5.6.2\lib\net40\Microsoft.Data.Edm.dll</HintPath>
       <Private>True</Private>
@@ -91,7 +100,12 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.97.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>packages\System.Data.SQLite.Core.1.0.97.0\lib\net45\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Management" />
     <Reference Include="System.Spatial, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\System.Spatial.5.6.2\lib\net40\System.Spatial.dll</HintPath>
@@ -110,7 +124,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\BarcodeNoDateEntity.cs" />
+    <Compile Include="Entity\BarcodeNoSellDateEntity.cs" />
+    <Compile Include="Entity\BarcodeNoReceivedDateEntity.cs" />
+    <Compile Include="DownloadImage.cs" />
+    <Compile Include="Entity\BarcodeInsertEntity.cs" />
+    <Compile Include="Entity\CategoryEntity.cs" />
+    <Compile Include="Entity\CustomerEntity.cs" />
     <Compile Include="Entity\BarcodeEntity.cs" />
+    <Compile Include="Entity\ProductUpdateEntity.cs" />
+    <Compile Include="Form\FmInitialData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmInitialData.Designer.cs">
+      <DependentUpon>FmInitialData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\FmClaim.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmClaim.Designer.cs">
+      <DependentUpon>FmClaim.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form\FmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -161,6 +195,11 @@
     <Compile Include="Entity\ShopEntity.cs" />
     <Compile Include="UserControl\UcBrand.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="UserControl\UcBrand.Designer.cs">
       <DependentUpon>UcBrand.cs</DependentUpon>
@@ -244,6 +283,12 @@
     <EmbeddedResource Include="Form\FmChangePassword.resx">
       <DependentUpon>FmChangePassword.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmClaim.resx">
+      <DependentUpon>FmClaim.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmInitialData.resx">
+      <DependentUpon>FmInitialData.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form\FmLicense.resx">
       <DependentUpon>FmLicense.cs</DependentUpon>
     </EmbeddedResource>
@@ -258,14 +303,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="UserControl\UcBrand.resx">
       <DependentUpon>UcBrand.cs</DependentUpon>
     </EmbeddedResource>
@@ -334,7 +374,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="bin\Debug\Resource\Images\Loading.gif" />
     <Content Include="icon.ico" />
+    <None Include="Resources\loading.gif" />
     <None Include="Resources\wrench-screwdriver.png" />
     <None Include="Resources\Fix.png" />
     <None Include="Resources\exclamation.png" />
@@ -376,6 +418,13 @@
     <None Include="Resources\key-solid.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="packages\System.Data.SQLite.Core.1.0.97.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('packages\System.Data.SQLite.Core.1.0.97.0\build\net45\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\System.Data.SQLite.Core.1.0.97.0\build\net45\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\System.Data.SQLite.Core.1.0.97.0\build\net45\System.Data.SQLite.Core.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
