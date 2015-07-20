@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            XPTable.Models.DataSourceColumnBinder dataSourceColumnBinder2 = new XPTable.Models.DataSourceColumnBinder();
-            XPTable.Renderers.DragDropRenderer dragDropRenderer2 = new XPTable.Renderers.DragDropRenderer();
+            XPTable.Models.DataSourceColumnBinder dataSourceColumnBinder1 = new XPTable.Models.DataSourceColumnBinder();
+            XPTable.Renderers.DragDropRenderer dragDropRenderer1 = new XPTable.Renderers.DragDropRenderer();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.pnlLeft = new System.Windows.Forms.Panel();
@@ -130,6 +130,7 @@
             this.txtBarcode.Size = new System.Drawing.Size(204, 29);
             this.txtBarcode.TabIndex = 1;
             this.txtBarcode.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtBarcode.Enter += new System.EventHandler(this.txtBarcode_Enter);
             this.txtBarcode.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtBarcode_KeyDown);
             // 
             // label2
@@ -195,6 +196,7 @@
             this.btnSave.Text = "บันทึก";
             this.btnSave.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // label3
             // 
@@ -244,10 +246,10 @@
             this.table1.BorderColor = System.Drawing.Color.Black;
             this.table1.ColumnModel = this.columnModel1;
             this.table1.DataMember = null;
-            this.table1.DataSourceColumnBinder = dataSourceColumnBinder2;
+            this.table1.DataSourceColumnBinder = dataSourceColumnBinder1;
             this.table1.Dock = System.Windows.Forms.DockStyle.Fill;
-            dragDropRenderer2.ForeColor = System.Drawing.Color.Red;
-            this.table1.DragDropRenderer = dragDropRenderer2;
+            dragDropRenderer1.ForeColor = System.Drawing.Color.Red;
+            this.table1.DragDropRenderer = dragDropRenderer1;
             this.table1.EnableHeaderContextMenu = false;
             this.table1.FullRowSelect = true;
             this.table1.GridLines = XPTable.Models.GridLines.Both;
@@ -320,6 +322,10 @@
             this.clProgress.IsTextTrimmed = false;
             this.clProgress.Resizable = false;
             this.clProgress.Width = 100;
+            // 
+            // tableModel1
+            // 
+            this.tableModel1.SelectionChanged += new XPTable.Events.SelectionEventHandler(this.tableModel1_SelectionChanged);
             // 
             // UcReceiveProduct
             // 

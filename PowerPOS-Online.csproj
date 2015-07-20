@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>true</IsWebBootstrapper>
+    <NuGetPackageImportStamp>725f64c1</NuGetPackageImportStamp>
     <PublishUrl>ftp://waws-prod-sg1-003.ftp.azurewebsites.windows.net/site/wwwroot/public/app/PowerPOS-Online/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -25,12 +26,11 @@
     <InstallUrl>https://powerdd.azurewebsites.net/app/PowerPOS-Online/</InstallUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationRevision>3</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>725f64c1</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -119,11 +119,16 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="ThaiNationalIDCard, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dll\ThaiNationalIDCard.dll</HintPath>
+    </Reference>
     <Reference Include="XPTable">
       <HintPath>dll\XPTable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DynamicEntity.cs" />
     <Compile Include="Entity\BarcodeNoDateEntity.cs" />
     <Compile Include="Entity\BarcodeNoSellDateEntity.cs" />
     <Compile Include="Entity\BarcodeNoReceivedDateEntity.cs" />
@@ -133,6 +138,24 @@
     <Compile Include="Entity\CustomerEntity.cs" />
     <Compile Include="Entity\BarcodeEntity.cs" />
     <Compile Include="Entity\ProductUpdateEntity.cs" />
+    <Compile Include="Form\FmAddCustomer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmAddCustomer.Designer.cs">
+      <DependentUpon>FmAddCustomer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\FmCashReceive.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmCashReceive.Designer.cs">
+      <DependentUpon>FmCashReceive.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\FmSelectCustomer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmSelectCustomer.Designer.cs">
+      <DependentUpon>FmSelectCustomer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form\FmInitialData.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -193,6 +216,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entity\ShopConfigEntity.cs" />
     <Compile Include="Entity\ShopEntity.cs" />
+    <Compile Include="Entity\SellHeaderEntity.cs" />
+    <Compile Include="Entity\ProvinceEntity.cs" />
     <Compile Include="UserControl\UcBrand.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -274,11 +299,17 @@
     <Compile Include="Entity\UserGroupEntity.cs" />
     <Compile Include="Entity\UserUpdateEntity.cs" />
     <Compile Include="Util.cs" />
+    <EmbeddedResource Include="Form\FmAddCustomer.resx">
+      <DependentUpon>FmAddCustomer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form\FmAbout.resx">
       <DependentUpon>FmAbout.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\FmAddUser.resx">
       <DependentUpon>FmAddUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmCashReceive.resx">
+      <DependentUpon>FmCashReceive.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\FmChangePassword.resx">
       <DependentUpon>FmChangePassword.cs</DependentUpon>
@@ -294,6 +325,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form\FmLogin.resx">
       <DependentUpon>FmLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmSelectCustomer.resx">
+      <DependentUpon>FmSelectCustomer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\FmUserDetail.resx">
       <DependentUpon>FmUserDetail.cs</DependentUpon>
@@ -374,6 +408,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\person.png" />
     <None Include="bin\Debug\Resource\Images\Loading.gif" />
     <Content Include="icon.ico" />
     <None Include="Resources\loading.gif" />

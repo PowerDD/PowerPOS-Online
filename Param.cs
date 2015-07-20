@@ -23,11 +23,14 @@ namespace PowerPOS_Online
         public static string CpuId;
         public static string ComputerName;
         public static string DatabaseName;
+        public static string UserId;
         public static string DatabasePassword;
         public static string ShopId;
         public static string ShopName;
         public static string ShopParent;
         public static string ShopCustomer;
+        public static string DevicePrefix;
+        public static string DevicePrinter;
         public static SQLiteConnection SQLiteConnection;
         public const string SQLiteFileName = "System.dll";
         public static bool InitialFinished = false;
@@ -37,8 +40,9 @@ namespace PowerPOS_Online
 
         public static string SelectCustomerId;
         public static string SelectCustomerName;
-        public static int SelectCustomerSex;
+        public static string SelectCustomerSex;
         public static int SelectCustomerAge;
+        public static int SelectCustomerSellPrice;
 
         public static string ProductId;
         public static string CategoryName;

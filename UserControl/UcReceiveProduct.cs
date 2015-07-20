@@ -56,6 +56,7 @@ namespace PowerPOS_Online
 
         private void cbbOrderNo_SelectedIndexChanged(object sender, EventArgs e)
         {
+            ptbProduct.Visible = false;
             SearchData();
         }
 
@@ -66,6 +67,11 @@ namespace PowerPOS_Online
                 table1.BeginUpdate();
                 tableModel1.Rows.Clear();
                 table1.EndUpdate();
+
+                gbOrderNo.Height = 69;
+                progressBar1.Visible = false;
+                gbCost.Visible = false;
+
             }
             else if (!_FIRST_LOAD)
             {
@@ -81,6 +87,7 @@ namespace PowerPOS_Online
                                 SELECT DISTINCT Product, COUNT(*) ReceivedCount 
                                 FROM Barcode 
                                 WHERE ReceivedDate IS NOT NULL 
+                                AND ReceivedBy = '' 
                                 AND OrderNo =  '{1}' 
                                 GROUP BY Product
                         ) r
@@ -143,7 +150,7 @@ namespace PowerPOS_Online
             {
                 DataTable dt = Util.DBQuery(string.Format(@"SELECT OrderNo, p.ID, p.CoverImage, IFNULL(ReceivedDate, '') ReceivedDate 
                     FROM Barcode b LEFT JOIN Product p ON b.product = p.id
-                    WHERE barcode = '{0}'", txtBarcode.Text));
+                    WHERE Barcode = '{0}'", txtBarcode.Text));
 
                 lblStatus.Visible = true;
 
@@ -170,14 +177,15 @@ namespace PowerPOS_Online
                     }
                     else
                     {
-                        Util.DBExecute(string.Format(@"UPDATE Barcode SET ReceivedDate = DATETIME('now'), receivedBy = '{1}', Sync = 1
-                            WHERE barcode = '{0}'", txtBarcode.Text, ""));
+                        Util.DBExecute(string.Format(@"UPDATE Barcode SET ReceivedDate = STRFTIME('%Y-%m-%d %H:%M:%S', 'NOW'), receivedBy = '{1}', Sync = 1
+                            WHERE Barcode = '{0}'", txtBarcode.Text, ""));
                         SearchData();
 
                         lblStatus.ForeColor = Color.Green;
                         lblStatus.Text = "รับสินค้าเข้าระบบเรียบร้อยแล้ว";
 
                         ptbProduct.Visible = true;
+                        ptbProduct.Image = null;
 
                         var filename = @"Resource/Images/Product/" + Param.ProductId + ".jpg";
                         if (!File.Exists(filename))
@@ -212,6 +220,67 @@ namespace PowerPOS_Online
             DownloadImage d = new DownloadImage();
             Thread thread = new Thread(() => d.Download(url, savePath, fileName));
             thread.Start();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            DataTable dt = Util.DBQuery(@"SELECT CAST(IFNULL(SUM(OperationCost),0) AS DOUBLE) OperationCost, COUNT(*) ProductCount
+                FROM Barcode 
+                WHERE ReceivedDate IS NOT NULL
+                AND SellDate IS NULL
+                AND OrderNo = '" + cbbOrderNo.SelectedItem.ToString() + "'");
+            var count = int.Parse(dt.Rows[0]["ProductCount"].ToString()) * 1.0;
+            var currentCost = double.Parse(dt.Rows[0]["OperationCost"].ToString()) * 1.0;
+            var cost = (((int)nudCost.Value * 1.0 + currentCost) / count).ToString("#,##0.00");
+
+            if (MessageBox.Show("เฉลี่ยค่าดำเนินการ = " + cost + " บาท/ชิ้น", "ยืนยันข้อมูล", MessageBoxButtons.OKCancel, MessageBoxIcon.Question)
+                == DialogResult.OK)
+            {
+                Util.DBExecute(@"UPDATE Barcode SET 
+                    OperationCost = " + cost + @", ReceivedBy = '"+Param.UserId+@"', Sync = 1  
+                    WHERE ReceivedDate IS NOT NULL AND SellBy = '' AND OrderNo = '" + cbbOrderNo.SelectedItem.ToString() + "'");
+                MessageBox.Show("รับสินค้าหมายเลขคำสั่งซื้อเลขที่ " + cbbOrderNo.SelectedItem.ToString() + "\n เสร็จเรียบร้อบแล้ว", "สถานะการทำงาน", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                SearchData();
+            }
+
+        }
+
+        private void tableModel1_SelectionChanged(object sender, XPTable.Events.SelectionEventArgs e)
+        {
+            if (table1.TableModel.Rows.Count > 0)
+            {
+                var row = e.TableModel.Selections.SelectedItems[0].Index;
+                Param.ProductId = table1.TableModel.Rows[row].Cells[1].Text;
+                DataTable dt = Util.DBQuery(string.Format(@"SELECT CoverImage FROM Product WHERE ID = '{0}' AND Shop = {1}", Param.ProductId, Param.ShopParent));
+                ptbProduct.Image = null;
+                ptbProduct.Visible = true;
+
+                var filename = @"Resource/Images/Product/" + Param.ProductId + ".jpg";
+                if (!File.Exists(filename))
+                {
+                    if (dt.Rows[0]["CoverImage"].ToString() != "")
+                    {
+                        DownloadImage(dt.Rows[0]["CoverImage"].ToString(), @"Resource/Images/Product/", Param.ProductId + ".jpg");
+                    }
+                }
+                else
+                {
+                    try { ptbProduct.Image = Image.FromFile(filename); }
+                    catch
+                    {
+                        if (dt.Rows[0]["CoverImage"].ToString() != "")
+                        {
+                            DownloadImage(dt.Rows[0]["CoverImage"].ToString(), @"Resource/Images/Product/", Param.ProductId + ".jpg");
+                        }
+                    }
+                }
+            }
+        }
+
+        private void txtBarcode_Enter(object sender, EventArgs e)
+        {
+            lblStatus.Text = "";
         }
     }
 }

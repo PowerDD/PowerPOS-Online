@@ -61,6 +61,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.panel5 = new System.Windows.Forms.Panel();
             this.btnConfirm = new System.Windows.Forms.Button();
             this.panel7 = new System.Windows.Forms.Panel();
@@ -69,7 +70,6 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnSearch = new System.Windows.Forms.Button();
             this.panel4.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.table1)).BeginInit();
@@ -184,7 +184,7 @@
             this.clSku.IsTextTrimmed = false;
             this.clSku.Resizable = false;
             this.clSku.Sortable = false;
-            this.clSku.Text = "SKU";
+            this.clSku.Text = "รหัสสินค้า";
             this.clSku.Width = 80;
             // 
             // clName
@@ -276,7 +276,7 @@
             // 
             // clPrice
             // 
-            this.clPrice.Alignment = XPTable.Models.ColumnAlignment.Right;
+            this.clPrice.Alignment = XPTable.Models.ColumnAlignment.Center;
             this.clPrice.Editable = false;
             this.clPrice.Format = "#,###";
             this.clPrice.IsTextTrimmed = false;
@@ -290,7 +290,7 @@
             // 
             // clQty
             // 
-            this.clQty.Alignment = XPTable.Models.ColumnAlignment.Right;
+            this.clQty.Alignment = XPTable.Models.ColumnAlignment.Center;
             this.clQty.Editable = false;
             this.clQty.Format = "#,###";
             this.clQty.IsTextTrimmed = false;
@@ -439,6 +439,17 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "ข้อมูลลูกค้า";
             // 
+            // btnSearch
+            // 
+            this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.btnSearch.Image = global::PowerPOS_Online.Properties.Resources.magnifier_left;
+            this.btnSearch.Location = new System.Drawing.Point(196, 24);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(31, 26);
+            this.btnSearch.TabIndex = 2;
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            // 
             // panel5
             // 
             this.panel5.Controls.Add(this.groupBox1);
@@ -458,6 +469,7 @@
             this.btnConfirm.TabIndex = 11;
             this.btnConfirm.Text = "ยืนยันการขาย";
             this.btnConfirm.UseVisualStyleBackColor = true;
+            this.btnConfirm.Click += new System.EventHandler(this.btnConfirm_Click);
             // 
             // panel7
             // 
@@ -477,6 +489,7 @@
             this.btnCancel.TabIndex = 12;
             this.btnCancel.Text = "ยกเลิกการขาย";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // panel6
             // 
@@ -524,16 +537,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(802, 39);
             this.panel1.TabIndex = 10;
-            // 
-            // btnSearch
-            // 
-            this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.btnSearch.Image = global::PowerPOS_Online.Properties.Resources.magnifier_left;
-            this.btnSearch.Location = new System.Drawing.Point(196, 24);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(31, 26);
-            this.btnSearch.TabIndex = 2;
-            this.btnSearch.UseVisualStyleBackColor = true;
             // 
             // UcSell
             // 

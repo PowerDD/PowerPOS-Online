@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -19,6 +20,7 @@ namespace PowerPOS_Online
         public Main()
         {
             InitializeComponent();
+            Param.UserId = "0000";
             Util.ConnectSQLiteDatabase();
             this.Opacity = 0;
             this.ShowInTaskbar = false;
@@ -46,6 +48,9 @@ namespace PowerPOS_Online
                 this.Opacity = 100;
                 this.ShowInTaskbar = true;
                 Param.InitialFinished = true;
+
+                Util.ShowScreen(Param.Screen.Sell);
+                Param.SelectedScreen = (int)Param.Screen.Sell;
             }
             else
             {

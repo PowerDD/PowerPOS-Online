@@ -127,5 +127,29 @@ namespace PowerPOS_Online.Properties {
                 this["ShopCustomer"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DevicePrefix {
+            get {
+                return ((string)(this["DevicePrefix"]));
+            }
+            set {
+                this["DevicePrefix"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DevicePrinter {
+            get {
+                return ((string)(this["DevicePrinter"]));
+            }
+            set {
+                this["DevicePrinter"] = value;
+            }
+        }
     }
 }

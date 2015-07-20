@@ -42,6 +42,9 @@
             this.bwLoadProduct = new System.ComponentModel.BackgroundWorker();
             this.bwCheckLicense = new System.ComponentModel.BackgroundWorker();
             this.bwSyncData = new System.ComponentModel.BackgroundWorker();
+            this.bwLoadCustomer = new System.ComponentModel.BackgroundWorker();
+            this.bwLoadSell = new System.ComponentModel.BackgroundWorker();
+            this.bwLoadProvince = new System.ComponentModel.BackgroundWorker();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -137,6 +140,21 @@
             this.bwSyncData.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwSyncData_DoWork);
             this.bwSyncData.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwSyncData_RunWorkerCompleted);
             // 
+            // bwLoadCustomer
+            // 
+            this.bwLoadCustomer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwLoadCustomer_DoWork);
+            this.bwLoadCustomer.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwLoadCustomer_RunWorkerCompleted);
+            // 
+            // bwLoadSell
+            // 
+            this.bwLoadSell.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwLoadSell_DoWork);
+            this.bwLoadSell.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwLoadSell_RunWorkerCompleted);
+            // 
+            // bwLoadProvince
+            // 
+            this.bwLoadProvince.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwLoadProvince_DoWork);
+            this.bwLoadProvince.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwLoadProvince_RunWorkerCompleted);
+            // 
             // FmInitialData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -170,5 +188,8 @@
         private System.ComponentModel.BackgroundWorker bwLoadProduct;
         private System.ComponentModel.BackgroundWorker bwCheckLicense;
         private System.ComponentModel.BackgroundWorker bwSyncData;
+        private System.ComponentModel.BackgroundWorker bwLoadCustomer;
+        private System.ComponentModel.BackgroundWorker bwLoadSell;
+        private System.ComponentModel.BackgroundWorker bwLoadProvince;
     }
 }

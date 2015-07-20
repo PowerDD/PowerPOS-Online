@@ -5,12 +5,16 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Data.SQLite;
+using System.Drawing;
+using System.Drawing.Printing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using XPTable.Models;
@@ -65,6 +69,7 @@ namespace PowerPOS_Online
 
         public static DataTable DBQuery(string sql)
         {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             DataTable dt = new DataTable();
             try
             {
@@ -80,6 +85,7 @@ namespace PowerPOS_Online
         }
         public static void DBExecute(string sql)
         {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             try
             {
                 SQLiteCommand command = new SQLiteCommand(sql, Param.SQLiteConnection);
@@ -113,7 +119,7 @@ namespace PowerPOS_Online
                     dynamic jsonObject = new JsonSerializer().Deserialize(new StringReader(json), structure.GetType());
                     if (jsonObject.success)
                     {
-                        var structureSuccess = new { success = false, shopId = "1234", databaseName = "", databasePassword = "" };
+                        var structureSuccess = new { success = false, shopId = "1234", databaseName = "", databasePassword = "", devicePrefix = "", devicePrinter = "" };
                         jsonObject = new JsonSerializer().Deserialize(new StringReader(json), structureSuccess.GetType());
 
                         if (Param.ShopId != jsonObject.shopId)
@@ -126,10 +132,14 @@ namespace PowerPOS_Online
                         Param.DatabaseName = jsonObject.databaseName;
                         Param.DatabasePassword = jsonObject.databasePassword;
                         Param.ShopId = jsonObject.shopId;
+                        Param.DevicePrefix = jsonObject.devicePrefix;
+                        Param.DevicePrinter = jsonObject.devicePrinter;
                         Param.ApiChecked = true;
                         Properties.Settings.Default.DatabaseName = Param.DatabaseName;
                         Properties.Settings.Default.DatabasePassword = Param.DatabasePassword;
                         Properties.Settings.Default.ShopId = Param.ShopId;
+                        Properties.Settings.Default.DevicePrefix = Param.DevicePrefix;
+                        Properties.Settings.Default.DevicePrinter = Param.DevicePrinter;
                         Properties.Settings.Default.ApiChecked = true;
                         Properties.Settings.Default.Save();
                         Properties.Settings.Default.Upgrade();
@@ -338,7 +348,7 @@ namespace PowerPOS_Online
                 /*case Param.StatusIcon.Info:
                     Param.lblStatus.Image = global::PowerPOS_Online.Properties.Resources.accept;
                     break;*/
-                default :
+                default:
                     Param.lblStatus.Image = null;
                     break;
             }
@@ -382,10 +392,10 @@ namespace PowerPOS_Online
             data.Cost = double.Parse(dr["Cost"].ToString());
             data.OperationCost = double.Parse(dr["OperationCost"].ToString());
             data.SellPrice = double.Parse(dr["SellPrice"].ToString());
-            data.ReceivedDate = DateTime.Parse(dr["ReceivedDate"].ToString());
+            data.ReceivedDate = Convert.ToDateTime(dr["ReceivedDate"].ToString());
             data.ReceivedBy = dr["ReceivedBy"].ToString();
             data.SellNo = dr["SellNo"].ToString();
-            data.SellDate = DateTime.Parse(dr["SellDate"].ToString());
+            data.SellDate = Convert.ToDateTime(dr["SellDate"].ToString());
             data.SellBy = dr["SellBy"].ToString();
             data.SellFinished = dr["SellFinished"].ToString() == "1" ? true : false;
             data.Customer = dr["Customer"].ToString();
@@ -420,7 +430,7 @@ namespace PowerPOS_Online
             data.SellPrice = double.Parse(dr["SellPrice"].ToString());
             data.ReceivedBy = dr["ReceivedBy"].ToString();
             data.SellNo = dr["SellNo"].ToString();
-            data.SellDate = DateTime.Parse(dr["SellDate"].ToString());
+            data.SellDate = Convert.ToDateTime(dr["SellDate"].ToString());
             data.SellBy = dr["SellBy"].ToString();
             data.SellFinished = dr["SellFinished"].ToString() == "1" ? true : false;
             data.Customer = dr["Customer"].ToString();
@@ -436,7 +446,7 @@ namespace PowerPOS_Online
             data.Cost = double.Parse(dr["Cost"].ToString());
             data.OperationCost = double.Parse(dr["OperationCost"].ToString());
             data.SellPrice = double.Parse(dr["SellPrice"].ToString());
-            data.ReceivedDate = DateTime.Parse(dr["ReceivedDate"].ToString());
+            data.ReceivedDate = Convert.ToDateTime(dr["ReceivedDate"].ToString());
             data.ReceivedBy = dr["ReceivedBy"].ToString();
             data.SellNo = dr["SellNo"].ToString();
             data.SellBy = dr["SellBy"].ToString();
@@ -448,35 +458,331 @@ namespace PowerPOS_Online
 
         public static void SyncData()
         {
+            DataTable dt;
             //## Product ##//
-            DataTable dt = Util.DBQuery("SELECT * FROM Barcode WHERE Sync = 1");
-
-            var azureTable = Param.AzureTableClient.GetTableReference("BarcodeStock");
-            TableBatchOperation batchOperation = new TableBatchOperation();
-            for (int i = 0; i < dt.Rows.Count; i++)
+            try
             {
-                DataRow row = dt.Rows[i];
-                if (row["ReceivedDate"].ToString() == "" && row["SellDate"].ToString() == "")
-                    batchOperation.InsertOrMerge(Util.RenderBarcodeNoDateData(row));
-                else if (row["SellDate"].ToString() == "")
-                    batchOperation.InsertOrMerge(Util.RenderBarcodeNoSellDateData(row));
-                else if (row["ReceivedDate"].ToString() == "")
-                    batchOperation.InsertOrMerge(Util.RenderBarcodeNoReceivedDateData(row));
-                else
-                    batchOperation.InsertOrMerge(Util.RenderBarcodeData(row));
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+                dt = Util.DBQuery("SELECT * FROM Barcode WHERE Sync = 1");
 
-                Util.DBExecute(string.Format("UPDATE Barcode SET Sync = 0 WHERE Barcode = {0}", row["Barcode"].ToString()));
-
-                if (batchOperation.Count == 100)
+                var azureTable = Param.AzureTableClient.GetTableReference("BarcodeStock");
+                TableBatchOperation batchOperation = new TableBatchOperation();
+                for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    azureTable.ExecuteBatch(batchOperation);
-                    batchOperation = new TableBatchOperation();
+                    DataRow row = dt.Rows[i];
+                    if (row["ReceivedDate"].ToString() == "" && row["SellDate"].ToString() == "")
+                        batchOperation.InsertOrMerge(Util.RenderBarcodeNoDateData(row));
+                    else if (row["SellDate"].ToString() == "")
+                        batchOperation.InsertOrMerge(Util.RenderBarcodeNoSellDateData(row));
+                    else if (row["ReceivedDate"].ToString() == "")
+                        batchOperation.InsertOrMerge(Util.RenderBarcodeNoReceivedDateData(row));
+                    else
+                        batchOperation.InsertOrMerge(Util.RenderBarcodeData(row));
+
+                    Util.DBExecute(string.Format("UPDATE Barcode SET Sync = 0 WHERE Barcode = {0}", row["Barcode"].ToString()));
+
+                    if (batchOperation.Count == 100)
+                    {
+                        azureTable.ExecuteBatch(batchOperation);
+                        batchOperation = new TableBatchOperation();
+                    }
                 }
+                if (batchOperation.Count > 0)
+                    azureTable.ExecuteBatch(batchOperation);
             }
-            if (batchOperation.Count > 0)
-                azureTable.ExecuteBatch(batchOperation);
+            catch (Exception ex)
+            {
+                WriteErrorLog(ex.Message);
+                WriteErrorLog(ex.StackTrace);
+            }
+
+            //## Customer ##//
+            try
+            {
+                dt = Util.DBQuery("SELECT * FROM Customer WHERE Sync = 1");
+
+                var azureTable = Param.AzureTableClient.GetTableReference("Customer");
+                TableBatchOperation batchOperation = new TableBatchOperation();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow row = dt.Rows[i];
+                    dynamic d = new DynamicEntity(Param.ShopId, row["ID"].ToString());
+                    //CustomerEntity d = new CustomerEntity(Param.ShopId, row["ID"].ToString());
+                    d.Member = row["Member"].ToString();
+                    d.Name = row["Firstname"].ToString() + " " + row["Lastname"].ToString();
+                    d.Firstname = row["Firstname"].ToString();
+                    d.Lastname = row["Lastname"].ToString();
+                    d.Nickname = row["Nickname"].ToString();
+                    d.CitizenID = row["CitizenID"].ToString();
+                    try { d.Birthday = Convert.ToDateTime(row["Birthday"].ToString()); } catch { }
+                    d.Sex = row["Sex"].ToString();
+                    d.CardNo = row["CardNo"].ToString();
+                    d.Mobile = row["Mobile"].ToString();
+                    d.Email = row["Email"].ToString();
+                    d.ShopName = row["ShopName"].ToString();
+                    d.Address = row["Address"].ToString();
+                    d.Address2 = row["Address2"].ToString();
+                    d.SubDistrict = row["SubDistrict"].ToString();
+                    d.District = row["District"].ToString();
+                    d.Province = row["Province"].ToString();
+                    d.ZipCode = row["ZipCode"].ToString();
+                    d.ShopSameAddress = row["ShopSameAddress"].ToString() == "True";
+                    d.ShopAddress = row["ShopAddress"].ToString();
+                    d.ShopAddress2 = row["ShopAddress2"].ToString();
+                    d.ShopSubDistrict = row["ShopSubDistrict"].ToString();
+                    d.ShopDistrict = row["ShopDistrict"].ToString();
+                    d.ShopProvince = row["ShopProvince"].ToString();
+                    d.ShopZipCode = row["ShopZipCode"].ToString();
+                    d.SellPrice = int.Parse(row["SellPrice"].ToString());
+                    d.DiscountPercent = int.Parse(row["DiscountPercent"].ToString());
+                    d.Credit = int.Parse(row["Credit"].ToString());
+                    d.Comment = row["Comment"].ToString();
+                    try { d.AddDate = Convert.ToDateTime(row["AddDate"].ToString()); } catch { }
+                    d.AddBy = row["AddBy"].ToString();
+                    try { d.UpdateDate = Convert.ToDateTime(row["UpdateDate"].ToString()); } catch { }
+                    d.UpdateBy = row["UpdateBy"].ToString();
+                    
+                    batchOperation.InsertOrMerge(d);
+
+                    Util.DBExecute(string.Format("UPDATE Customer SET Sync = 0 WHERE ID = '{0}'", row["ID"].ToString()));
+
+                    if (batchOperation.Count == 100)
+                    {
+                        azureTable.ExecuteBatch(batchOperation);
+                        batchOperation = new TableBatchOperation();
+                    }
+                }
+                if (batchOperation.Count > 0)
+                    azureTable.ExecuteBatch(batchOperation);
+            }
+            catch (Exception ex)
+            {
+                WriteErrorLog(ex.Message);
+                WriteErrorLog(ex.StackTrace);
+            }
+
+            //## SellHeader ##//
+            try
+            {
+                dt = Util.DBQuery("SELECT * FROM SellHeader WHERE Sync = 1");
+
+                var azureTable = Param.AzureTableClient.GetTableReference("SellHeader");
+                azureTable.CreateIfNotExists();
+
+                TableBatchOperation batchOperation = new TableBatchOperation();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow row = dt.Rows[i];
+                    dynamic d = new DynamicEntity(Param.ShopId, row["SellNo"].ToString());
+                    //SellHeaderEntity d = new SellHeaderEntity(Param.ShopId, row["SellNo"].ToString());
+                    d.Customer = row["Customer"].ToString();
+                    d.CustomerSex = row["CustomerSex"].ToString();
+                    d.CustomerAge = int.Parse(row["CustomerAge"].ToString());
+                    d.Credit = int.Parse(row["Credit"].ToString());
+                    d.PayType = row["PayType"].ToString();
+                    d.Cash = double.Parse(row["Cash"].ToString());
+                    d.DiscountPercent = double.Parse(row["DiscountPercent"].ToString());
+                    d.DiscountCash = double.Parse(row["DiscountCash"].ToString());
+                    d.Paid = row["Paid"].ToString() == "True";
+                    d.Profit = double.Parse(row["Profit"].ToString());
+                    d.TotalPrice = double.Parse(row["TotalPrice"].ToString());
+                    d.PointReceived = int.Parse(row["PointReceived"].ToString());
+                    d.PointUse = int.Parse(row["PointUse"].ToString());
+                    d.Comment = row["Comment"].ToString();
+                    d.SellDate = Convert.ToDateTime(row["SellDate"].ToString());
+                    d.SellBy = row["SellBy"].ToString();
+                    batchOperation.InsertOrMerge(d);
+
+                    Util.DBExecute(string.Format("UPDATE SellHeader SET Sync = 0 WHERE SellNo = '{0}'", row["SellNo"].ToString()));
+
+                    if (batchOperation.Count == 100)
+                    {
+                        azureTable.ExecuteBatch(batchOperation);
+                        batchOperation = new TableBatchOperation();
+                    }
+                }
+                if (batchOperation.Count > 0)
+                    azureTable.ExecuteBatch(batchOperation);
+            }
+            catch (Exception ex)
+            {
+                WriteErrorLog(ex.Message);
+                WriteErrorLog(ex.StackTrace);
+            }
+
+            //## SellDetail ##//
+            try
+            {
+                dt = Util.DBQuery("SELECT * FROM SellDetail WHERE Sync = 1");
+
+                var azureTable = Param.AzureTableClient.GetTableReference("SellDetail");
+                azureTable.CreateIfNotExists();
+
+                TableBatchOperation batchOperation = new TableBatchOperation();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow row = dt.Rows[i];
+                    dynamic d = new DynamicEntity(Param.ShopId, row["SellNo"].ToString() + "-" + row["Product"].ToString());
+                    d.SellPrice = double.Parse(row["SellPrice"].ToString());
+                    d.Cost = double.Parse(row["Cost"].ToString());
+                    d.Quantity = int.Parse(row["Quantity"].ToString());
+                    batchOperation.InsertOrMerge(d);
+
+                    Util.DBExecute(string.Format("UPDATE SellDetail SET Sync = 0 WHERE SellNo = '{0}' AND Product = '{1}'", 
+                        row["SellNo"].ToString(), row["Product"].ToString()));
+
+                    if (batchOperation.Count == 100)
+                    {
+                        azureTable.ExecuteBatch(batchOperation);
+                        batchOperation = new TableBatchOperation();
+                    }
+                }
+                if (batchOperation.Count > 0)
+                    azureTable.ExecuteBatch(batchOperation);
+            }
+            catch (Exception ex)
+            {
+                WriteErrorLog(ex.Message);
+                WriteErrorLog(ex.StackTrace);
+            }
         }
 
+
+
+
+        public static void PrintReceipt(string sellNo)
+        {
+            DataTable dt = Util.DBQuery(string.Format(@"SELECT COUNT(*) cnt FROM Barcode WHERE SellNo = '{0}'", sellNo));
+
+            var hight = 195 + int.Parse(dt.Rows[0]["cnt"].ToString()) * 13;
+            //PaperSize paperSize = new PaperSize("Custom Size", 280, hight);
+            //PaperSize paperSize = new PaperSize("Custom Size", 380, hight);
+            PaperSize paperSize = new PaperSize("Custom Size", 400, hight);
+            paperSize.RawKind = (int)PaperKind.Custom;
+
+            PrintDocument pd = new PrintDocument();
+            pd.DefaultPageSettings.PaperSize = paperSize;
+            pd.PrintController = new System.Drawing.Printing.StandardPrintController();
+            pd.PrinterSettings.PrinterName = "Bullzip PDF Printer";
+            //pd.PrinterSettings.PrinterName = "GP-80250 Series";
+            //pd.PrinterSettings.PrinterName = "POS80";
+
+            pd.PrintPage += (_, g) =>
+            {
+                PrintReceipt(g, sellNo);
+            };
+            pd.Print();
+        }
+
+
+        private static void PrintReceipt(PrintPageEventArgs g, string sellNo)
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+
+
+            DataTable dtHeader = Util.DBQuery(string.Format(@"SELECT h.TotalPrice Price, IFNULL(h.Cash,0) Cash, c.Firstname, c.Lastname, c.Mobile,
+                    datetime(h.SellDate, 'localtime') SellDate, h.SellBy
+                    FROM SellHeader h
+                        LEFT JOIN Customer c
+                        ON h.Customer = c.ID
+                    WHERE h.SellNo = '{0}'"
+                , sellNo));
+
+            var width = 280;
+            var gab = 5;
+            Image image = Image.FromFile("logo.png");
+            Rectangle destRect = new Rectangle(0, 0, width, image.Height * width / image.Width);
+            g.Graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
+
+
+            SolidBrush brush = new SolidBrush(Color.Black);
+            Font stringFont = new Font("Calibri", 6);
+            g.Graphics.DrawString("http:// www.", stringFont, brush, new PointF(62, 49));
+            g.Graphics.DrawString(".co.th", stringFont, brush, new PointF(193, 49));
+            stringFont = new Font("Calibri", 6.5f, FontStyle.Bold);
+            g.Graphics.DrawString("R e m a x T h a i l a n d", stringFont, brush, new PointF(109, 48.3f));
+
+            var pX = 0;
+            var pY = 65;
+            stringFont = new Font("Calibri", 7);
+            g.Graphics.DrawString(DateTime.Parse(dtHeader.Rows[0]["SellDate"].ToString()).ToString("dd/MM/yyyy HH:mm") + " : " + dtHeader.Rows[0]["SellBy"].ToString(), stringFont, brush, new PointF(pX, pY + 6));
+
+            stringFont = new Font("DilleniaUPC", 13);
+            g.Graphics.DrawString("เลขที่ ", stringFont, brush, new PointF(pX + 188, pY));
+
+            stringFont = new Font("Calibri", 10, FontStyle.Bold);
+            string measureString = sellNo;
+            SizeF stringSize = g.Graphics.MeasureString(measureString, stringFont);
+            g.Graphics.DrawString(sellNo, stringFont, brush, new PointF(width - stringSize.Width + gab, pY + 3));
+            pY += 20;
+
+            stringFont = new Font("DilleniaUPC", 17, FontStyle.Bold);
+            measureString = "ใบเสร็จรับเงิน";
+            stringSize = g.Graphics.MeasureString(measureString, stringFont);
+            g.Graphics.DrawString(measureString, stringFont, brush, new PointF((width - stringSize.Width + gab) / 2, pY + 5));
+            pY += 30;
+
+            stringFont = new Font("DilleniaUPC", 9);
+            DataTable dt = Util.DBQuery(string.Format(@"SELECT Name, ProductCount, SellPrice
+                    FROM (SELECT product, SUM(SellPrice) SellPrice, COUNT(*) ProductCount FROM Barcode WHERE SellNo = '{0}' GROUP BY product) b 
+                        LEFT JOIN Product p 
+                        ON b.Product = p.ID
+                        AND p.Shop = '{1}'
+                ", sellNo, Param.ShopParent));
+            var sumQty = 0;
+            var sumPrice = 0;
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                g.Graphics.DrawString(int.Parse(dt.Rows[i]["ProductCount"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX, pY));
+                g.Graphics.DrawString(dt.Rows[i]["Name"].ToString(), stringFont, brush, new PointF(pX + 16, pY));
+
+                g.Graphics.FillRectangle(new SolidBrush(Color.White), pX + 230, pY + 3, 150, 10);
+                g.Graphics.DrawString("@" + (int.Parse(dt.Rows[i]["SellPrice"].ToString()) / int.Parse(dt.Rows[i]["ProductCount"].ToString())).ToString("#,##0"),
+                    stringFont, brush, new PointF(pX + 232, pY));
+                measureString = int.Parse(dt.Rows[i]["SellPrice"].ToString()).ToString("#,##0");
+                stringSize = g.Graphics.MeasureString(measureString, stringFont);
+                g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY));
+                sumQty += int.Parse(dt.Rows[i]["ProductCount"].ToString());
+                sumPrice += int.Parse(dt.Rows[i]["SellPrice"].ToString());
+                pY += 13;
+            }
+
+            pY += 4;
+            stringFont = new Font("DilleniaUPC", 12, FontStyle.Bold);
+            g.Graphics.DrawString(string.Format("รวม {0} รายการ ({1} ชิ้น)", dt.Rows.Count, sumQty), stringFont, brush, new PointF(pX, pY));
+            measureString = "" + sumPrice.ToString("#,##0");
+            stringSize = g.Graphics.MeasureString(measureString, stringFont);
+            g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY));
+            pY += 17;
+            stringFont = new Font("DilleniaUPC", 11);
+            g.Graphics.DrawString("เงินสด  " + int.Parse(dtHeader.Rows[0]["cash"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX, pY));
+            measureString = "เงินทอน  " + (int.Parse(dtHeader.Rows[0]["cash"].ToString()) - sumPrice).ToString("#,##0");
+            stringSize = g.Graphics.MeasureString(measureString, stringFont);
+            g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY));
+            pY += 23;
+
+            g.Graphics.DrawLine(new Pen(Color.Black, 0.25f), pX, pY, pX + width, pY);
+            pY += 5;
+
+            stringFont = new Font("DilleniaUPC", 9);
+            g.Graphics.DrawString("ชื่อลูกค้า " + dtHeader.Rows[0]["Firstname"].ToString() + " " + dtHeader.Rows[0]["Lastname"].ToString() +
+                ((dtHeader.Rows[0]["Mobile"].ToString() != "") ?
+                " (" + dtHeader.Rows[0]["Mobile"].ToString().Substring(0, 3) + "-" + dtHeader.Rows[0]["Mobile"].ToString().Substring(3, 4) + "-" + dtHeader.Rows[0]["Mobile"].ToString().Substring(7) + ")"
+                : "")
+                , stringFont, brush, new PointF(pX, pY));
+
+            /*stringFont = new Font("DilleniaUPC", 11);
+            measureString = "แต้มสะสม  " + (34534).ToString("#,##0");
+            stringSize = g.Graphics.MeasureString(measureString, stringFont);
+            g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY - 2));*/
+            pY += 17;
+
+            stringFont = new Font("Calibri", 8, FontStyle.Bold);
+            measureString = "LINE Official ID : @RemaxThailand";
+            stringSize = g.Graphics.MeasureString(measureString, stringFont);
+            g.Graphics.DrawString(measureString, stringFont, brush, new PointF((width - stringSize.Width + gab) / 2, pY));
+
+        }
 
 
     }

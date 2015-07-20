@@ -33,6 +33,7 @@
             this.txtLicenseKey = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.lblDeviceID = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnSave
@@ -71,11 +72,21 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // lblDeviceID
+            // 
+            this.lblDeviceID.BackColor = System.Drawing.SystemColors.Control;
+            this.lblDeviceID.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lblDeviceID.Location = new System.Drawing.Point(12, 51);
+            this.lblDeviceID.Name = "lblDeviceID";
+            this.lblDeviceID.Size = new System.Drawing.Size(108, 13);
+            this.lblDeviceID.TabIndex = 6;
+            // 
             // FmLicense
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(341, 84);
+            this.Controls.Add(this.lblDeviceID);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtLicenseKey);
@@ -98,5 +109,6 @@
         private System.Windows.Forms.TextBox txtLicenseKey;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.TextBox lblDeviceID;
     }
 }

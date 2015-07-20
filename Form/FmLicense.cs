@@ -20,6 +20,7 @@ namespace PowerPOS_Online
         private void FmLicense_Load(object sender, EventArgs e)
         {
             txtLicenseKey.Text = Properties.Settings.Default.LicenseKey;
+            lblDeviceID.Text = Param.CpuId;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -39,9 +40,11 @@ namespace PowerPOS_Online
                 btnSave.Enabled = true;
                 btnCancel.Enabled = true;
                 txtLicenseKey.Enabled = true;
+                lblDeviceID.Visible = true;
             }
             else
             {
+                lblDeviceID.Visible = false;
                 this.DialogResult = System.Windows.Forms.DialogResult.OK;
             }
         }
