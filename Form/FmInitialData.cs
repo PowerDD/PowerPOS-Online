@@ -150,7 +150,7 @@ namespace PowerPOS_Online
 
         private void bwLoadBarcode_DoWork(object sender, DoWorkEventArgs e)
         {
-            /*var startDate = DateTime.Now;
+            var startDate = DateTime.Now;
             var azureTable = Param.AzureTableClient.GetTableReference("BarcodeStock");
             TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId));
             //TableContinuationToken continuationToken = null;
@@ -200,7 +200,7 @@ namespace PowerPOS_Online
             LoadCategory(Param.ShopParent);
             LoadCategory(Param.ShopId);
             LoadBrand(Param.ShopParent);
-            LoadBrand(Param.ShopId);*/
+            LoadBrand(Param.ShopId);
         }
 
         private void bwLoadBarcode_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -213,10 +213,10 @@ namespace PowerPOS_Online
 
         private void bwLoadProduct_DoWork(object sender, DoWorkEventArgs e)
         {
-            /*var startDate = DateTime.Now;
+            var startDate = DateTime.Now;
             InsertProduct(Param.ShopParent);
             InsertProduct(Param.ShopId);
-            Console.WriteLine("Load parent product = {0} seconds", (DateTime.Now - startDate).TotalSeconds);*/
+            Console.WriteLine("Load parent product = {0} seconds", (DateTime.Now - startDate).TotalSeconds);
         }
 
         private void bwLoadProduct_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -229,7 +229,7 @@ namespace PowerPOS_Online
 
         private void bwInitialShopProduct_DoWork(object sender, DoWorkEventArgs e)
         {
-            /*Util.DBExecute(string.Format(@"INSERT OR REPLACE INTO Product (Shop, ID, Name, CoverImage, Category, Brand, Price, Price1, Price2, Price3, Price4, Price5, Warranty,
+            Util.DBExecute(string.Format(@"INSERT OR REPLACE INTO Product (Shop, ID, Name, CoverImage, Category, Brand, Price, Price1, Price2, Price3, Price4, Price5, Warranty,
                 WebPrice, WebPrice1, WebPrice2, WebPrice3, WebPrice4, WebPrice5, WebWarranty, Cost)
                 SELECT '{0}', p.ID, p.Name, p.CoverImage, p.Category, p.Brand, ps.Price, ps.Price1, ps.Price2, ps.Price3, ps.Price4, ps.Price5, ps.Warranty,
                 p.Price, p.Price1, p.Price2, p.Price3, p.Price4, p.Price5, p.Warranty, ps.Cost
@@ -264,7 +264,7 @@ namespace PowerPOS_Online
                 AND Sync = 1", Param.ShopId));
             Console.WriteLine("Update product total = {0} records", dt.Rows.Count);
 
-            /*var azureTable = Param.AzureTableClient.GetTableReference("Product");
+            var azureTable = Param.AzureTableClient.GetTableReference("Product");
             TableBatchOperation batchOperation = new TableBatchOperation();
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -361,7 +361,7 @@ namespace PowerPOS_Online
                 azureTable.ExecuteBatch(batchOperation);
             Util.DBExecute(string.Format(@"DELETE Category WHERE Shop = '{0}'", Param.ShopParent));
             Util.DBExecute(string.Format(@"UPDATE Category SET Sync = 0 WHERE Shop = '{0}'", Param.ShopId));
-            Console.WriteLine("Update category total = {0} records", dt.Rows.Count);*/
+            Console.WriteLine("Update category total = {0} records", dt.Rows.Count);
         }
 
         private void bwInitialShopProduct_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -374,7 +374,7 @@ namespace PowerPOS_Online
 
         private void LoadCategory(string shop)
         {
-            /*var azureTable = Param.AzureTableClient.GetTableReference("Category");
+            var azureTable = Param.AzureTableClient.GetTableReference("Category");
 
             Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'Category' (
                 'Shop' VARCHAR NOT NULL ,
@@ -404,12 +404,12 @@ namespace PowerPOS_Online
                 }
             }
             if (i != 0)
-                Util.DBExecute(sb.ToString());*/
+                Util.DBExecute(sb.ToString());
         }
 
         private void LoadBrand(string shop)
         {
-            /*var azureTable = Param.AzureTableClient.GetTableReference("Brand");
+            var azureTable = Param.AzureTableClient.GetTableReference("Brand");
 
             Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'Brand' (
                 'Shop' VARCHAR NOT NULL ,
@@ -439,7 +439,7 @@ namespace PowerPOS_Online
                 }
             }
             if (i != 0)
-                Util.DBExecute(sb.ToString());*/
+                Util.DBExecute(sb.ToString());
         }
 
         private void InsertProduct(string shop)
@@ -506,7 +506,7 @@ namespace PowerPOS_Online
 
         private void bwLoadCustomer_DoWork(object sender, DoWorkEventArgs e)
         {
-            /*Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'Customer' (
+            Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'Customer' (
                 'ID' VARCHAR PRIMARY KEY NOT NULL,
                 'Member' VARCHAR,
                 'Firstname' VARCHAR,
@@ -580,7 +580,7 @@ namespace PowerPOS_Online
             if (i == 0){
                 Util.DBExecute(@"INSERT OR REPLACE INTO Customer (ID, Firstname, Lastname, AddDate, AddBy, Sync)
                 SELECT '000000', 'ลูกค้า', 'ทั่วไป', STRFTIME('%Y-%m-%d %H:%M:%S', 'NOW'), '0000', 1");
-            }*/
+            }
 
             
         }
@@ -595,7 +595,7 @@ namespace PowerPOS_Online
 
         private void bwLoadSell_DoWork(object sender, DoWorkEventArgs e)
         {
-            /*Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'SellHeader' (
+            Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'SellHeader' (
                 'SellNo' VARCHAR PRIMARY KEY NOT NULL,
                 'Customer' VARCHAR DEFAULT '000000',
                 'CustomerSex' VARCHAR,
@@ -647,7 +647,7 @@ namespace PowerPOS_Online
                     sb = new StringBuilder(command);
                 }
             }
-            Util.DBExecute(sb.ToString());*/
+            Util.DBExecute(sb.ToString());
         }
 
         private void bwLoadSell_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -660,7 +660,7 @@ namespace PowerPOS_Online
 
         private void bwLoadProvince_DoWork(object sender, DoWorkEventArgs e)
         {
-            /*Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'Province' (
+            Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'Province' (
                 'ID' VARCHAR PRIMARY KEY NOT NULL,
                 'Name' VARCHAR)");
 
@@ -707,7 +707,7 @@ namespace PowerPOS_Online
                     }
                 }
                 Util.DBExecute(sb.ToString());
-            }*/
+            }
 
         }
 
