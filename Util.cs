@@ -28,6 +28,7 @@ namespace PowerPOS_Online
         public static void GetApiConfig()
         {
             Param.ApiUrl = Properties.Settings.Default.ApiUrl;
+            Param.ApiKey = Properties.Settings.Default.ApiKey;
             Param.LicenseKey = Properties.Settings.Default.LicenseKey;
             Param.ApiChecked = Properties.Settings.Default.ApiChecked;
             Param.CpuId = GetCpuId();
@@ -38,6 +39,17 @@ namespace PowerPOS_Online
             Param.ShopName = Properties.Settings.Default.ShopName;
             Param.ShopParent = Properties.Settings.Default.ShopParent;
             Param.ShopCustomer = Properties.Settings.Default.ShopCustomer;
+            Param.LogoPath = Properties.Settings.Default.LogoPath;
+            if (Param.LogoPath.ToString() == "")
+            {
+                if (!Directory.Exists("Resource/Images")) Directory.CreateDirectory("Resource/Images");
+                if (File.Exists(Param.LogoPath)) File.Delete(Param.LogoPath);
+                using (var client = new WebClient())
+                {
+                    client.DownloadFileAsync(new Uri(Param.LogoUrl), Param.LogoPath);
+                    Param.LogoPath = "Resource/Images/logo.jpg";
+                }
+            }
         }
 
         public static string GetCpuId()
@@ -690,17 +702,25 @@ namespace PowerPOS_Online
 
             var width = 280;
             var gab = 5;
-            Image image = Image.FromFile("logo.png");
-            Rectangle destRect = new Rectangle(0, 0, width, image.Height * width / image.Width);
-            g.Graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
+
+            if (Param.SystemConfig.Bill.PrintLogo == "Y")
+            {
+                Image image = Image.FromFile(Param.LogoPath);
+                Rectangle destRect = new Rectangle(0, 0, width, 64);
+                //Rectangle destRect = new Rectangle(0, 0, width, image.Height * width / image.Width);
+                g.Graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
+            }
 
 
             SolidBrush brush = new SolidBrush(Color.Black);
             Font stringFont = new Font("Calibri", 6);
-            g.Graphics.DrawString("http:// www.", stringFont, brush, new PointF(62, 49));
-            g.Graphics.DrawString(".co.th", stringFont, brush, new PointF(193, 49));
-            stringFont = new Font("Calibri", 6.5f, FontStyle.Bold);
-            g.Graphics.DrawString("R e m a x T h a i l a n d", stringFont, brush, new PointF(109, 48.3f));
+            if (Param.SystemConfig.Bill.Logo == Param.LogoUrl && Param.SystemConfig.Bill.PrintLogo == "Y")
+            {
+                g.Graphics.DrawString("http:// www.", stringFont, brush, new PointF(62, 49));
+                g.Graphics.DrawString(".co.th", stringFont, brush, new PointF(193, 49));
+                stringFont = new Font("Calibri", 6.5f, FontStyle.Bold);
+                g.Graphics.DrawString("R e m a x T h a i l a n d", stringFont, brush, new PointF(109, 48.3f));
+            }
 
             var pX = 0;
             var pY = 65;
@@ -717,7 +737,7 @@ namespace PowerPOS_Online
             pY += 20;
 
             stringFont = new Font("DilleniaUPC", 17, FontStyle.Bold);
-            measureString = "ใบเสร็จรับเงิน";
+            measureString = Param.SystemConfig.Bill.HeaderName; // "ใบเสร็จรับเงิน";
             stringSize = g.Graphics.MeasureString(measureString, stringFont);
             g.Graphics.DrawString(measureString, stringFont, brush, new PointF((width - stringSize.Width + gab) / 2, pY + 5));
             pY += 30;
@@ -778,7 +798,7 @@ namespace PowerPOS_Online
             pY += 17;
 
             stringFont = new Font("Calibri", 8, FontStyle.Bold);
-            measureString = "LINE Official ID : @RemaxThailand";
+            measureString = Param.SystemConfig.Bill.FooterText; // "LINE Official ID : @RemaxThailand";
             stringSize = g.Graphics.MeasureString(measureString, stringFont);
             g.Graphics.DrawString(measureString, stringFont, brush, new PointF((width - stringSize.Width + gab) / 2, pY));
 

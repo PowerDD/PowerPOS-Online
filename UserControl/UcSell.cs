@@ -288,7 +288,7 @@ namespace PowerPOS_Online
                 FmCashReceive dialog = new FmCashReceive();
                 dialog.lblPrice.Text = lblPrice.Text;
                 dialog.lblChange.Text = "0";
-                dialog._TOTAL = int.Parse(lblPrice.Text);
+                dialog._TOTAL = int.Parse(lblPrice.Text.Replace(",", ""));
                 dialog._SELL_NO = SellNo;
                 var result = dialog.ShowDialog(this);
                 if (result != DialogResult.OK)
@@ -302,7 +302,17 @@ namespace PowerPOS_Online
                 Param.SelectCustomerAge = 0;
                 Param.SelectCustomerSellPrice = 0;
                 lblStatus.Text = "";
-                Util.PrintReceipt(SellNo);
+                if (Param.SystemConfig.Bill.PrintType == "Y")
+                {
+                    var cnt = int.Parse(Param.SystemConfig.Bill.PrintCount.ToString());
+                    for (int i = 1; i <= cnt; i++)
+                        Util.PrintReceipt(SellNo);
+                }
+                else if (Param.SystemConfig.Bill.PrintType == "A")
+                {
+                    if (MessageBox.Show("คุณต้องการพิมพ์ใบเสร็จรับเงินหรือไม่ ?", "การพิมพ์", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        Util.PrintReceipt(SellNo);
+                }
                 LoadData();
             }
         }

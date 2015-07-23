@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            XPTable.Models.DataSourceColumnBinder dataSourceColumnBinder2 = new XPTable.Models.DataSourceColumnBinder();
-            XPTable.Renderers.DragDropRenderer dragDropRenderer2 = new XPTable.Renderers.DragDropRenderer();
+            XPTable.Models.DataSourceColumnBinder dataSourceColumnBinder1 = new XPTable.Models.DataSourceColumnBinder();
+            XPTable.Renderers.DragDropRenderer dragDropRenderer1 = new XPTable.Renderers.DragDropRenderer();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -48,15 +48,15 @@
             this.table1 = new XPTable.Models.Table();
             this.columnModel1 = new XPTable.Models.ColumnModel();
             this.clNo = new XPTable.Models.TextColumn();
-            this.clSellDate = new XPTable.Models.DateTimeColumn();
             this.clShop = new XPTable.Models.TextColumn();
-            this.clReceive = new XPTable.Models.DateTimeColumn();
             this.clCustomer = new XPTable.Models.TextColumn();
             this.tableModel1 = new XPTable.Models.TableModel();
             this.bwGetProduct = new System.ComponentModel.BackgroundWorker();
             this.bwDownloadImage = new System.ComponentModel.BackgroundWorker();
             this.bwGetShopName = new System.ComponentModel.BackgroundWorker();
             this.bwGetCustomerName = new System.ComponentModel.BackgroundWorker();
+            this.clSellDate = new XPTable.Models.TextColumn();
+            this.clReceivedDate = new XPTable.Models.TextColumn();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -238,10 +238,10 @@
             this.table1.BorderColor = System.Drawing.Color.Black;
             this.table1.ColumnModel = this.columnModel1;
             this.table1.DataMember = null;
-            this.table1.DataSourceColumnBinder = dataSourceColumnBinder2;
+            this.table1.DataSourceColumnBinder = dataSourceColumnBinder1;
             this.table1.Dock = System.Windows.Forms.DockStyle.Fill;
-            dragDropRenderer2.ForeColor = System.Drawing.Color.Red;
-            this.table1.DragDropRenderer = dragDropRenderer2;
+            dragDropRenderer1.ForeColor = System.Drawing.Color.Red;
+            this.table1.DragDropRenderer = dragDropRenderer1;
             this.table1.EnableHeaderContextMenu = false;
             this.table1.FullRowSelect = true;
             this.table1.GridLines = XPTable.Models.GridLines.Both;
@@ -263,7 +263,7 @@
             this.clNo,
             this.clSellDate,
             this.clShop,
-            this.clReceive,
+            this.clReceivedDate,
             this.clCustomer});
             // 
             // clNo
@@ -274,32 +274,12 @@
             this.clNo.Text = "ที่";
             this.clNo.Width = 40;
             // 
-            // clSellDate
-            // 
-            this.clSellDate.Alignment = XPTable.Models.ColumnAlignment.Center;
-            this.clSellDate.CustomDateTimeFormat = "d MMMM yyyy HH:mm:ss";
-            this.clSellDate.Editable = false;
-            this.clSellDate.IsTextTrimmed = false;
-            this.clSellDate.ShowDropDownButton = false;
-            this.clSellDate.Text = "วันที่ขาย";
-            this.clSellDate.Width = 180;
-            // 
             // clShop
             // 
             this.clShop.Editable = false;
             this.clShop.IsTextTrimmed = false;
             this.clShop.Text = "ชื่อร้าน";
             this.clShop.Width = 240;
-            // 
-            // clReceive
-            // 
-            this.clReceive.Alignment = XPTable.Models.ColumnAlignment.Center;
-            this.clReceive.CustomDateTimeFormat = "d MMMM yyyy HH:mm:ss";
-            this.clReceive.Editable = false;
-            this.clReceive.IsTextTrimmed = false;
-            this.clReceive.ShowDropDownButton = false;
-            this.clReceive.Text = "วันที่รับสินค้าเข้า";
-            this.clReceive.Width = 180;
             // 
             // clCustomer
             // 
@@ -326,6 +306,22 @@
             // 
             this.bwGetCustomerName.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwGetCustomerName_DoWork);
             this.bwGetCustomerName.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwGetCustomerName_RunWorkerCompleted);
+            // 
+            // clSellDate
+            // 
+            this.clSellDate.Alignment = XPTable.Models.ColumnAlignment.Center;
+            this.clSellDate.Editable = false;
+            this.clSellDate.IsTextTrimmed = false;
+            this.clSellDate.Text = "วันที่ขายสินค้า";
+            this.clSellDate.Width = 180;
+            // 
+            // clReceivedDate
+            // 
+            this.clReceivedDate.Alignment = XPTable.Models.ColumnAlignment.Center;
+            this.clReceivedDate.Editable = false;
+            this.clReceivedDate.IsTextTrimmed = false;
+            this.clReceivedDate.Text = "วันที่รับสินค้าเข้า";
+            this.clReceivedDate.Width = 180;
             // 
             // UcClaim
             // 
@@ -365,9 +361,7 @@
         private XPTable.Models.ColumnModel columnModel1;
         private XPTable.Models.TableModel tableModel1;
         private XPTable.Models.TextColumn clNo;
-        private XPTable.Models.DateTimeColumn clSellDate;
         private XPTable.Models.TextColumn clShop;
-        private XPTable.Models.DateTimeColumn clReceive;
         private XPTable.Models.TextColumn clCustomer;
         private System.Windows.Forms.PictureBox ptbProduct;
         private System.Windows.Forms.Label lblWarrantyStatus;
@@ -378,5 +372,7 @@
         private System.ComponentModel.BackgroundWorker bwDownloadImage;
         private System.ComponentModel.BackgroundWorker bwGetShopName;
         private System.ComponentModel.BackgroundWorker bwGetCustomerName;
+        private XPTable.Models.TextColumn clSellDate;
+        private XPTable.Models.TextColumn clReceivedDate;
     }
 }

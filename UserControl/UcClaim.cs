@@ -12,6 +12,8 @@ using XPTable.Models;
 using System.Net;
 using System.IO;
 using System.Collections;
+using System.Globalization;
+using System.Threading;
 
 namespace PowerPOS_Online
 {
@@ -104,20 +106,21 @@ namespace PowerPOS_Online
                 tableModel1.RowHeight = 22;
                 shopList = new List<string>();
                 customerList = new List<string>();
+
                 for (int i = 0; i < barcodeEntityList.Count; i++)
                 {
                     tableModel1.Rows.Add(new Row(
                         new Cell[] {
                     new Cell("" + (i+1)),
-                    new Cell(barcodeEntityList[i].SellDate),
-                    new Cell(Param.SshopNameHashtable.Contains(barcodeEntityList[i].PartitionKey) ? Param.SshopNameHashtable[barcodeEntityList[i].PartitionKey].ToString() : barcodeEntityList[i].PartitionKey),
-                    new Cell(barcodeEntityList[i].ReceivedDate),
+                    new Cell(barcodeEntityList[i].SellDate.ToLocalTime().ToString("dd MMMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"))),
+                    new Cell(Param.ShopNameHashtable.Contains(barcodeEntityList[i].PartitionKey) ? Param.ShopNameHashtable[barcodeEntityList[i].PartitionKey].ToString() : barcodeEntityList[i].PartitionKey),
+                    new Cell(barcodeEntityList[i].ReceivedDate.ToLocalTime().ToString("dd MMMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"))),
                     new Cell(Param.CustomerNameHashtable.Contains(barcodeEntityList[i].Customer) ? Param.CustomerNameHashtable[barcodeEntityList[i].Customer].ToString() : barcodeEntityList[i].Customer)
                     //,
                     //new Cell(Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy") == "01/01/0544" ? "-" : Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy hh:mm:ss")),
                     })
                     );
-                    if (!Param.SshopNameHashtable.Contains(barcodeEntityList[i].PartitionKey))
+                    if (!Param.ShopNameHashtable.Contains(barcodeEntityList[i].PartitionKey))
                         shopList.Add(barcodeEntityList[i].PartitionKey);
                     if (!Param.CustomerNameHashtable.Contains(barcodeEntityList[i].Customer))
                         customerList.Add(barcodeEntityList[i].Customer);
@@ -136,7 +139,7 @@ namespace PowerPOS_Online
             TableResult retrievedResult = azureTable.Execute(retrieveOperation);
             productEntity = (ProductEntity)retrievedResult.Result;
             
-            var filename = @"Resource/Images/Product/" + barcodeEntityList[index].PartitionKey + "-" + barcodeEntityList[index].Product + ".jpg";
+            var filename = @"Resource/Images/Product/" + barcodeEntityList[index].Product + ".jpg";
             if (!File.Exists(filename))
             {
                 downloading = true;
@@ -179,7 +182,7 @@ namespace PowerPOS_Online
                 ptbProduct.Image = null;
 
                 var index = barcodeEntityList.Count - 1;
-                var filename = @"Resource/Images/Product/" + barcodeEntityList[index].PartitionKey + "-" + barcodeEntityList[index].Product + ".jpg";
+                var filename = @"Resource/Images/Product/" + barcodeEntityList[index].Product + ".jpg";
                 if (File.Exists(filename) && !downloading)
                 {
                     try
@@ -214,7 +217,7 @@ namespace PowerPOS_Online
         private void bwDownloadImage_DoWork(object sender, DoWorkEventArgs e)
         {
             var index = barcodeEntityList.Count - 1;
-            var filename = @"Resource/Images/Product/" + barcodeEntityList[index].PartitionKey + "-" + barcodeEntityList[index].Product + ".jpg";
+            var filename = @"Resource/Images/Product/" + barcodeEntityList[index].Product + ".jpg";
             //var sp = productEntity.CoverImage.Split('|');
             //if (sp.Length > 2)
             //{
@@ -250,7 +253,7 @@ namespace PowerPOS_Online
                 );
                 foreach (ShopEntity entity in azureTable.ExecuteQuery(query))
                 {
-                    Param.SshopNameHashtable[shopList[i]] = entity.Name;
+                    Param.ShopNameHashtable[shopList[i]] = entity.Name;
                 }
             }
         }
@@ -261,7 +264,7 @@ namespace PowerPOS_Online
             {
                 try
                 {
-                    tableModel1.Rows[i].Cells[2].Text = Param.SshopNameHashtable[tableModel1.Rows[i].Cells[2].Text].ToString();
+                    tableModel1.Rows[i].Cells[2].Text = Param.ShopNameHashtable[tableModel1.Rows[i].Cells[2].Text].ToString();
                 }
                 catch { }
             }

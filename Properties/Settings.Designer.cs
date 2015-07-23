@@ -25,7 +25,7 @@ namespace PowerPOS_Online.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://power-api-test.azurewebsites.net")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://power-api.azurewebsites.net")]
         public string ApiUrl {
             get {
                 return ((string)(this["ApiUrl"]));
@@ -149,6 +149,27 @@ namespace PowerPOS_Online.Properties {
             }
             set {
                 this["DevicePrinter"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("9ADBB968-40D3-4FCD-B9A6-D83F66572F38")]
+        public string ApiKey {
+            get {
+                return ((string)(this["ApiKey"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LogoPath {
+            get {
+                return ((string)(this["LogoPath"]));
+            }
+            set {
+                this["LogoPath"] = value;
             }
         }
     }

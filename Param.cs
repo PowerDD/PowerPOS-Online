@@ -17,7 +17,7 @@ namespace PowerPOS_Online
         public enum StatusIcon { None, Loading, Success, Info };
 
         public static string ApiUrl;
-        public const string ApiKey = "LMK6OUB3-7AAY-TNZ4-AX2I-LWWGBICKS00C";
+        public static string ApiKey;
         public static bool ApiChecked;
         public static string LicenseKey;
         public static string CpuId;
@@ -37,6 +37,8 @@ namespace PowerPOS_Online
 
         public const string LoadingImageLocal = @"Resource/Images/Loading.gif";
         public const string LoadingImageUrl = "http://a.lnwpic.com/et1xpc.gif";
+        public static string LogoPath;
+        public const string LogoUrl = "https://lh3.googleusercontent.com/of2iTh9rSFHDQreN0Pu1CIV1_-K9BwqTyfFqNMkDtRA=w2655-no";
 
         public static string SelectCustomerId;
         public static string SelectCustomerName;
@@ -66,7 +68,7 @@ namespace PowerPOS_Online
         public static List<UserEntity> UserEntityList;
 
 
-        public static Hashtable SshopNameHashtable = new Hashtable();
+        public static Hashtable ShopNameHashtable = new Hashtable();
         public static Hashtable CustomerNameHashtable = new Hashtable();
 
 

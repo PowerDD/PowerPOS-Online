@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="ApiUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://power-api-test.azurewebsites.net</Value>
+      <Value Profile="(Default)">https://power-api.azurewebsites.net</Value>
     </Setting>
     <Setting Name="LicenseKey" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -33,6 +33,12 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="DevicePrinter" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ApiKey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">9ADBB968-40D3-4FCD-B9A6-D83F66572F38</Value>
+    </Setting>
+    <Setting Name="LogoPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

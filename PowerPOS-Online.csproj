@@ -408,6 +408,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\daily.png" />
+    <None Include="Resources\table-money.png" />
+    <None Include="Resources\printer.png" />
+    <None Include="Resources\image.png" />
     <None Include="Resources\person.png" />
     <None Include="bin\Debug\Resource\Images\Loading.gif" />
     <Content Include="icon.ico" />
