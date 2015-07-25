@@ -33,13 +33,17 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.gbxBill = new System.Windows.Forms.GroupBox();
+            this.btnSaveBill = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.cbxPrinter = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.txtBillFooter = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.ptbLogo = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mniResetLogo = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniChangeLogo = new System.Windows.Forms.ToolStripMenuItem();
             this.txtBillHeader = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -55,20 +59,16 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.bwUploadLogo = new System.ComponentModel.BackgroundWorker();
             this.bwDownloadLogo = new System.ComponentModel.BackgroundWorker();
-            this.mniChangeLogo = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnSaveBill = new System.Windows.Forms.Button();
-            this.ptbLogo = new System.Windows.Forms.PictureBox();
-            this.mniResetLogo = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.gbxBill.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbLogo)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrintCount)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbLogo)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -123,6 +123,22 @@
             this.gbxBill.TabIndex = 0;
             this.gbxBill.TabStop = false;
             this.gbxBill.Text = "ใบเสร็จรับเงิน";
+            // 
+            // btnSaveBill
+            // 
+            this.btnSaveBill.Enabled = false;
+            this.btnSaveBill.Image = global::PowerPOS_Online.Properties.Resources.disk_return_black;
+            this.btnSaveBill.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnSaveBill.Location = new System.Drawing.Point(205, 399);
+            this.btnSaveBill.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSaveBill.Name = "btnSaveBill";
+            this.btnSaveBill.Padding = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.btnSaveBill.Size = new System.Drawing.Size(102, 33);
+            this.btnSaveBill.TabIndex = 12;
+            this.btnSaveBill.Text = "บันทึกข้อมูล";
+            this.btnSaveBill.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnSaveBill.UseVisualStyleBackColor = true;
+            this.btnSaveBill.Click += new System.EventHandler(this.btnSaveBill_Click);
             // 
             // groupBox4
             // 
@@ -195,6 +211,18 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "หัวใบเสร็จ";
             // 
+            // ptbLogo
+            // 
+            this.ptbLogo.BackColor = System.Drawing.Color.Azure;
+            this.ptbLogo.ContextMenuStrip = this.contextMenuStrip1;
+            this.ptbLogo.Location = new System.Drawing.Point(8, 102);
+            this.ptbLogo.Name = "ptbLogo";
+            this.ptbLogo.Size = new System.Drawing.Size(283, 65);
+            this.ptbLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.ptbLogo.TabIndex = 10;
+            this.ptbLogo.TabStop = false;
+            this.ptbLogo.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ptbLogo_MouseDoubleClick);
+            // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -202,6 +230,22 @@
             this.mniChangeLogo});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(184, 48);
+            // 
+            // mniResetLogo
+            // 
+            this.mniResetLogo.Image = global::PowerPOS_Online.Properties.Resources.arrow_circle_225_left;
+            this.mniResetLogo.Name = "mniResetLogo";
+            this.mniResetLogo.Size = new System.Drawing.Size(183, 22);
+            this.mniResetLogo.Text = "ใช้ภาพเริ่มต้นของระบบ";
+            this.mniResetLogo.Click += new System.EventHandler(this.mniResetLogo_Click);
+            // 
+            // mniChangeLogo
+            // 
+            this.mniChangeLogo.Image = global::PowerPOS_Online.Properties.Resources.image;
+            this.mniChangeLogo.Name = "mniChangeLogo";
+            this.mniChangeLogo.Size = new System.Drawing.Size(183, 22);
+            this.mniChangeLogo.Text = "เปลี่ยนภาพ";
+            this.mniChangeLogo.Click += new System.EventHandler(this.mniChangeLogo_Click);
             // 
             // txtBillHeader
             // 
@@ -361,50 +405,6 @@
             this.bwDownloadLogo.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwDownloadLogo_DoWork);
             this.bwDownloadLogo.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwDownloadLogo_RunWorkerCompleted);
             // 
-            // mniChangeLogo
-            // 
-            this.mniChangeLogo.Image = global::PowerPOS_Online.Properties.Resources.image;
-            this.mniChangeLogo.Name = "mniChangeLogo";
-            this.mniChangeLogo.Size = new System.Drawing.Size(183, 22);
-            this.mniChangeLogo.Text = "เปลี่ยนภาพ";
-            this.mniChangeLogo.Click += new System.EventHandler(this.mniChangeLogo_Click);
-            // 
-            // btnSaveBill
-            // 
-            this.btnSaveBill.Enabled = false;
-            this.btnSaveBill.Image = global::PowerPOS_Online.Properties.Resources.disk_return_black;
-            this.btnSaveBill.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnSaveBill.Location = new System.Drawing.Point(205, 399);
-            this.btnSaveBill.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSaveBill.Name = "btnSaveBill";
-            this.btnSaveBill.Padding = new System.Windows.Forms.Padding(7, 0, 7, 0);
-            this.btnSaveBill.Size = new System.Drawing.Size(102, 33);
-            this.btnSaveBill.TabIndex = 12;
-            this.btnSaveBill.Text = "บันทึกข้อมูล";
-            this.btnSaveBill.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnSaveBill.UseVisualStyleBackColor = true;
-            this.btnSaveBill.Click += new System.EventHandler(this.btnSaveBill_Click);
-            // 
-            // ptbLogo
-            // 
-            this.ptbLogo.BackColor = System.Drawing.Color.Azure;
-            this.ptbLogo.ContextMenuStrip = this.contextMenuStrip1;
-            this.ptbLogo.Location = new System.Drawing.Point(8, 102);
-            this.ptbLogo.Name = "ptbLogo";
-            this.ptbLogo.Size = new System.Drawing.Size(283, 65);
-            this.ptbLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.ptbLogo.TabIndex = 10;
-            this.ptbLogo.TabStop = false;
-            this.ptbLogo.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ptbLogo_MouseDoubleClick);
-            // 
-            // mniResetLogo
-            // 
-            this.mniResetLogo.Image = global::PowerPOS_Online.Properties.Resources.arrow_circle_225_left;
-            this.mniResetLogo.Name = "mniResetLogo";
-            this.mniResetLogo.Size = new System.Drawing.Size(183, 22);
-            this.mniResetLogo.Text = "ใช้ภาพเริ่มต้นของระบบ";
-            this.mniResetLogo.Click += new System.EventHandler(this.mniResetLogo_Click);
-            // 
             // UcConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -424,11 +424,11 @@
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbLogo)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrintCount)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbLogo)).EndInit();
             this.ResumeLayout(false);
 
         }

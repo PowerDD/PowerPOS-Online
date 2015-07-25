@@ -1,0 +1,168 @@
+﻿namespace PowerPOS_Online
+{
+    partial class FmSellDetial
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            XPTable.Models.DataSourceColumnBinder dataSourceColumnBinder2 = new XPTable.Models.DataSourceColumnBinder();
+            XPTable.Renderers.DragDropRenderer dragDropRenderer2 = new XPTable.Renderers.DragDropRenderer();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.table1 = new XPTable.Models.Table();
+            this.columnModel1 = new XPTable.Models.ColumnModel();
+            this.No = new XPTable.Models.TextColumn();
+            this.ProductCode = new XPTable.Models.TextColumn();
+            this.ProductName = new XPTable.Models.TextColumn();
+            this.tableModel1 = new XPTable.Models.TableModel();
+            this.Price = new XPTable.Models.NumberColumn();
+            this.Quantity = new XPTable.Models.NumberColumn();
+            this.Total = new XPTable.Models.NumberColumn();
+            this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.table1)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // panel1
+            // 
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(705, 62);
+            this.panel1.TabIndex = 0;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.table1);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 62);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(705, 332);
+            this.panel2.TabIndex = 1;
+            // 
+            // table1
+            // 
+            this.table1.BorderColor = System.Drawing.Color.Black;
+            this.table1.ColumnModel = this.columnModel1;
+            this.table1.DataMember = null;
+            this.table1.DataSourceColumnBinder = dataSourceColumnBinder2;
+            this.table1.Dock = System.Windows.Forms.DockStyle.Fill;
+            dragDropRenderer2.ForeColor = System.Drawing.Color.Red;
+            this.table1.DragDropRenderer = dragDropRenderer2;
+            this.table1.EnableHeaderContextMenu = false;
+            this.table1.FullRowSelect = true;
+            this.table1.GridLines = XPTable.Models.GridLines.Both;
+            this.table1.GridLinesContrainedToData = false;
+            this.table1.HeaderFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.table1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.table1.Location = new System.Drawing.Point(0, 0);
+            this.table1.Name = "table1";
+            this.table1.NoItemsText = "";
+            this.table1.SelectionStyle = XPTable.Models.SelectionStyle.Grid;
+            this.table1.Size = new System.Drawing.Size(705, 332);
+            this.table1.TabIndex = 13;
+            this.table1.TableModel = this.tableModel1;
+            this.table1.TabStop = false;
+            this.table1.Text = "table1";
+            this.table1.UnfocusedBorderColor = System.Drawing.Color.Black;
+            // 
+            // columnModel1
+            // 
+            this.columnModel1.Columns.AddRange(new XPTable.Models.Column[] {
+            this.No,
+            this.ProductCode,
+            this.ProductName,
+            this.Price,
+            this.Quantity,
+            this.Total});
+            // 
+            // No
+            // 
+            this.No.IsTextTrimmed = false;
+            this.No.Text = "ที่";
+            this.No.Width = 40;
+            // 
+            // ProductCode
+            // 
+            this.ProductCode.IsTextTrimmed = false;
+            this.ProductCode.Text = "รหัสสินค้า";
+            this.ProductCode.Width = 90;
+            // 
+            // ProductName
+            // 
+            this.ProductName.IsTextTrimmed = false;
+            this.ProductName.Text = "ชื่อสินค้า";
+            this.ProductName.Width = 250;
+            // 
+            // Price
+            // 
+            this.Price.Alignment = XPTable.Models.ColumnAlignment.Right;
+            this.Price.IsTextTrimmed = false;
+            this.Price.Text = "ราคา";
+            // 
+            // Quantity
+            // 
+            this.Quantity.Alignment = XPTable.Models.ColumnAlignment.Right;
+            this.Quantity.IsTextTrimmed = false;
+            this.Quantity.Text = "จำนวน";
+            // 
+            // Total
+            // 
+            this.Total.Alignment = XPTable.Models.ColumnAlignment.Right;
+            this.Total.IsTextTrimmed = false;
+            this.Total.Text = "รวม";
+            // 
+            // FmSellDetial
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(705, 394);
+            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.panel1);
+            this.Name = "FmSellDetial";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "รายละเอียดการขาย";
+            this.Load += new System.EventHandler(this.FmSellDetial_Load);
+            this.panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.table1)).EndInit();
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
+        private XPTable.Models.ColumnModel columnModel1;
+        private XPTable.Models.TableModel tableModel1;
+        private XPTable.Models.Table table1;
+        private XPTable.Models.TextColumn No;
+        private XPTable.Models.TextColumn ProductCode;
+        private XPTable.Models.TextColumn ProductName;
+        private XPTable.Models.NumberColumn Price;
+        private XPTable.Models.NumberColumn Quantity;
+        private XPTable.Models.NumberColumn Total;
+    }
+}

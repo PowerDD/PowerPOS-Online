@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -159,7 +160,53 @@ namespace PowerPOS_Online
 
         private void mniImportBarcode_Click(object sender, EventArgs e)
         {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
 
+            if (opdImportBarcode.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            {
+                DataTable dt = Util.DBQuery(string.Format(@"SELECT IFNULL(SUBSTR(MAX(SellNo), 1, 5)||SUBSTR('0000'||(SUBSTR(MAX(SellNo), 6, 4)+1), -4, 4), SUBSTR(STRFTIME('%Y%m{0}'), 3)||'0001') SellNo
+                    FROM Barcode
+                    WHERE SUBSTR(SellNo, 1, 4) = SUBSTR(STRFTIME('%Y%m'), 3, 4)
+                    AND SUBSTR(SellNo, 5, 1) = '{0}'", "Z"));
+                var SellNo = dt.Rows[0]["SellNo"].ToString();
+
+                FileInfo f = new FileInfo(opdImportBarcode.FileName);
+                string date = f.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss");
+                Console.WriteLine(date);
+
+                StreamReader sr = new StreamReader(opdImportBarcode.FileName);
+                string barcode = sr.ReadLine();
+                while( barcode != null)
+                {
+                    Util.DBExecute(string.Format(@"UPDATE Barcode SET
+                        SellDate= '{0}', 
+                        SellBy = '0000', 
+                        SellNo ='{2}',
+                        SellFinished = 1 ,
+                        Sync = 1,
+                        Customer = '000000',
+                        SellPrice = (SELECT  Price  FROM Product WHERE shop = '00000002' AND id = (SELECT Product FROM Barcode  WHERE Barcode   = {1}))
+                        WHERE Barcode = {1}
+                    ",date,barcode,SellNo));
+
+                    Console.WriteLine(barcode);
+                    barcode = sr.ReadLine();
+                }
+                dt = Util.DBQuery(string.Format(@"SELECT COUNT(*) count FROM Barcode WHERE SellNo = '{0}'", SellNo));
+                if (Convert.ToInt32(dt.Rows[0]["count"].ToString()) > 0)
+                {
+
+                    Util.DBExecute(string.Format(@"INSERT INTO SellHeader (SellNo, Profit, TotalPrice, Cash, Customer, CustomerSex, CustomerAge, SellDate, SellBy,Sync)
+                    SELECT '{0}', (SELECT SUM(SellPrice-Cost-OperationCost) FROM Barcode WHERE SellNo = '{0}'),
+                    (SELECT SUM(SellPrice) FROM Barcode WHERE SellNo = '{0}'),(SELECT SUM(SellPrice) FROM Barcode WHERE SellNo = '{0}'), '000000', '', 0, '{1}', '{2}',1",
+                       SellNo, date, Param.UserId));
+
+                    Util.DBExecute(string.Format(@"INSERT INTO SellDetail (SellNo, Product, SellPrice, Cost, Quantity, Sync)
+                    SELECT '{0}', Product, SUM(SellPrice), SUM(Cost), COUNT(*), 1 FROM Barcode WHERE SellNo = '{0}' GROUP BY Product",
+                        SellNo));
+                    MessageBox.Show("นำข้อมูลเข้าระบบเรียบร้อยแล้ว จำนวน : " + dt.Rows[0]["count"].ToString() + " Records (ไฟล์ : " + opdImportBarcode.FileName + ")", "ยืนยันการนำข้อมูลเข้าระบบ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
         }
 
         private void mniImportExcel_Click(object sender, EventArgs e)

@@ -34,33 +34,33 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mniSaveImage = new System.Windows.Forms.ToolStripMenuItem();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dtpStartDate = new System.Windows.Forms.DateTimePicker();
             this.cbbReportType = new System.Windows.Forms.ComboBox();
             this.tableModel1 = new XPTable.Models.TableModel();
             this.columnModel1 = new XPTable.Models.ColumnModel();
             this.textColumn1 = new XPTable.Models.TextColumn();
+            this.textColumn5 = new XPTable.Models.TextColumn();
             this.textColumn2 = new XPTable.Models.TextColumn();
             this.textColumn3 = new XPTable.Models.TextColumn();
             this.textColumn4 = new XPTable.Models.TextColumn();
             this.numberColumn1 = new XPTable.Models.NumberColumn();
             this.table1 = new XPTable.Models.Table();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.textColumn5 = new XPTable.Models.TextColumn();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.miPrintReceipt = new System.Windows.Forms.ToolStripMenuItem();
             this.miDetail = new System.Windows.Forms.ToolStripMenuItem();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.mniSaveImage = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.contextMenuStrip2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.table1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
-            this.contextMenuStrip2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -96,6 +96,41 @@
             this.panel3.Padding = new System.Windows.Forms.Padding(7, 10, 7, 0);
             this.panel3.Size = new System.Drawing.Size(247, 443);
             this.panel3.TabIndex = 10;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.ContextMenuStrip = this.contextMenuStrip2;
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pictureBox1.Image = global::PowerPOS_Online.Properties.Resources.daily;
+            this.pictureBox1.Location = new System.Drawing.Point(7, 106);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(233, 348);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 2;
+            this.pictureBox1.TabStop = false;
+            // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniSaveImage});
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(137, 26);
+            // 
+            // mniSaveImage
+            // 
+            this.mniSaveImage.Image = global::PowerPOS_Online.Properties.Resources.disk_return_black;
+            this.mniSaveImage.Name = "mniSaveImage";
+            this.mniSaveImage.Size = new System.Drawing.Size(136, 22);
+            this.mniSaveImage.Text = "บันทึกรูปภาพ";
+            this.mniSaveImage.Click += new System.EventHandler(this.mniSaveImage_Click);
+            // 
+            // panel2
+            // 
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(7, 96);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(233, 10);
+            this.panel2.TabIndex = 3;
             // 
             // groupBox1
             // 
@@ -149,6 +184,14 @@
             this.textColumn1.IsTextTrimmed = false;
             this.textColumn1.Text = "ที่";
             this.textColumn1.Width = 40;
+            // 
+            // textColumn5
+            // 
+            this.textColumn5.Alignment = XPTable.Models.ColumnAlignment.Center;
+            this.textColumn5.Editable = false;
+            this.textColumn5.IsTextTrimmed = false;
+            this.textColumn5.Text = "วันที่";
+            this.textColumn5.Width = 135;
             // 
             // textColumn2
             // 
@@ -205,6 +248,7 @@
             this.table1.TableModel = this.tableModel1;
             this.table1.Text = "table1";
             this.table1.UnfocusedBorderColor = System.Drawing.Color.Black;
+            this.table1.CellClick += new XPTable.Events.CellMouseEventHandler(this.table1_CellClick);
             // 
             // contextMenuStrip1
             // 
@@ -214,39 +258,13 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(166, 48);
             // 
-            // textColumn5
-            // 
-            this.textColumn5.Alignment = XPTable.Models.ColumnAlignment.Center;
-            this.textColumn5.Editable = false;
-            this.textColumn5.IsTextTrimmed = false;
-            this.textColumn5.Text = "วันที่";
-            this.textColumn5.Width = 135;
-            // 
-            // panel2
-            // 
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel2.Location = new System.Drawing.Point(7, 96);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(233, 10);
-            this.panel2.TabIndex = 3;
-            // 
-            // contextMenuStrip2
-            // 
-            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mniSaveImage});
-            this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(137, 26);
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.DefaultExt = "png";
-            // 
             // miPrintReceipt
             // 
             this.miPrintReceipt.Image = global::PowerPOS_Online.Properties.Resources.printer;
             this.miPrintReceipt.Name = "miPrintReceipt";
             this.miPrintReceipt.Size = new System.Drawing.Size(165, 22);
             this.miPrintReceipt.Text = "พิมพ์ใบเสร็จรับเงิน";
+            this.miPrintReceipt.Click += new System.EventHandler(this.miPrintReceipt_Click);
             // 
             // miDetail
             // 
@@ -254,26 +272,11 @@
             this.miDetail.Name = "miDetail";
             this.miDetail.Size = new System.Drawing.Size(165, 22);
             this.miDetail.Text = "รายละเอียดการขาย";
+            this.miDetail.Click += new System.EventHandler(this.miDetail_Click);
             // 
-            // pictureBox1
+            // saveFileDialog1
             // 
-            this.pictureBox1.ContextMenuStrip = this.contextMenuStrip2;
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pictureBox1.Image = global::PowerPOS_Online.Properties.Resources.daily;
-            this.pictureBox1.Location = new System.Drawing.Point(7, 106);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(233, 348);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
-            // 
-            // mniSaveImage
-            // 
-            this.mniSaveImage.Image = global::PowerPOS_Online.Properties.Resources.disk_return_black;
-            this.mniSaveImage.Name = "mniSaveImage";
-            this.mniSaveImage.Size = new System.Drawing.Size(136, 22);
-            this.mniSaveImage.Text = "บันทึกรูปภาพ";
-            this.mniSaveImage.Click += new System.EventHandler(this.mniSaveImage_Click);
+            this.saveFileDialog1.DefaultExt = "png";
             // 
             // UcReport
             // 
@@ -288,11 +291,11 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.contextMenuStrip2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.table1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
-            this.contextMenuStrip2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }

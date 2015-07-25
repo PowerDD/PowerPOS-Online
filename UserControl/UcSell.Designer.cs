@@ -67,6 +67,8 @@
             this.panel7 = new System.Windows.Forms.Panel();
             this.btnCancel = new System.Windows.Forms.Button();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.panel8 = new System.Windows.Forms.Panel();
+            this.btnCancelProduct = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -463,7 +465,7 @@
             // 
             this.btnConfirm.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnConfirm.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.btnConfirm.Location = new System.Drawing.Point(0, 56);
+            this.btnConfirm.Location = new System.Drawing.Point(0, 102);
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(233, 38);
             this.btnConfirm.TabIndex = 11;
@@ -483,25 +485,47 @@
             // 
             this.btnCancel.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnCancel.Font = new System.Drawing.Font("Tahoma", 11.25F);
-            this.btnCancel.Location = new System.Drawing.Point(0, 10);
+            this.btnCancel.Location = new System.Drawing.Point(0, 56);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(233, 38);
             this.btnCancel.TabIndex = 12;
-            this.btnCancel.Text = "ยกเลิกการขาย";
+            this.btnCancel.Text = "ยกเลิกการขายทั้งบิล";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // panel6
             // 
             this.panel6.Controls.Add(this.btnConfirm);
-            this.panel6.Controls.Add(this.panel7);
+            this.panel6.Controls.Add(this.panel8);
             this.panel6.Controls.Add(this.btnCancel);
+            this.panel6.Controls.Add(this.panel7);
+            this.panel6.Controls.Add(this.btnCancelProduct);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel6.Location = new System.Drawing.Point(7, 344);
             this.panel6.Name = "panel6";
             this.panel6.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.panel6.Size = new System.Drawing.Size(233, 120);
+            this.panel6.Size = new System.Drawing.Size(233, 154);
             this.panel6.TabIndex = 10;
+            // 
+            // panel8
+            // 
+            this.panel8.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel8.Location = new System.Drawing.Point(0, 94);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(233, 8);
+            this.panel8.TabIndex = 13;
+            // 
+            // btnCancelProduct
+            // 
+            this.btnCancelProduct.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnCancelProduct.Font = new System.Drawing.Font("Tahoma", 11.25F);
+            this.btnCancelProduct.Location = new System.Drawing.Point(0, 10);
+            this.btnCancelProduct.Name = "btnCancelProduct";
+            this.btnCancelProduct.Size = new System.Drawing.Size(233, 38);
+            this.btnCancelProduct.TabIndex = 14;
+            this.btnCancelProduct.Text = "ยกเลิกการขายทีละรายการ";
+            this.btnCancelProduct.UseVisualStyleBackColor = true;
+            this.btnCancelProduct.Click += new System.EventHandler(this.btnCancelProduct_Click);
             // 
             // panel3
             // 
@@ -607,5 +631,7 @@
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel8;
+        private System.Windows.Forms.Button btnCancelProduct;
     }
 }

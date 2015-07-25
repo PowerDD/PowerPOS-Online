@@ -16,6 +16,7 @@ namespace PowerPOS_Online
         public enum Screen { Sell, ReceiveProduct, Product, Customer, User, Brand, Category, Color, Report, ShopInfo, Config, Claim };
         public enum StatusIcon { None, Loading, Success, Info };
 
+        public static UcSell UcSell;
         public static string ApiUrl;
         public static string ApiKey;
         public static bool ApiChecked;

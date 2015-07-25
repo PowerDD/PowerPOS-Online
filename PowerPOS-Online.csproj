@@ -61,7 +61,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -138,6 +138,18 @@
     <Compile Include="Entity\CustomerEntity.cs" />
     <Compile Include="Entity\BarcodeEntity.cs" />
     <Compile Include="Entity\ProductUpdateEntity.cs" />
+    <Compile Include="FmSellDetial.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FmSellDetial.Designer.cs">
+      <DependentUpon>FmSellDetial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\FmCancelProduct.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmCancelProduct.Designer.cs">
+      <DependentUpon>FmCancelProduct.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form\FmAddCustomer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -299,6 +311,9 @@
     <Compile Include="Entity\UserGroupEntity.cs" />
     <Compile Include="Entity\UserUpdateEntity.cs" />
     <Compile Include="Util.cs" />
+    <EmbeddedResource Include="FmSellDetial.resx">
+      <DependentUpon>FmSellDetial.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form\FmAddCustomer.resx">
       <DependentUpon>FmAddCustomer.cs</DependentUpon>
     </EmbeddedResource>
@@ -307,6 +322,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form\FmAddUser.resx">
       <DependentUpon>FmAddUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmCancelProduct.resx">
+      <DependentUpon>FmCancelProduct.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\FmCashReceive.resx">
       <DependentUpon>FmCashReceive.cs</DependentUpon>

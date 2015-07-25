@@ -20,12 +20,14 @@ namespace PowerPOS_Online
 
         private void UcSell_Load(object sender, EventArgs e)
         {
+            
             Util.InitialTable(table1);
             Param.SelectCustomerId = "000000";
             Param.SelectCustomerName = "ลูกค้าทั่วไป";
             Param.SelectCustomerSex = "";
             Param.SelectCustomerAge = 0;
             Param.SelectCustomerSellPrice = 0;
+            Param.UcSell = this;
             LoadData();
             SelectCustomer(sender, e);
         }
@@ -202,7 +204,7 @@ namespace PowerPOS_Online
             }
         }
 
-        private void LoadData()
+        public void LoadData()
         {
             DataTable dt = Util.DBQuery(string.Format(@"SELECT p.ID, p.Name, p.Price{2} Price, ProductCount
                     FROM (SELECT Product, COUNT(*) ProductCount FROM Barcode WHERE SellBy = '{0}' GROUP BY Product) b 
@@ -236,8 +238,8 @@ namespace PowerPOS_Online
             lblPrice.Text = sumPrice.ToString("#,##0");
 
             btnCancel.Enabled = sumPrice > 0;
+            btnCancelProduct.Enabled = sumPrice > 0;
             btnConfirm.Enabled = sumPrice > 0;
-
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -248,6 +250,13 @@ namespace PowerPOS_Online
                 Util.DBExecute(string.Format(@"UPDATE Barcode SET SellBy = '', Sync = 1 WHERE SellBy = '{0}'", Param.CpuId));
                 LoadData();
             }
+        }
+
+        private void btnCancelProduct_Click(object sender, EventArgs e)
+        {
+            FmCancelProduct frm = new FmCancelProduct();
+            frm.Show();
+           
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)
@@ -313,6 +322,12 @@ namespace PowerPOS_Online
                     if (MessageBox.Show("คุณต้องการพิมพ์ใบเสร็จรับเงินหรือไม่ ?", "การพิมพ์", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                         Util.PrintReceipt(SellNo);
                 }
+
+                lblCustomerName.Text = "ลูกค้าทั่วไป";
+                Param.SelectCustomerSex = "";
+                Param.SelectCustomerAge = 0;
+                Param.SelectCustomerSellPrice = 0;
+                SelectCustomer(sender, (e));
                 LoadData();
             }
         }

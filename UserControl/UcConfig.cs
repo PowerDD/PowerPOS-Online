@@ -188,6 +188,7 @@ namespace PowerPOS_Online
             {
             }
 
+            Param.DevicePrinter = cbxPrinter.SelectedItem.ToString();
             bwUpdateConfig.RunWorkerAsync();
         }
 

@@ -18,6 +18,7 @@ namespace PowerPOS_Online
 {
     public partial class UcReport : UserControl
     {
+        int row = -1;
         public UcReport()
         {
             InitializeComponent();
@@ -58,7 +59,7 @@ namespace PowerPOS_Online
                 tableModel1.Rows.Add(new Row(
                     new Cell[] {
                         new Cell("" + (i+1)),
-                        new Cell(dt.Rows[i]["SellDate"].ToString()),
+                        new Cell(Convert.ToDateTime(dt.Rows[i]["SellDate"].ToString()).ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")),
                         new Cell(dt.Rows[i]["SellNo"].ToString()),
                         new Cell(dt.Rows[i]["Firstname"].ToString()+" "+dt.Rows[i]["Lastname"].ToString()),
                         new Cell(mobile == "" ? "-" : mobile),
@@ -145,9 +146,9 @@ namespace PowerPOS_Online
                 g.DrawString(measureString, stringFont, drawBrush, (pictureBox1.Image.Width - stringSize.Width - 50) , 334);
 
 
-                measureString = sumProfit.ToString("#,##0");
-                stringSize = g.MeasureString(measureString, stringFont);
-                g.DrawString(measureString, stringFont, drawBrush, (pictureBox1.Image.Width - stringSize.Width - 50), 428);
+                //measureString = sumProfit.ToString("#,##0");
+                //stringSize = g.MeasureString(measureString, stringFont);
+                //g.DrawString(measureString, stringFont, drawBrush, (pictureBox1.Image.Width - stringSize.Width - 50), 428);
 
                 drawBrush = new SolidBrush(ColorTranslator.FromHtml("#fa3711"));
                 measureString = avgPrice.ToString("#,##0");
@@ -184,6 +185,50 @@ namespace PowerPOS_Online
             if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
             {
                 pictureBox1.Image.Save(saveFileDialog1.FileName, ImageFormat.Png);
+            }
+        }
+
+        private void table1_CellClick(object sender, XPTable.Events.CellMouseEventArgs e)
+        {
+            if (e.Row < table1.RowCount)
+            {
+                row = e.Row;
+            }
+        }
+
+        private void miPrintReceipt_Click(object sender, EventArgs e)
+        {
+            if (row != -1)
+            {
+                string sellNo = tableModel1.Rows[row].Cells[2].Text;
+                if (Param.SystemConfig.Bill.PrintType == "Y")
+                {
+                    var cnt = int.Parse(Param.SystemConfig.Bill.PrintCount.ToString());
+                    for (int i = 1; i <= cnt; i++)
+                        Util.PrintReceipt(sellNo);
+                }
+                else if (Param.SystemConfig.Bill.PrintType == "A")
+                {
+                    if (MessageBox.Show("คุณต้องการพิมพ์ใบเสร็จรับเงินหรือไม่ ?", "การพิมพ์", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        Util.PrintReceipt(sellNo);
+                }
+            }
+            else
+            {
+                MessageBox.Show("กรุณาเลือกรายการที่ต้องการพิมพ์ใบเสร็จรับเงิน", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void miDetail_Click(object sender, EventArgs e)
+        {
+            if (row != -1)
+            {
+                FmSellDetial frm = new FmSellDetial();
+                frm.Show();
+            }
+            else
+            {
+                MessageBox.Show("กรุณาเลือกรายการที่ต้องการดูรายละเอียดการขาย", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }

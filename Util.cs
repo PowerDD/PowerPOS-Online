@@ -409,7 +409,7 @@ namespace PowerPOS_Online
             data.SellNo = dr["SellNo"].ToString();
             data.SellDate = Convert.ToDateTime(dr["SellDate"].ToString());
             data.SellBy = dr["SellBy"].ToString();
-            data.SellFinished = dr["SellFinished"].ToString() == "1" ? true : false;
+            data.SellFinished = dr["SellFinished"].ToString() == "True" ? true : false;
             data.Customer = dr["Customer"].ToString();
             data.ETag = "*";
             return data;
@@ -426,7 +426,7 @@ namespace PowerPOS_Online
             data.ReceivedBy = dr["ReceivedBy"].ToString();
             data.SellNo = dr["SellNo"].ToString();
             data.SellBy = dr["SellBy"].ToString();
-            data.SellFinished = dr["SellFinished"].ToString() == "1" ? true : false;
+            data.SellFinished = dr["SellFinished"].ToString() == "True" ? true : false;
             data.Customer = dr["Customer"].ToString();
             data.ETag = "*";
             return data;
@@ -444,7 +444,7 @@ namespace PowerPOS_Online
             data.SellNo = dr["SellNo"].ToString();
             data.SellDate = Convert.ToDateTime(dr["SellDate"].ToString());
             data.SellBy = dr["SellBy"].ToString();
-            data.SellFinished = dr["SellFinished"].ToString() == "1" ? true : false;
+            data.SellFinished = dr["SellFinished"].ToString() == "True" ? true : false;
             data.Customer = dr["Customer"].ToString();
             data.ETag = "*";
             return data;
@@ -462,7 +462,7 @@ namespace PowerPOS_Online
             data.ReceivedBy = dr["ReceivedBy"].ToString();
             data.SellNo = dr["SellNo"].ToString();
             data.SellBy = dr["SellBy"].ToString();
-            data.SellFinished = dr["SellFinished"].ToString() == "1" ? true : false;
+            data.SellFinished = dr["SellFinished"].ToString() == "True" ? true : false;
             data.Customer = dr["Customer"].ToString();
             data.ETag = "*";
             return data;
@@ -675,7 +675,7 @@ namespace PowerPOS_Online
             PrintDocument pd = new PrintDocument();
             pd.DefaultPageSettings.PaperSize = paperSize;
             pd.PrintController = new System.Drawing.Printing.StandardPrintController();
-            pd.PrinterSettings.PrinterName = "Bullzip PDF Printer";
+            pd.PrinterSettings.PrinterName = Param.DevicePrinter;
             //pd.PrinterSettings.PrinterName = "GP-80250 Series";
             //pd.PrinterSettings.PrinterName = "POS80";
 
@@ -684,6 +684,7 @@ namespace PowerPOS_Online
                 PrintReceipt(g, sellNo);
             };
             pd.Print();
+
         }
 
 
@@ -705,6 +706,16 @@ namespace PowerPOS_Online
 
             if (Param.SystemConfig.Bill.PrintLogo == "Y")
             {
+                if (!File.Exists(Param.LogoPath))
+                {
+                    if (!Directory.Exists("Resource/Images")) Directory.CreateDirectory("Resource/Images");
+                    if (File.Exists(Param.LogoPath)) File.Delete(Param.LogoPath);
+                    using (var client = new WebClient())
+                    {
+                        client.DownloadFile(new Uri(Param.LogoUrl), Param.LogoPath);
+                        Param.SystemConfig.Bill.Logo = Param.LogoUrl;
+                    }
+                }
                 Image image = Image.FromFile(Param.LogoPath);
                 Rectangle destRect = new Rectangle(0, 0, width, 64);
                 //Rectangle destRect = new Rectangle(0, 0, width, image.Height * width / image.Width);
@@ -775,8 +786,8 @@ namespace PowerPOS_Online
             g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY));
             pY += 17;
             stringFont = new Font("DilleniaUPC", 11);
-            g.Graphics.DrawString("เงินสด  " + int.Parse(dtHeader.Rows[0]["cash"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX, pY));
-            measureString = "เงินทอน  " + (int.Parse(dtHeader.Rows[0]["cash"].ToString()) - sumPrice).ToString("#,##0");
+            g.Graphics.DrawString("เงินสด  " + int.Parse(dtHeader.Rows[0]["Cash"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX, pY));
+            measureString = "เงินทอน  " + (int.Parse(dtHeader.Rows[0]["Cash"].ToString()) - sumPrice).ToString("#,##0");
             stringSize = g.Graphics.MeasureString(measureString, stringFont);
             g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY));
             pY += 23;

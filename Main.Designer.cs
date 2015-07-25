@@ -81,6 +81,7 @@
             this.pnlMain = new System.Windows.Forms.Panel();
             this.tmSync = new System.Windows.Forms.Timer(this.components);
             this.bwSync = new System.ComponentModel.BackgroundWorker();
+            this.opdImportBarcode = new System.Windows.Forms.OpenFileDialog();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -464,7 +465,7 @@
             this.btnClaim.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnClaim.Name = "btnClaim";
             this.btnClaim.Size = new System.Drawing.Size(68, 83);
-            this.btnClaim.Text = "เครมสินค้า";
+            this.btnClaim.Text = "เคลมสินค้า";
             this.btnClaim.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnClaim.Click += new System.EventHandler(this.mniClaim_Click);
             // 
@@ -557,6 +558,10 @@
             this.bwSync.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwSync_DoWork);
             this.bwSync.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwSync_RunWorkerCompleted);
             // 
+            // opdImportBarcode
+            // 
+            this.opdImportBarcode.FileName = "openFileDialog1";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -639,6 +644,7 @@
         private System.Windows.Forms.ToolStripMenuItem mniClaim;
         private System.Windows.Forms.Timer tmSync;
         private System.ComponentModel.BackgroundWorker bwSync;
+        private System.Windows.Forms.OpenFileDialog opdImportBarcode;
     }
 }
 
