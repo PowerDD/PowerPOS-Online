@@ -13,7 +13,7 @@ namespace PowerPOS_Online
 {
     public class Param
     {
-        public enum Screen { Sell, ReceiveProduct, Product, Customer, User, Brand, Category, Color, Report, ShopInfo, Config, Claim };
+        public enum Screen { Sell, ReceiveProduct, Product, Customer, User, Brand, Category, Color, Report, ShopInfo, Config, Claim, Return };
         public enum StatusIcon { None, Loading, Success, Info };
 
         public static UcSell UcSell;

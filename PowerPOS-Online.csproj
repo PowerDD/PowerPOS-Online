@@ -138,10 +138,10 @@
     <Compile Include="Entity\CustomerEntity.cs" />
     <Compile Include="Entity\BarcodeEntity.cs" />
     <Compile Include="Entity\ProductUpdateEntity.cs" />
-    <Compile Include="FmSellDetial.cs">
+    <Compile Include="Form\FmSellDetial.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FmSellDetial.Designer.cs">
+    <Compile Include="Form\FmSellDetial.Designer.cs">
       <DependentUpon>FmSellDetial.cs</DependentUpon>
     </Compile>
     <Compile Include="Form\FmCancelProduct.cs">
@@ -230,6 +230,13 @@
     <Compile Include="Entity\ShopEntity.cs" />
     <Compile Include="Entity\SellHeaderEntity.cs" />
     <Compile Include="Entity\ProvinceEntity.cs" />
+    <Compile Include="Entity\SellDetailEntity.cs" />
+    <Compile Include="UserControl\UcReturn.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControl\UcReturn.Designer.cs">
+      <DependentUpon>UcReturn.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControl\UcBrand.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -311,7 +318,7 @@
     <Compile Include="Entity\UserGroupEntity.cs" />
     <Compile Include="Entity\UserUpdateEntity.cs" />
     <Compile Include="Util.cs" />
-    <EmbeddedResource Include="FmSellDetial.resx">
+    <EmbeddedResource Include="Form\FmSellDetial.resx">
       <DependentUpon>FmSellDetial.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\FmAddCustomer.resx">
@@ -379,6 +386,9 @@
     <EmbeddedResource Include="UserControl\UcReport.resx">
       <DependentUpon>UcReport.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UserControl\UcReturn.resx">
+      <DependentUpon>UcReturn.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserControl\UcShopInfo.resx">
       <DependentUpon>UcShopInfo.cs</DependentUpon>
     </EmbeddedResource>
@@ -426,6 +436,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Return.png" />
     <None Include="Resources\daily.png" />
     <None Include="Resources\table-money.png" />
     <None Include="Resources\printer.png" />

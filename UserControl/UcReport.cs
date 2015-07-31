@@ -18,6 +18,7 @@ namespace PowerPOS_Online
 {
     public partial class UcReport : UserControl
     {
+        public static string sellNo;
         int row = -1;
         public UcReport()
         {
@@ -200,7 +201,7 @@ namespace PowerPOS_Online
         {
             if (row != -1)
             {
-                string sellNo = tableModel1.Rows[row].Cells[2].Text;
+                sellNo = tableModel1.Rows[row].Cells[2].Text;
                 if (Param.SystemConfig.Bill.PrintType == "Y")
                 {
                     var cnt = int.Parse(Param.SystemConfig.Bill.PrintCount.ToString());
@@ -223,6 +224,7 @@ namespace PowerPOS_Online
         {
             if (row != -1)
             {
+                sellNo = tableModel1.Rows[row].Cells[2].Text;
                 FmSellDetial frm = new FmSellDetial();
                 frm.Show();
             }

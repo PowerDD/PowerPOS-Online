@@ -48,15 +48,15 @@
             this.table1 = new XPTable.Models.Table();
             this.columnModel1 = new XPTable.Models.ColumnModel();
             this.clNo = new XPTable.Models.TextColumn();
+            this.clSellDate = new XPTable.Models.TextColumn();
             this.clShop = new XPTable.Models.TextColumn();
+            this.clReceivedDate = new XPTable.Models.TextColumn();
             this.clCustomer = new XPTable.Models.TextColumn();
             this.tableModel1 = new XPTable.Models.TableModel();
             this.bwGetProduct = new System.ComponentModel.BackgroundWorker();
             this.bwDownloadImage = new System.ComponentModel.BackgroundWorker();
             this.bwGetShopName = new System.ComponentModel.BackgroundWorker();
             this.bwGetCustomerName = new System.ComponentModel.BackgroundWorker();
-            this.clSellDate = new XPTable.Models.TextColumn();
-            this.clReceivedDate = new XPTable.Models.TextColumn();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -274,12 +274,28 @@
             this.clNo.Text = "ที่";
             this.clNo.Width = 40;
             // 
+            // clSellDate
+            // 
+            this.clSellDate.Alignment = XPTable.Models.ColumnAlignment.Center;
+            this.clSellDate.Editable = false;
+            this.clSellDate.IsTextTrimmed = false;
+            this.clSellDate.Text = "วันที่ขายสินค้า";
+            this.clSellDate.Width = 180;
+            // 
             // clShop
             // 
             this.clShop.Editable = false;
             this.clShop.IsTextTrimmed = false;
             this.clShop.Text = "ชื่อร้าน";
             this.clShop.Width = 240;
+            // 
+            // clReceivedDate
+            // 
+            this.clReceivedDate.Alignment = XPTable.Models.ColumnAlignment.Center;
+            this.clReceivedDate.Editable = false;
+            this.clReceivedDate.IsTextTrimmed = false;
+            this.clReceivedDate.Text = "วันที่รับสินค้าเข้า";
+            this.clReceivedDate.Width = 180;
             // 
             // clCustomer
             // 
@@ -306,22 +322,6 @@
             // 
             this.bwGetCustomerName.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwGetCustomerName_DoWork);
             this.bwGetCustomerName.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwGetCustomerName_RunWorkerCompleted);
-            // 
-            // clSellDate
-            // 
-            this.clSellDate.Alignment = XPTable.Models.ColumnAlignment.Center;
-            this.clSellDate.Editable = false;
-            this.clSellDate.IsTextTrimmed = false;
-            this.clSellDate.Text = "วันที่ขายสินค้า";
-            this.clSellDate.Width = 180;
-            // 
-            // clReceivedDate
-            // 
-            this.clReceivedDate.Alignment = XPTable.Models.ColumnAlignment.Center;
-            this.clReceivedDate.Editable = false;
-            this.clReceivedDate.IsTextTrimmed = false;
-            this.clReceivedDate.Text = "วันที่รับสินค้าเข้า";
-            this.clReceivedDate.Width = 180;
             // 
             // UcClaim
             // 

@@ -256,6 +256,7 @@ namespace PowerPOS_Online
         {
             FmCancelProduct frm = new FmCancelProduct();
             frm.Show();
+            lblStatus.Visible = false;
            
         }
 

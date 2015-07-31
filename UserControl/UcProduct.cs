@@ -180,9 +180,12 @@ namespace PowerPOS_Online
 
         private void SearchData()
         {
+            DataTable dt;
             if (!_FIRST_LOAD)
             {
-                DataTable dt = Util.DBQuery(string.Format(@"SELECT DISTINCT p.ID, p.Name, c.Name Category, b.Name Brand, IFNULL(cnt.Cost,0) Cost, p.Warranty,
+                if (Param.SystemConfig.SellPrice != null)
+                {
+                    dt = Util.DBQuery(string.Format(@"SELECT DISTINCT p.ID, p.Name, c.Name Category, b.Name Brand, IFNULL(cnt.Cost,0) Cost, p.Warranty,
                     p.Price, p.Price1, p.Price2, p.WebPrice, p.WebPrice1, p.WebPrice2, IFNULL(cnt.ProductCount, 0) ProductCount
                     FROM Barcode b
                         LEFT JOIN Product p
@@ -200,11 +203,38 @@ namespace PowerPOS_Online
 		            ON p.ID = cnt.Product
 		            WHERE (p.ID LIKE '%{1}%' OR p.Name LIKE '%{1}%') {2} {3} {4} {5}
                     ORDER BY p.Name", Param.ShopId, txtSearch.Text.Trim(),
-                        (cbbCategory.SelectedIndex != 0) ? "AND c.Name = '" + cbbCategory.SelectedItem.ToString() + "'" : "",
-                        (cbbBrand.SelectedIndex != 0) ? "AND b.Name = '" + cbbBrand.SelectedItem.ToString() + "'" : "",
-                        (cbNoPrice.Checked) ? "AND p.Price = 0" : "",
-                        (cbNoStock.Checked) ? "AND IFNULL(cnt.ProductCount, 0) = 0" : ""
-                    ));
+                            (cbbCategory.SelectedIndex != 0) ? "AND c.Name = '" + cbbCategory.SelectedItem.ToString() + "'" : "",
+                            (cbbBrand.SelectedIndex != 0) ? "AND b.Name = '" + cbbBrand.SelectedItem.ToString() + "'" : "",
+                            (cbNoPrice.Checked) ? "AND p.Price = 0" : "",
+                            (cbNoStock.Checked) ? "AND IFNULL(cnt.ProductCount, 0) = 0" : ""
+                        ));
+                }
+                else
+                {
+                    dt = Util.DBQuery(string.Format(@"SELECT DISTINCT p.ID, p.Name, c.Name Category, b.Name Brand,  IFNULL(cnt.Cost,0) Cost,  IFNULL(p.Warranty, 0)  Warranty,   
+                    IFNULL(p.Price, 0) Price, IFNULL(p.Price1, 0)  Price1,IFNULL(p.Price2, 0)  Price2, p.WebPrice, p.WebPrice1, p.WebPrice2, IFNULL(cnt.ProductCount, 0) ProductCount
+                    FROM Barcode b
+                        LEFT JOIN Product p
+                            ON b.Product = p.ID
+                            AND p.Shop = '{0}'
+                        LEFT JOIN Category c
+                            ON p.Category = c.ID
+                            AND p.Shop = c.Shop
+                        LEFT JOIN Brand b
+                            ON p.Brand = b.ID
+                            AND p.Shop = b.Shop
+                        LEFT JOIN (
+                            SELECT Product, AVG(Cost+OperationCost) Cost, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL GROUP BY Product
+                        ) cnt
+		            ON p.ID = cnt.Product
+		            WHERE (p.ID LIKE '%{1}%' OR p.Name LIKE '%{1}%') {2} {3} {4} {5}
+                    ORDER BY p.Name", Param.ShopId, txtSearch.Text.Trim(),
+                           (cbbCategory.SelectedIndex != 0) ? "AND c.Name = '" + cbbCategory.SelectedItem.ToString() + "'" : "",
+                           (cbbBrand.SelectedIndex != 0) ? "AND b.Name = '" + cbbBrand.SelectedItem.ToString() + "'" : "",
+                           (cbNoPrice.Checked) ? "AND p.Price = 0" : "",
+                           (cbNoStock.Checked) ? "AND IFNULL(cnt.ProductCount, 0) = 0" : ""
+                       ));
+                }
 
                 table1.BeginUpdate();
                 tableModel1.Rows.Clear();

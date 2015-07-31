@@ -595,6 +595,7 @@ namespace PowerPOS_Online
 
         private void bwLoadSell_DoWork(object sender, DoWorkEventArgs e)
         {
+            int i = 0;
             Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'SellHeader' (
                 'SellNo' VARCHAR PRIMARY KEY NOT NULL,
                 'Customer' VARCHAR DEFAULT '000000',
@@ -615,15 +616,6 @@ namespace PowerPOS_Online
                 'SellBy' VARCHAR,
                 'Sync' BOOL DEFAULT 0)");
 
-            Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'SellDetail' (
-                'SellNo' VARCHAR NOT NULL,
-                'Product' VARCHAR NOT NULL,
-                'SellPrice' DOUBLE NOT NULL,
-                'Cost' DOUBLE DEFAULT 0,
-                'Quantity' INT NOT NULL,
-                'Sync' BOOL DEFAULT 0,
-                PRIMARY KEY ('SellNo', 'Product'))");
-
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             var azureTable = Param.AzureTableClient.GetTableReference("SellHeader");
             azureTable.CreateIfNotExists();
@@ -631,7 +623,7 @@ namespace PowerPOS_Online
             const string command = @"INSERT OR REPLACE INTO SellHeader (SellNo, Customer, CustomerSex, CustomerAge, Credit, PayType, Cash, DiscountPercent, DiscountCash, 
                 Paid, Profit, TotalPrice, PointReceived, PointUse, Comment, SellDate, SellBy) ";
             var sb = new StringBuilder(command);
-            int i = 0;
+            
             foreach (SellHeaderEntity d in azureTable.ExecuteQuery(query))
             {
                 if (i != 0) sb.Append(" UNION ALL ");
@@ -648,6 +640,41 @@ namespace PowerPOS_Online
                 }
             }
             Util.DBExecute(sb.ToString());
+
+
+            Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'SellDetail' (
+                'SellNo' VARCHAR NOT NULL,
+                'Product' VARCHAR NOT NULL,
+                'SellPrice' DOUBLE NOT NULL,
+                'Cost' DOUBLE DEFAULT 0,
+                'Quantity' INT NOT NULL,
+                'Sync' BOOL DEFAULT 0,
+                PRIMARY KEY ('SellNo', 'Product'))");
+
+
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            var azureTableD = Param.AzureTableClient.GetTableReference("SellDetail");
+            azureTableD.CreateIfNotExists();
+            var queryD = new TableQuery<SellDetailEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId));
+            const string cmd = @"INSERT OR REPLACE INTO SellDetail (SellNo, Product, SellPrice, Cost, Quantity) ";
+            var sbd = new StringBuilder(cmd);
+            i = 0;
+            foreach (SellDetailEntity s in azureTableD.ExecuteQuery(queryD))
+            {
+                string[] val = s.RowKey.Split('-');
+
+                if (i != 0) sbd.Append(" UNION ALL ");
+                sbd.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', {3}, {4}",
+                    val[0].ToString(), val[1].ToString(), s.SellPrice, s.Quantity, s.Cost));
+                i++;
+                if (i % 500 == 0)
+                {
+                    i = 0;
+                    Util.DBExecute(sbd.ToString());
+                    sbd = new StringBuilder(cmd);
+                }
+            }
+            Util.DBExecute(sbd.ToString());
         }
 
         private void bwLoadSell_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

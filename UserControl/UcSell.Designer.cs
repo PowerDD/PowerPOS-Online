@@ -617,7 +617,6 @@
         private XPTable.Models.Table table1;
         private XPTable.Models.TableModel tableModel1;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox txtBarcode;
         private System.Windows.Forms.Panel pnlBarcode;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label7;
@@ -633,5 +632,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel8;
         private System.Windows.Forms.Button btnCancelProduct;
+        private System.Windows.Forms.TextBox txtBarcode;
     }
 }

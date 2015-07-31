@@ -311,6 +311,10 @@ namespace PowerPOS_Online
             {
                 Param.UserControl = new UcClaim();
             }
+            else if (screen == Param.Screen.Return && Param.SelectedScreen != (int)Param.Screen.Return)
+            {
+                Param.UserControl = new UcReturn();
+            }
             Param.UserControl.Dock = System.Windows.Forms.DockStyle.Fill;
 
             if (!Param.MainPanel.Contains(Param.UserControl))
@@ -482,14 +486,27 @@ namespace PowerPOS_Online
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     DataRow row = dt.Rows[i];
-                    if (row["ReceivedDate"].ToString() == "" && row["SellDate"].ToString() == "")
-                        batchOperation.InsertOrMerge(Util.RenderBarcodeNoDateData(row));
-                    else if (row["SellDate"].ToString() == "")
-                        batchOperation.InsertOrMerge(Util.RenderBarcodeNoSellDateData(row));
-                    else if (row["ReceivedDate"].ToString() == "")
-                        batchOperation.InsertOrMerge(Util.RenderBarcodeNoReceivedDateData(row));
+                    dynamic d = new DynamicEntity(Param.ShopId, row["Barcode"].ToString());
+                    d.OrderNo = row["OrderNo"].ToString();
+                    d.Product = row["Product"].ToString();
+                    d.Cost = double.Parse(row["Cost"].ToString());
+                    d.OperationCost = double.Parse(row["OperationCost"].ToString());
+                    d.SellPrice = double.Parse(row["SellPrice"].ToString());
+                    d.ReceivedDate = Convert.ToDateTime(row["ReceivedDate"].ToString());
+                    d.ReceivedBy = row["ReceivedBy"].ToString();
+                    d.SellNo = row["SellNo"].ToString();
+                    if (row["SellDate"].ToString() == "")
+                    {
+                        d.SellDate = "";
+                    }
                     else
-                        batchOperation.InsertOrMerge(Util.RenderBarcodeData(row));
+                    {
+                        d.SellDate = Convert.ToDateTime(row["SellDate"].ToString());
+                    }
+                    d.SellBy = row["SellBy"].ToString();
+                    d.SellFinished = row["SellFinished"].ToString() == "True" ? true : false;
+                    d.Customer = row["Customer"].ToString();
+                    batchOperation.InsertOrMerge(d);
 
                     Util.DBExecute(string.Format("UPDATE Barcode SET Sync = 0 WHERE Barcode = {0}", row["Barcode"].ToString()));
 
@@ -501,6 +518,25 @@ namespace PowerPOS_Online
                 }
                 if (batchOperation.Count > 0)
                     azureTable.ExecuteBatch(batchOperation);
+                //    if (row["ReceivedDate"].ToString() == "" && row["SellDate"].ToString() == "")
+                //        batchOperation.InsertOrMerge(Util.RenderBarcodeNoDateData(row));
+                //    else if (row["SellDate"].ToString() == "")
+                //        batchOperation.InsertOrMerge(Util.RenderBarcodeNoSellDateData(row));
+                //    else if (row["ReceivedDate"].ToString() == "")
+                //        batchOperation.InsertOrMerge(Util.RenderBarcodeNoReceivedDateData(row));
+                //    else
+                //        batchOperation.InsertOrMerge(Util.RenderBarcodeData(row));
+
+                //    Util.DBExecute(string.Format("UPDATE Barcode SET Sync = 0 WHERE Barcode = {0}", row["Barcode"].ToString()));
+
+                //    if (batchOperation.Count == 100)
+                //    {
+                //        azureTable.ExecuteBatch(batchOperation);
+                //        batchOperation = new TableBatchOperation();
+                //    }
+                //}
+                //if (batchOperation.Count > 0)
+                //    azureTable.ExecuteBatch(batchOperation);
             }
             catch (Exception ex)
             {

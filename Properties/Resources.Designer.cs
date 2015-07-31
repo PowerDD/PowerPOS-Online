@@ -433,6 +433,16 @@ namespace PowerPOS_Online.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Return {
+            get {
+                object obj = ResourceManager.GetObject("Return", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap sell {
             get {
                 object obj = ResourceManager.GetObject("sell", resourceCulture);

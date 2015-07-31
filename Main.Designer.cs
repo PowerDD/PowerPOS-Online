@@ -31,57 +31,58 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.mniFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniLogin = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniChangePassword = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniLogout = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
-            this.mniImportData = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniImportBarcode = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniImportExcel = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniConfig = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.mniExit = new System.Windows.Forms.ToolStripMenuItem();
             this.mniProducts = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniSell = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniReceive = new System.Windows.Forms.ToolStripMenuItem();
             this.mniData = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniProduct = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniCustomer = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniClaim = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
-            this.mniCategory = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniBrand = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniColor = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
-            this.mniUser = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniShop = new System.Windows.Forms.ToolStripMenuItem();
             this.mniReport = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniReportSell = new System.Windows.Forms.ToolStripMenuItem();
             this.mniHelp = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniRegister = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.mniAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.pnlMain = new System.Windows.Forms.Panel();
+            this.tmSync = new System.Windows.Forms.Timer(this.components);
+            this.bwSync = new System.ComponentModel.BackgroundWorker();
+            this.opdImportBarcode = new System.Windows.Forms.OpenFileDialog();
             this.btnSell = new System.Windows.Forms.ToolStripButton();
             this.btnAddProduct = new System.Windows.Forms.ToolStripButton();
             this.btnProduct = new System.Windows.Forms.ToolStripButton();
             this.btnCustomer = new System.Windows.Forms.ToolStripButton();
             this.btnClaim = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnReturn = new System.Windows.Forms.ToolStripButton();
             this.btnReport = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.btnUpdateData = new System.Windows.Forms.ToolStripButton();
             this.btnChangePassword = new System.Windows.Forms.ToolStripButton();
             this.btnSetting = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.btnExit = new System.Windows.Forms.ToolStripButton();
-            this.pnlMain = new System.Windows.Forms.Panel();
-            this.tmSync = new System.Windows.Forms.Timer(this.components);
-            this.bwSync = new System.ComponentModel.BackgroundWorker();
-            this.opdImportBarcode = new System.Windows.Forms.OpenFileDialog();
+            this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.mniLogin = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniChangePassword = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniLogout = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniImportData = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniImportBarcode = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniImportExcel = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniConfig = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniSell = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniReceive = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniProduct = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniCustomer = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniClaim = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniCategory = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniBrand = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniColor = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniUser = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniShop = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniReportSell = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniRegister = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -97,16 +98,6 @@
             this.statusStrip1.Size = new System.Drawing.Size(837, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.Image = global::PowerPOS_Online.Properties.Resources.loading;
-            this.lblStatus.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(116, 17);
-            this.lblStatus.Text = "กำลังตรวจสอบข้อมูล";
-            this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.lblStatus.Visible = false;
             // 
             // menuStrip1
             // 
@@ -139,84 +130,15 @@
             this.mniFile.Size = new System.Drawing.Size(39, 20);
             this.mniFile.Text = "ไ&ฟล์";
             // 
-            // mniLogin
-            // 
-            this.mniLogin.Image = global::PowerPOS_Online.Properties.Resources.tick_shield;
-            this.mniLogin.Name = "mniLogin";
-            this.mniLogin.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.I)));
-            this.mniLogin.Size = new System.Drawing.Size(199, 22);
-            this.mniLogin.Text = "เข้าระบบ";
-            this.mniLogin.Click += new System.EventHandler(this.mniLogin_Click);
-            // 
-            // mniChangePassword
-            // 
-            this.mniChangePassword.Image = global::PowerPOS_Online.Properties.Resources.key1;
-            this.mniChangePassword.Name = "mniChangePassword";
-            this.mniChangePassword.Size = new System.Drawing.Size(199, 22);
-            this.mniChangePassword.Text = "เปลี่ยนรหัสผ่าน";
-            this.mniChangePassword.Click += new System.EventHandler(this.mniChangePassword_Click);
-            // 
-            // mniLogout
-            // 
-            this.mniLogout.Image = global::PowerPOS_Online.Properties.Resources.minus_shield;
-            this.mniLogout.Name = "mniLogout";
-            this.mniLogout.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.O)));
-            this.mniLogout.Size = new System.Drawing.Size(199, 22);
-            this.mniLogout.Text = "ออกจากระบบ";
-            this.mniLogout.Click += new System.EventHandler(this.mniLogout_Click);
-            // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
             this.toolStripMenuItem5.Size = new System.Drawing.Size(196, 6);
             // 
-            // mniImportData
-            // 
-            this.mniImportData.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mniImportBarcode,
-            this.mniImportExcel});
-            this.mniImportData.Image = global::PowerPOS_Online.Properties.Resources.database__plus;
-            this.mniImportData.Name = "mniImportData";
-            this.mniImportData.Size = new System.Drawing.Size(199, 22);
-            this.mniImportData.Text = "นำข้อมูลเข้าระบบ";
-            // 
-            // mniImportBarcode
-            // 
-            this.mniImportBarcode.Image = global::PowerPOS_Online.Properties.Resources.barcode;
-            this.mniImportBarcode.Name = "mniImportBarcode";
-            this.mniImportBarcode.Size = new System.Drawing.Size(151, 22);
-            this.mniImportBarcode.Text = "ใช้บาร์โค้ดสินค้า";
-            this.mniImportBarcode.Click += new System.EventHandler(this.mniImportBarcode_Click);
-            // 
-            // mniImportExcel
-            // 
-            this.mniImportExcel.Image = global::PowerPOS_Online.Properties.Resources.blue_document_excel;
-            this.mniImportExcel.Name = "mniImportExcel";
-            this.mniImportExcel.Size = new System.Drawing.Size(151, 22);
-            this.mniImportExcel.Text = "ใช้ไฟล์ Excel";
-            this.mniImportExcel.Click += new System.EventHandler(this.mniImportExcel_Click);
-            // 
-            // mniConfig
-            // 
-            this.mniConfig.Image = global::PowerPOS_Online.Properties.Resources.gear;
-            this.mniConfig.Name = "mniConfig";
-            this.mniConfig.Size = new System.Drawing.Size(199, 22);
-            this.mniConfig.Text = "การตั้งค่าระบบ";
-            this.mniConfig.Click += new System.EventHandler(this.mniConfig_Click);
-            // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(196, 6);
-            // 
-            // mniExit
-            // 
-            this.mniExit.Image = global::PowerPOS_Online.Properties.Resources.cross;
-            this.mniExit.Name = "mniExit";
-            this.mniExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.mniExit.Size = new System.Drawing.Size(199, 22);
-            this.mniExit.Text = "ออกจากโปรแกรม";
-            this.mniExit.Click += new System.EventHandler(this.mniExit_Click);
             // 
             // mniProducts
             // 
@@ -226,24 +148,6 @@
             this.mniProducts.Name = "mniProducts";
             this.mniProducts.Size = new System.Drawing.Size(46, 20);
             this.mniProducts.Text = "&สินค้า";
-            // 
-            // mniSell
-            // 
-            this.mniSell.Image = global::PowerPOS_Online.Properties.Resources.money_bag_dollar;
-            this.mniSell.Name = "mniSell";
-            this.mniSell.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
-            this.mniSell.Size = new System.Drawing.Size(179, 22);
-            this.mniSell.Text = "ขายสินค้า";
-            this.mniSell.Click += new System.EventHandler(this.mniSell_Click);
-            // 
-            // mniReceive
-            // 
-            this.mniReceive.Image = global::PowerPOS_Online.Properties.Resources.box__plus;
-            this.mniReceive.Name = "mniReceive";
-            this.mniReceive.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
-            this.mniReceive.Size = new System.Drawing.Size(179, 22);
-            this.mniReceive.Text = "รับสินค้าเข้า";
-            this.mniReceive.Click += new System.EventHandler(this.mniReceive_Click);
             // 
             // mniData
             // 
@@ -262,82 +166,15 @@
             this.mniData.Size = new System.Drawing.Size(46, 20);
             this.mniData.Text = "&ข้อมูล";
             // 
-            // mniProduct
-            // 
-            this.mniProduct.Image = global::PowerPOS_Online.Properties.Resources.box;
-            this.mniProduct.Name = "mniProduct";
-            this.mniProduct.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F3)));
-            this.mniProduct.Size = new System.Drawing.Size(174, 22);
-            this.mniProduct.Text = "สินค้า";
-            this.mniProduct.Click += new System.EventHandler(this.mniProduct_Click);
-            // 
-            // mniCustomer
-            // 
-            this.mniCustomer.Image = global::PowerPOS_Online.Properties.Resources.address_book_blue;
-            this.mniCustomer.Name = "mniCustomer";
-            this.mniCustomer.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F4)));
-            this.mniCustomer.Size = new System.Drawing.Size(174, 22);
-            this.mniCustomer.Text = "ลูกค้า";
-            this.mniCustomer.Click += new System.EventHandler(this.mniCustomer_Click);
-            // 
-            // mniClaim
-            // 
-            this.mniClaim.Image = global::PowerPOS_Online.Properties.Resources.wrench_screwdriver;
-            this.mniClaim.Name = "mniClaim";
-            this.mniClaim.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F5)));
-            this.mniClaim.Size = new System.Drawing.Size(174, 22);
-            this.mniClaim.Text = "เคลมสินค้า";
-            this.mniClaim.Click += new System.EventHandler(this.mniClaim_Click);
-            // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
             this.toolStripMenuItem4.Size = new System.Drawing.Size(171, 6);
             // 
-            // mniCategory
-            // 
-            this.mniCategory.Image = global::PowerPOS_Online.Properties.Resources.sitemap;
-            this.mniCategory.Name = "mniCategory";
-            this.mniCategory.Size = new System.Drawing.Size(174, 22);
-            this.mniCategory.Text = "หมวดหมู่สินค้า";
-            this.mniCategory.Click += new System.EventHandler(this.mniCategory_Click);
-            // 
-            // mniBrand
-            // 
-            this.mniBrand.Image = global::PowerPOS_Online.Properties.Resources.tags;
-            this.mniBrand.Name = "mniBrand";
-            this.mniBrand.Size = new System.Drawing.Size(174, 22);
-            this.mniBrand.Text = "ยี่ห้อสินค้า";
-            this.mniBrand.Click += new System.EventHandler(this.mniBrand_Click);
-            // 
-            // mniColor
-            // 
-            this.mniColor.Image = global::PowerPOS_Online.Properties.Resources.color_swatch;
-            this.mniColor.Name = "mniColor";
-            this.mniColor.Size = new System.Drawing.Size(174, 22);
-            this.mniColor.Text = "สี";
-            this.mniColor.Click += new System.EventHandler(this.mniColor_Click);
-            // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
             this.toolStripMenuItem3.Size = new System.Drawing.Size(171, 6);
-            // 
-            // mniUser
-            // 
-            this.mniUser.Image = global::PowerPOS_Online.Properties.Resources.users;
-            this.mniUser.Name = "mniUser";
-            this.mniUser.Size = new System.Drawing.Size(174, 22);
-            this.mniUser.Text = "ผู้ใช้งานระบบ";
-            this.mniUser.Click += new System.EventHandler(this.mniUser_Click);
-            // 
-            // mniShop
-            // 
-            this.mniShop.Image = global::PowerPOS_Online.Properties.Resources.store;
-            this.mniShop.Name = "mniShop";
-            this.mniShop.Size = new System.Drawing.Size(174, 22);
-            this.mniShop.Text = "ร้านค้า";
-            this.mniShop.Click += new System.EventHandler(this.mniShop_Click);
             // 
             // mniReport
             // 
@@ -346,15 +183,6 @@
             this.mniReport.Name = "mniReport";
             this.mniReport.Size = new System.Drawing.Size(55, 20);
             this.mniReport.Text = "&รายงาน";
-            // 
-            // mniReportSell
-            // 
-            this.mniReportSell.Image = global::PowerPOS_Online.Properties.Resources.money_coin;
-            this.mniReportSell.Name = "mniReportSell";
-            this.mniReportSell.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F5)));
-            this.mniReportSell.Size = new System.Drawing.Size(162, 22);
-            this.mniReportSell.Text = "ยอดขาย";
-            this.mniReportSell.Click += new System.EventHandler(this.mniReportSell_Click);
             // 
             // mniHelp
             // 
@@ -366,26 +194,10 @@
             this.mniHelp.Size = new System.Drawing.Size(62, 20);
             this.mniHelp.Text = "&ช่วยเหลือ";
             // 
-            // mniRegister
-            // 
-            this.mniRegister.Image = global::PowerPOS_Online.Properties.Resources.key_solid;
-            this.mniRegister.Name = "mniRegister";
-            this.mniRegister.Size = new System.Drawing.Size(168, 22);
-            this.mniRegister.Text = "ลงทะเบียนโปรแกรม";
-            this.mniRegister.Click += new System.EventHandler(this.mniRegister_Click);
-            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(165, 6);
-            // 
-            // mniAbout
-            // 
-            this.mniAbout.Image = global::PowerPOS_Online.Properties.Resources.information_white;
-            this.mniAbout.Name = "mniAbout";
-            this.mniAbout.Size = new System.Drawing.Size(168, 22);
-            this.mniAbout.Text = "เกี่ยวกับโปรแกรม";
-            this.mniAbout.Click += new System.EventHandler(this.mniAbout_Click);
             // 
             // toolStrip1
             // 
@@ -398,6 +210,7 @@
             this.btnProduct,
             this.btnCustomer,
             this.btnClaim,
+            this.btnReturn,
             this.toolStripSeparator1,
             this.btnReport,
             this.toolStripSeparator4,
@@ -413,6 +226,44 @@
             this.toolStrip1.Size = new System.Drawing.Size(837, 86);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 86);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 86);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 86);
+            // 
+            // pnlMain
+            // 
+            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlMain.Location = new System.Drawing.Point(0, 110);
+            this.pnlMain.Name = "pnlMain";
+            this.pnlMain.Size = new System.Drawing.Size(837, 334);
+            this.pnlMain.TabIndex = 3;
+            // 
+            // tmSync
+            // 
+            this.tmSync.Enabled = true;
+            this.tmSync.Interval = 10000;
+            this.tmSync.Tick += new System.EventHandler(this.tmSync_Tick);
+            // 
+            // bwSync
+            // 
+            this.bwSync.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwSync_DoWork);
+            this.bwSync.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwSync_RunWorkerCompleted);
+            // 
+            // opdImportBarcode
+            // 
+            this.opdImportBarcode.FileName = "openFileDialog1";
             // 
             // btnSell
             // 
@@ -469,10 +320,16 @@
             this.btnClaim.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnClaim.Click += new System.EventHandler(this.mniClaim_Click);
             // 
-            // toolStripSeparator1
+            // btnReturn
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 86);
+            this.btnReturn.AutoToolTip = false;
+            this.btnReturn.Image = global::PowerPOS_Online.Properties.Resources.Return;
+            this.btnReturn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnReturn.Name = "btnReturn";
+            this.btnReturn.Size = new System.Drawing.Size(68, 83);
+            this.btnReturn.Text = "รับคืนสินค้า";
+            this.btnReturn.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnReturn.Click += new System.EventHandler(this.mniReturn_Click);
             // 
             // btnReport
             // 
@@ -484,11 +341,6 @@
             this.btnReport.Text = "รายงาน";
             this.btnReport.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnReport.Click += new System.EventHandler(this.mniReportSell_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 86);
             // 
             // btnUpdateData
             // 
@@ -523,11 +375,6 @@
             this.btnSetting.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnSetting.Click += new System.EventHandler(this.mniConfig_Click);
             // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 86);
-            // 
             // btnExit
             // 
             this.btnExit.AutoToolTip = false;
@@ -539,28 +386,194 @@
             this.btnExit.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnExit.Click += new System.EventHandler(this.mniLogout_Click);
             // 
-            // pnlMain
+            // lblStatus
             // 
-            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 110);
-            this.pnlMain.Name = "pnlMain";
-            this.pnlMain.Size = new System.Drawing.Size(837, 334);
-            this.pnlMain.TabIndex = 3;
+            this.lblStatus.Image = global::PowerPOS_Online.Properties.Resources.loading;
+            this.lblStatus.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(116, 17);
+            this.lblStatus.Text = "กำลังตรวจสอบข้อมูล";
+            this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblStatus.Visible = false;
             // 
-            // tmSync
+            // mniLogin
             // 
-            this.tmSync.Enabled = true;
-            this.tmSync.Interval = 10000;
-            this.tmSync.Tick += new System.EventHandler(this.tmSync_Tick);
+            this.mniLogin.Image = global::PowerPOS_Online.Properties.Resources.tick_shield;
+            this.mniLogin.Name = "mniLogin";
+            this.mniLogin.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.I)));
+            this.mniLogin.Size = new System.Drawing.Size(199, 22);
+            this.mniLogin.Text = "เข้าระบบ";
+            this.mniLogin.Click += new System.EventHandler(this.mniLogin_Click);
             // 
-            // bwSync
+            // mniChangePassword
             // 
-            this.bwSync.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwSync_DoWork);
-            this.bwSync.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwSync_RunWorkerCompleted);
+            this.mniChangePassword.Image = global::PowerPOS_Online.Properties.Resources.key1;
+            this.mniChangePassword.Name = "mniChangePassword";
+            this.mniChangePassword.Size = new System.Drawing.Size(199, 22);
+            this.mniChangePassword.Text = "เปลี่ยนรหัสผ่าน";
+            this.mniChangePassword.Click += new System.EventHandler(this.mniChangePassword_Click);
             // 
-            // opdImportBarcode
+            // mniLogout
             // 
-            this.opdImportBarcode.FileName = "openFileDialog1";
+            this.mniLogout.Image = global::PowerPOS_Online.Properties.Resources.minus_shield;
+            this.mniLogout.Name = "mniLogout";
+            this.mniLogout.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.O)));
+            this.mniLogout.Size = new System.Drawing.Size(199, 22);
+            this.mniLogout.Text = "ออกจากระบบ";
+            this.mniLogout.Click += new System.EventHandler(this.mniLogout_Click);
+            // 
+            // mniImportData
+            // 
+            this.mniImportData.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniImportBarcode,
+            this.mniImportExcel});
+            this.mniImportData.Image = global::PowerPOS_Online.Properties.Resources.database__plus;
+            this.mniImportData.Name = "mniImportData";
+            this.mniImportData.Size = new System.Drawing.Size(199, 22);
+            this.mniImportData.Text = "นำข้อมูลเข้าระบบ";
+            // 
+            // mniImportBarcode
+            // 
+            this.mniImportBarcode.Image = global::PowerPOS_Online.Properties.Resources.barcode;
+            this.mniImportBarcode.Name = "mniImportBarcode";
+            this.mniImportBarcode.Size = new System.Drawing.Size(151, 22);
+            this.mniImportBarcode.Text = "ใช้บาร์โค้ดสินค้า";
+            this.mniImportBarcode.Click += new System.EventHandler(this.mniImportBarcode_Click);
+            // 
+            // mniImportExcel
+            // 
+            this.mniImportExcel.Image = global::PowerPOS_Online.Properties.Resources.blue_document_excel;
+            this.mniImportExcel.Name = "mniImportExcel";
+            this.mniImportExcel.Size = new System.Drawing.Size(151, 22);
+            this.mniImportExcel.Text = "ใช้ไฟล์ Excel";
+            this.mniImportExcel.Click += new System.EventHandler(this.mniImportExcel_Click);
+            // 
+            // mniConfig
+            // 
+            this.mniConfig.Image = global::PowerPOS_Online.Properties.Resources.gear;
+            this.mniConfig.Name = "mniConfig";
+            this.mniConfig.Size = new System.Drawing.Size(199, 22);
+            this.mniConfig.Text = "การตั้งค่าระบบ";
+            this.mniConfig.Click += new System.EventHandler(this.mniConfig_Click);
+            // 
+            // mniExit
+            // 
+            this.mniExit.Image = global::PowerPOS_Online.Properties.Resources.cross;
+            this.mniExit.Name = "mniExit";
+            this.mniExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
+            this.mniExit.Size = new System.Drawing.Size(199, 22);
+            this.mniExit.Text = "ออกจากโปรแกรม";
+            this.mniExit.Click += new System.EventHandler(this.mniExit_Click);
+            // 
+            // mniSell
+            // 
+            this.mniSell.Image = global::PowerPOS_Online.Properties.Resources.money_bag_dollar;
+            this.mniSell.Name = "mniSell";
+            this.mniSell.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
+            this.mniSell.Size = new System.Drawing.Size(179, 22);
+            this.mniSell.Text = "ขายสินค้า";
+            this.mniSell.Click += new System.EventHandler(this.mniSell_Click);
+            // 
+            // mniReceive
+            // 
+            this.mniReceive.Image = global::PowerPOS_Online.Properties.Resources.box__plus;
+            this.mniReceive.Name = "mniReceive";
+            this.mniReceive.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
+            this.mniReceive.Size = new System.Drawing.Size(179, 22);
+            this.mniReceive.Text = "รับสินค้าเข้า";
+            this.mniReceive.Click += new System.EventHandler(this.mniReceive_Click);
+            // 
+            // mniProduct
+            // 
+            this.mniProduct.Image = global::PowerPOS_Online.Properties.Resources.box;
+            this.mniProduct.Name = "mniProduct";
+            this.mniProduct.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F3)));
+            this.mniProduct.Size = new System.Drawing.Size(174, 22);
+            this.mniProduct.Text = "สินค้า";
+            this.mniProduct.Click += new System.EventHandler(this.mniProduct_Click);
+            // 
+            // mniCustomer
+            // 
+            this.mniCustomer.Image = global::PowerPOS_Online.Properties.Resources.address_book_blue;
+            this.mniCustomer.Name = "mniCustomer";
+            this.mniCustomer.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F4)));
+            this.mniCustomer.Size = new System.Drawing.Size(174, 22);
+            this.mniCustomer.Text = "ลูกค้า";
+            this.mniCustomer.Click += new System.EventHandler(this.mniCustomer_Click);
+            // 
+            // mniClaim
+            // 
+            this.mniClaim.Image = global::PowerPOS_Online.Properties.Resources.wrench_screwdriver;
+            this.mniClaim.Name = "mniClaim";
+            this.mniClaim.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F5)));
+            this.mniClaim.Size = new System.Drawing.Size(174, 22);
+            this.mniClaim.Text = "เคลมสินค้า";
+            this.mniClaim.Click += new System.EventHandler(this.mniClaim_Click);
+            // 
+            // mniCategory
+            // 
+            this.mniCategory.Image = global::PowerPOS_Online.Properties.Resources.sitemap;
+            this.mniCategory.Name = "mniCategory";
+            this.mniCategory.Size = new System.Drawing.Size(174, 22);
+            this.mniCategory.Text = "หมวดหมู่สินค้า";
+            this.mniCategory.Click += new System.EventHandler(this.mniCategory_Click);
+            // 
+            // mniBrand
+            // 
+            this.mniBrand.Image = global::PowerPOS_Online.Properties.Resources.tags;
+            this.mniBrand.Name = "mniBrand";
+            this.mniBrand.Size = new System.Drawing.Size(174, 22);
+            this.mniBrand.Text = "ยี่ห้อสินค้า";
+            this.mniBrand.Click += new System.EventHandler(this.mniBrand_Click);
+            // 
+            // mniColor
+            // 
+            this.mniColor.Image = global::PowerPOS_Online.Properties.Resources.color_swatch;
+            this.mniColor.Name = "mniColor";
+            this.mniColor.Size = new System.Drawing.Size(174, 22);
+            this.mniColor.Text = "สี";
+            this.mniColor.Click += new System.EventHandler(this.mniColor_Click);
+            // 
+            // mniUser
+            // 
+            this.mniUser.Image = global::PowerPOS_Online.Properties.Resources.users;
+            this.mniUser.Name = "mniUser";
+            this.mniUser.Size = new System.Drawing.Size(174, 22);
+            this.mniUser.Text = "ผู้ใช้งานระบบ";
+            this.mniUser.Click += new System.EventHandler(this.mniUser_Click);
+            // 
+            // mniShop
+            // 
+            this.mniShop.Image = global::PowerPOS_Online.Properties.Resources.store;
+            this.mniShop.Name = "mniShop";
+            this.mniShop.Size = new System.Drawing.Size(174, 22);
+            this.mniShop.Text = "ร้านค้า";
+            this.mniShop.Click += new System.EventHandler(this.mniShop_Click);
+            // 
+            // mniReportSell
+            // 
+            this.mniReportSell.Image = global::PowerPOS_Online.Properties.Resources.money_coin;
+            this.mniReportSell.Name = "mniReportSell";
+            this.mniReportSell.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F5)));
+            this.mniReportSell.Size = new System.Drawing.Size(162, 22);
+            this.mniReportSell.Text = "ยอดขาย";
+            this.mniReportSell.Click += new System.EventHandler(this.mniReportSell_Click);
+            // 
+            // mniRegister
+            // 
+            this.mniRegister.Image = global::PowerPOS_Online.Properties.Resources.key_solid;
+            this.mniRegister.Name = "mniRegister";
+            this.mniRegister.Size = new System.Drawing.Size(168, 22);
+            this.mniRegister.Text = "ลงทะเบียนโปรแกรม";
+            this.mniRegister.Click += new System.EventHandler(this.mniRegister_Click);
+            // 
+            // mniAbout
+            // 
+            this.mniAbout.Image = global::PowerPOS_Online.Properties.Resources.information_white;
+            this.mniAbout.Name = "mniAbout";
+            this.mniAbout.Size = new System.Drawing.Size(168, 22);
+            this.mniAbout.Text = "เกี่ยวกับโปรแกรม";
+            this.mniAbout.Click += new System.EventHandler(this.mniAbout_Click);
             // 
             // Main
             // 
@@ -645,6 +658,7 @@
         private System.Windows.Forms.Timer tmSync;
         private System.ComponentModel.BackgroundWorker bwSync;
         private System.Windows.Forms.OpenFileDialog opdImportBarcode;
+        private System.Windows.Forms.ToolStripButton btnReturn;
     }
 }
 

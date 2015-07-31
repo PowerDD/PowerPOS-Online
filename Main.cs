@@ -231,6 +231,12 @@ namespace PowerPOS_Online
             Param.SelectedScreen = (int)Param.Screen.Claim;
         }
 
+        private void mniReturn_Click(object sender, EventArgs e)
+        {
+            Util.ShowScreen(Param.Screen.Return);
+            Param.SelectedScreen = (int)Param.Screen.Return;
+        }
+
         private void btnUpdateData_Click(object sender, EventArgs e)
         {
             InitialCloudData();

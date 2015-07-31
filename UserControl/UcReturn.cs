@@ -7,31 +7,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 using Microsoft.WindowsAzure.Storage.Table;
 using XPTable.Models;
 using System.Net;
-using System.IO;
-using System.Collections;
 using System.Globalization;
-using System.Threading;
 
 namespace PowerPOS_Online
 {
-    public partial class UcClaim : UserControl
+    public partial class UcReturn : UserControl
     {
         private List<BarcodeEntity> barcodeEntityList;
         private ProductEntity productEntity;
+        private BarcodeEntity barcodeEntity;
         private string barcode;
         private bool downloading;
         private List<string> shopList;
         private List<string> customerList;
 
-        public UcClaim()
+        public UcReturn()
         {
             InitializeComponent();
         }
 
-        private void UcClaim_Load(object sender, EventArgs e)
+        private void UcReturn_Load(object sender, EventArgs e)
         {
             Util.InitialTable(table1);
             barcode = string.Empty;
@@ -65,7 +64,7 @@ namespace PowerPOS_Online
                 lblWarrantyStatus.Visible = false;
                 lblWarranty.Visible = false;
                 ptbProduct.Visible = false;
-                btnClaim.Visible = false;
+                btnReturn.Visible = false;
 
                 bwSearch.RunWorkerAsync();
             }
@@ -73,7 +72,7 @@ namespace PowerPOS_Online
 
         private void bwSearch_DoWork(object sender, DoWorkEventArgs e)
         {
-            var azureTable = Param.AzureTableClient.GetTableReference("Barcode");
+            var azureTable = Param.AzureTableClient.GetTableReference("BarcodeStock");
             TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(
                 TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, barcode)
             );
@@ -99,31 +98,31 @@ namespace PowerPOS_Online
             {
                 lblStatus.Visible = false;
                 txtBarcode.Enabled = true;
-                txtBarcode.Text = "";
+                //txtBarcode.Text = "";
 
                 table1.BeginUpdate();
                 tableModel1.Rows.Clear();
                 tableModel1.RowHeight = 22;
                 shopList = new List<string>();
                 customerList = new List<string>();
-
-                for (int i = 0; i < barcodeEntityList.Count; i++)
+                if (barcodeEntityList[0].SellNo != "")
                 {
-                    tableModel1.Rows.Add(new Row(
-                        new Cell[] {
+                    for (int i = 0; i < barcodeEntityList.Count; i++)
+                    {
+                        tableModel1.Rows.Add(new Row(
+                            new Cell[] {
                     new Cell("" + (i+1)),
                     new Cell(barcodeEntityList[i].SellDate.ToLocalTime().ToString("dd MMMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"))),
-                    new Cell(Param.ShopNameHashtable.Contains(barcodeEntityList[i].PartitionKey) ? Param.ShopNameHashtable[barcodeEntityList[i].PartitionKey].ToString() : barcodeEntityList[i].PartitionKey),
-                    new Cell(barcodeEntityList[i].ReceivedDate.ToLocalTime().ToString("dd MMMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"))),
                     new Cell(Param.CustomerNameHashtable.Contains(barcodeEntityList[i].Customer) ? Param.CustomerNameHashtable[barcodeEntityList[i].Customer].ToString() : barcodeEntityList[i].Customer)
                     //,
                     //new Cell(Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy") == "01/01/0544" ? "-" : Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy hh:mm:ss")),
                     })
-                    );
-                    if (!Param.ShopNameHashtable.Contains(barcodeEntityList[i].PartitionKey))
-                        shopList.Add(barcodeEntityList[i].PartitionKey);
-                    if (!Param.CustomerNameHashtable.Contains(barcodeEntityList[i].Customer))
-                        customerList.Add(barcodeEntityList[i].Customer);
+                        );
+                        if (!Param.ShopNameHashtable.Contains(barcodeEntityList[i].PartitionKey))
+                            shopList.Add(barcodeEntityList[i].PartitionKey);
+                        if (!Param.CustomerNameHashtable.Contains(barcodeEntityList[i].Customer))
+                            customerList.Add(barcodeEntityList[i].Customer);
+                    }
                 }
                 table1.EndUpdate();
                 bwGetProduct.RunWorkerAsync();
@@ -138,7 +137,7 @@ namespace PowerPOS_Online
             TableOperation retrieveOperation = TableOperation.Retrieve<ProductEntity>(barcodeEntityList[index].PartitionKey, barcodeEntityList[index].Product);
             TableResult retrievedResult = azureTable.Execute(retrieveOperation);
             productEntity = (ProductEntity)retrievedResult.Result;
-            
+
             var filename = @"Resource/Images/Product/" + barcodeEntityList[index].Product + ".jpg";
             if (!File.Exists(filename))
             {
@@ -168,17 +167,24 @@ namespace PowerPOS_Online
                 lblName.Text = productEntity.Name;
                 lblName.Visible = true;
 
-                var remain = (productEntity.Warranty == 0) ? 0 : productEntity.Warranty - (DateTime.Now - barcodeEntityList[0].SellDate).TotalDays;
+                if (barcodeEntityList[0].SellNo == "")
+                {
+                    lblStatus.Text = "สินค้าชิ้นนี้ยังไม่ได้ทำการขาย";
+                    lblStatus.ForeColor = Color.Red;
+                    lblStatus.Visible = true;
+                }
+                else
+                {
+                    var remain = (DateTime.Now - barcodeEntityList[0].SellDate).TotalDays;
 
-                btnClaim.Visible = remain > 0;
+                    btnReturn.Visible = remain > 0;
 
-                lblWarranty.Text = (productEntity.Warranty == 0) ? "สินค้าไม่มีประกัน" : "ประกัน " + productEntity.Warranty + " วัน" +
-                    ((remain > 0) ? " (เหลือประกันอีก " + remain.ToString("#,###") + " วัน)" : " (ประกันหมดแล้ว " + (remain * -1).ToString("#,###") + " วัน)");
-                lblWarranty.Visible = true;
+                    lblWarranty.Text = "สินค้าชิ้นนี้" + ((remain > 0) ? " ขายไปแล้ว " + remain.ToString("#,###") + " วัน" : " ขายไปแล้ว " + (remain * -1).ToString("#,###") + " วัน");
+                    lblWarranty.Visible = true;
 
-                lblWarrantyStatus.Text = (productEntity.Warranty == 0) ? "ไม่สามารถเคลมสินค้าได้ค่ะ" : ((remain <= 0) ? "สินค้าหมดประกันแล้วค่ะ" : "");
-                lblWarrantyStatus.Visible = productEntity.Warranty == 0 || remain <= 0;
-
+                    //lblWarrantyStatus.Text = (productEntity.Warranty == 0) ? "ไม่สามารถเคลมสินค้าได้ค่ะ" : ((remain <= 0) ? "สินค้าหมดประกันแล้วค่ะ" : "");
+                    //lblWarrantyStatus.Visible = productEntity.Warranty == 0 || remain <= 0;
+                }
                 ptbProduct.Image = null;
 
                 var index = barcodeEntityList.Count - 1;
@@ -233,16 +239,6 @@ namespace PowerPOS_Online
 
         }
 
-        private void btnClaim_Click(object sender, EventArgs e)
-        {
-            FmClaim fm = new FmClaim();
-            var result = fm.ShowDialog(this);
-            if (result == DialogResult.OK)
-            {
-
-            }
-        }
-
         private void bwGetShopName_DoWork(object sender, DoWorkEventArgs e)
         {
             var azureTable = Param.AzureTableClient.GetTableReference("Shop");
@@ -291,10 +287,35 @@ namespace PowerPOS_Online
             {
                 try
                 {
-                    tableModel1.Rows[i].Cells[4].Text = Param.CustomerNameHashtable[tableModel1.Rows[i].Cells[4].Text].ToString();
+                    tableModel1.Rows[i].Cells[2].Text = Param.CustomerNameHashtable[tableModel1.Rows[i].Cells[2].Text].ToString();
                 }
                 catch { }
             }
+        }
+
+        private void btnReturn_Click(object sender, EventArgs e)
+        {
+            DataTable dt = Util.DBQuery(string.Format(@"SELECT b.Barcode, b.SellNo, p.ID
+                                            FROM Barcode b
+                                                LEFT JOIN Product p
+                                                ON b.product = p.id
+                                            WHERE p.Shop = '{0}' AND Barcode = '{1}'", Param.ShopId, txtBarcode.Text));
+
+            Util.DBExecute(string.Format(@"UPDATE Barcode SET SellBy = '',SellNo = '',SellFinished = 'Flase',Customer = '',SellPrice = '',SellDate = null ,Sync = 1 WHERE Barcode = '{0}'", txtBarcode.Text));
+
+            Util.DBExecute(string.Format(@"UPDATE SellHeader SET Profit = (SELECT SUM(SellPrice-Cost-OperationCost) FROM Barcode WHERE SellNo = '{0}')
+                    , TotalPrice = (SELECT SUM(SellPrice) FROM Barcode WHERE SellNo = '{0}') ,Sync = 1 WHERE SellNo = '{0}'", dt.Rows[0]["SellNo"].ToString()));
+
+            Util.DBExecute(string.Format(@"UPDATE SellDetail SET SellPrice =  (SELECT SUM(SellPrice) FROM Barcode WHERE SellNo = '{0}' AND Product = '{1}'), Cost = (SELECT SUM(Cost) FROM Barcode WHERE SellNo = '{0}' AND Product = '{1}'), Quantity = (SELECT COUNT(*) FROM Barcode WHERE SellNo = '{0}' AND Product = '{1}'),
+                     Sync = 1 WHERE SellNo = '{0}'", dt.Rows[0]["SellNo"].ToString(), dt.Rows[0]["ID"].ToString()));
+            //txtBarcode.Focus();
+            lblStatus.Visible = true;
+            lblStatus.Text = "รับคืนสินค้าในชิ้นนี้แล้ว";
+            lblWarranty.Visible = false;
+            ptbProduct.Image = null;
+            lblName.Visible = false;
+            btnReturn.Visible = false;
+            lblStatus.ForeColor = Color.Green;            
         }
     }
 }

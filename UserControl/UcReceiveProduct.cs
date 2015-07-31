@@ -87,16 +87,16 @@ namespace PowerPOS_Online
                                 SELECT DISTINCT Product, COUNT(*) ReceivedCount 
                                 FROM Barcode 
                                 WHERE ReceivedDate IS NOT NULL 
-                                AND ReceivedBy = '' 
+                                AND ReceivedBy = '{2}' 
                                 AND OrderNo =  '{1}' 
                                 GROUP BY Product
                         ) r
                             ON b.Product = r.Product
-                    WHERE (b.ReceivedDate IS NULL OR b.ReceivedBy = '')
+                    WHERE (b.ReceivedDate IS NULL OR b.ReceivedBy = '{2}')
                         AND b.OrderNo = '{1}'
                     GROUP BY b.Product
                     ORDER BY p.Name
-                ", Param.ShopId, cbbOrderNo.SelectedItem.ToString()));
+                ", Param.ShopId, cbbOrderNo.SelectedItem.ToString(), Param.UserId));
                 table1.BeginUpdate();
                 tableModel1.Rows.Clear();
                 tableModel1.RowHeight = 22;
@@ -177,8 +177,8 @@ namespace PowerPOS_Online
                     }
                     else
                     {
-                        Util.DBExecute(string.Format(@"UPDATE Barcode SET ReceivedDate = STRFTIME('%Y-%m-%d %H:%M:%S', 'NOW'), receivedBy = '{1}', Sync = 1
-                            WHERE Barcode = '{0}'", txtBarcode.Text, ""));
+                        Util.DBExecute(string.Format(@"UPDATE Barcode SET ReceivedDate = STRFTIME('%Y-%m-%d %H:%M:%S', 'NOW'), ReceivedBy = '{1}', Sync = 1
+                            WHERE Barcode = '{0}'", txtBarcode.Text, Param.UserId));
                         SearchData();
 
                         lblStatus.ForeColor = Color.Green;

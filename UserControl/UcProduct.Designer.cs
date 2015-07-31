@@ -508,7 +508,6 @@
             // 
             // nudPrice2
             // 
-            this.nudPrice2.Enabled = false;
             this.nudPrice2.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.nudPrice2.Location = new System.Drawing.Point(226, 54);
             this.nudPrice2.Maximum = new decimal(new int[] {
@@ -525,7 +524,6 @@
             // 
             // nudPrice1
             // 
-            this.nudPrice1.Enabled = false;
             this.nudPrice1.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.nudPrice1.Location = new System.Drawing.Point(154, 54);
             this.nudPrice1.Maximum = new decimal(new int[] {
@@ -542,7 +540,6 @@
             // 
             // nudPrice
             // 
-            this.nudPrice.Enabled = false;
             this.nudPrice.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.nudPrice.Location = new System.Drawing.Point(82, 54);
             this.nudPrice.Maximum = new decimal(new int[] {
