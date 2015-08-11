@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.gbxDetail = new System.Windows.Forms.GroupBox();
+            this.rtbDetail = new System.Windows.Forms.RichTextBox();
+            this.rdbHq = new System.Windows.Forms.RadioButton();
             this.txtCash = new System.Windows.Forms.TextBox();
             this.txtBarcode = new System.Windows.Forms.TextBox();
             this.rdbCash = new System.Windows.Forms.RadioButton();
             this.rdbSwap = new System.Windows.Forms.RadioButton();
-            this.rdbHq = new System.Windows.Forms.RadioButton();
-            this.rtbDetail = new System.Windows.Forms.RichTextBox();
-            this.gbxDetail = new System.Windows.Forms.GroupBox();
             this.gbxCustomer = new System.Windows.Forms.GroupBox();
             this.txtEmail = new System.Windows.Forms.TextBox();
             this.txtMobile = new System.Windows.Forms.TextBox();
@@ -72,7 +72,40 @@
             this.groupBox1.Size = new System.Drawing.Size(305, 226);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "เลือกวิธีการเครมสินค้า";
+            this.groupBox1.Text = "เลือกวิธีการเคลมสินค้า";
+            // 
+            // gbxDetail
+            // 
+            this.gbxDetail.Controls.Add(this.rtbDetail);
+            this.gbxDetail.ForeColor = System.Drawing.Color.Red;
+            this.gbxDetail.Location = new System.Drawing.Point(13, 107);
+            this.gbxDetail.Name = "gbxDetail";
+            this.gbxDetail.Padding = new System.Windows.Forms.Padding(5, 3, 5, 5);
+            this.gbxDetail.Size = new System.Drawing.Size(277, 106);
+            this.gbxDetail.TabIndex = 7;
+            this.gbxDetail.TabStop = false;
+            this.gbxDetail.Text = "อาการเสีย";
+            // 
+            // rtbDetail
+            // 
+            this.rtbDetail.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.rtbDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbDetail.Location = new System.Drawing.Point(5, 18);
+            this.rtbDetail.Name = "rtbDetail";
+            this.rtbDetail.Size = new System.Drawing.Size(267, 83);
+            this.rtbDetail.TabIndex = 5;
+            this.rtbDetail.Text = "";
+            // 
+            // rdbHq
+            // 
+            this.rdbHq.AutoSize = true;
+            this.rdbHq.Location = new System.Drawing.Point(13, 80);
+            this.rdbHq.Name = "rdbHq";
+            this.rdbHq.Size = new System.Drawing.Size(135, 20);
+            this.rdbHq.TabIndex = 4;
+            this.rdbHq.Text = "ส่งเคลมที่สำนักงานใหญ่";
+            this.rdbHq.UseVisualStyleBackColor = true;
+            this.rdbHq.CheckedChanged += new System.EventHandler(this.checkRadio);
             // 
             // txtCash
             // 
@@ -112,39 +145,6 @@
             this.rdbSwap.Text = "เปลี่ยนสินค้า บาร์โค้ด";
             this.rdbSwap.UseVisualStyleBackColor = true;
             this.rdbSwap.CheckedChanged += new System.EventHandler(this.checkRadio);
-            // 
-            // rdbHq
-            // 
-            this.rdbHq.AutoSize = true;
-            this.rdbHq.Location = new System.Drawing.Point(13, 80);
-            this.rdbHq.Name = "rdbHq";
-            this.rdbHq.Size = new System.Drawing.Size(135, 20);
-            this.rdbHq.TabIndex = 4;
-            this.rdbHq.Text = "ส่งเครมที่สำนักงานใหญ่";
-            this.rdbHq.UseVisualStyleBackColor = true;
-            this.rdbHq.CheckedChanged += new System.EventHandler(this.checkRadio);
-            // 
-            // rtbDetail
-            // 
-            this.rtbDetail.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.rtbDetail.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbDetail.Location = new System.Drawing.Point(5, 18);
-            this.rtbDetail.Name = "rtbDetail";
-            this.rtbDetail.Size = new System.Drawing.Size(267, 83);
-            this.rtbDetail.TabIndex = 5;
-            this.rtbDetail.Text = "";
-            // 
-            // gbxDetail
-            // 
-            this.gbxDetail.Controls.Add(this.rtbDetail);
-            this.gbxDetail.ForeColor = System.Drawing.Color.Red;
-            this.gbxDetail.Location = new System.Drawing.Point(13, 107);
-            this.gbxDetail.Name = "gbxDetail";
-            this.gbxDetail.Padding = new System.Windows.Forms.Padding(5, 3, 5, 5);
-            this.gbxDetail.Size = new System.Drawing.Size(277, 106);
-            this.gbxDetail.TabIndex = 7;
-            this.gbxDetail.TabStop = false;
-            this.gbxDetail.Text = "อาการเสีย";
             // 
             // gbxCustomer
             // 
@@ -274,6 +274,7 @@
             this.btnSave.Text = "บันทึกข้อมูล";
             this.btnSave.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnCancel
             // 
@@ -314,7 +315,7 @@
             this.Name = "FmClaim";
             this.Padding = new System.Windows.Forms.Padding(11, 5, 11, 11);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "เครมสินค้า";
+            this.Text = "เคลมสินค้า";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.gbxDetail.ResumeLayout(false);

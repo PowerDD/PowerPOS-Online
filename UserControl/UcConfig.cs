@@ -38,6 +38,7 @@ namespace PowerPOS_Online
 
                 //Param.systemConfig = Tuple.Create(Param.systemConfig, Bill);
                 //Param.systemConfig = Tuple.Create(Param.systemConfig.Item1, Param.systemConfig.Item2);
+               
             }
 
             nudPrintCount.Value = Param.SystemConfig.Bill.PrintCount;
@@ -56,6 +57,11 @@ namespace PowerPOS_Online
 
             CheckLogoUrl();
 
+            if (Param.MemberType == "Officer")
+            {
+                groupBox2.Enabled = false;
+                groupBox3.Enabled = false;
+            }
         }
 
         private void GetPrinter()

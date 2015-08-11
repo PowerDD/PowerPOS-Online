@@ -24,7 +24,6 @@ namespace PowerPOS_Online
 {
     public class Util
     {
-
         public static void GetApiConfig()
         {
             Param.ApiUrl = Properties.Settings.Default.ApiUrl;
@@ -131,7 +130,7 @@ namespace PowerPOS_Online
                     dynamic jsonObject = new JsonSerializer().Deserialize(new StringReader(json), structure.GetType());
                     if (jsonObject.success)
                     {
-                        var structureSuccess = new { success = false, shopId = "1234", databaseName = "", databasePassword = "", devicePrefix = "", devicePrinter = "" };
+                        var structureSuccess = new { success = false, shopId = "1234", databaseName = "", databasePassword = "", devicePrefix = "", devicePrinter = "", MemberType = "" };
                         jsonObject = new JsonSerializer().Deserialize(new StringReader(json), structureSuccess.GetType());
 
                         if (Param.ShopId != jsonObject.shopId)
@@ -146,12 +145,14 @@ namespace PowerPOS_Online
                         Param.ShopId = jsonObject.shopId;
                         Param.DevicePrefix = jsonObject.devicePrefix;
                         Param.DevicePrinter = jsonObject.devicePrinter;
+                        Param.MemberType = jsonObject.MemberType;
                         Param.ApiChecked = true;
                         Properties.Settings.Default.DatabaseName = Param.DatabaseName;
                         Properties.Settings.Default.DatabasePassword = Param.DatabasePassword;
                         Properties.Settings.Default.ShopId = Param.ShopId;
                         Properties.Settings.Default.DevicePrefix = Param.DevicePrefix;
                         Properties.Settings.Default.DevicePrinter = Param.DevicePrinter;
+                        Properties.Settings.Default.MemberType = Param.MemberType;
                         Properties.Settings.Default.ApiChecked = true;
                         Properties.Settings.Default.Save();
                         Properties.Settings.Default.Upgrade();
@@ -315,6 +316,10 @@ namespace PowerPOS_Online
             {
                 Param.UserControl = new UcReturn();
             }
+            else if (screen == Param.Screen.Stock && Param.SelectedScreen != (int)Param.Screen.Stock)
+            {
+                Param.UserControl = new UcStock();
+            }
             Param.UserControl.Dock = System.Windows.Forms.DockStyle.Fill;
 
             if (!Param.MainPanel.Contains(Param.UserControl))
@@ -475,7 +480,7 @@ namespace PowerPOS_Online
         public static void SyncData()
         {
             DataTable dt;
-            //## Product ##//
+            //## Barcode ##//
             try
             {
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -506,6 +511,7 @@ namespace PowerPOS_Online
                     d.SellBy = row["SellBy"].ToString();
                     d.SellFinished = row["SellFinished"].ToString() == "True" ? true : false;
                     d.Customer = row["Customer"].ToString();
+                    d.Stock = row["Stock"].ToString();
                     batchOperation.InsertOrMerge(d);
 
                     Util.DBExecute(string.Format("UPDATE Barcode SET Sync = 0 WHERE Barcode = {0}", row["Barcode"].ToString()));
@@ -537,6 +543,80 @@ namespace PowerPOS_Online
                 //}
                 //if (batchOperation.Count > 0)
                 //    azureTable.ExecuteBatch(batchOperation);
+            }
+            catch (Exception ex)
+            {
+                WriteErrorLog(ex.Message);
+                WriteErrorLog(ex.StackTrace);
+            }
+
+            //## Product ##//
+            try
+            {
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+                dt = Util.DBQuery("SELECT * FROM Product WHERE Sync = 1");
+
+                var azureTable = Param.AzureTableClient.GetTableReference("Product");
+                TableBatchOperation batchOperation = new TableBatchOperation();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow row = dt.Rows[i];
+                    dynamic d = new DynamicEntity(Param.ShopId, row["ID"].ToString());
+                    d.Price = double.Parse(row["Price"].ToString());
+                    d.Price1 = double.Parse(row["Price1"].ToString());
+                    d.Price2 = double.Parse(row["Price2"].ToString());
+                    d.Price3 = double.Parse(row["Price3"].ToString());
+                    if (row["Price4"].ToString() == "" || row["Price4"].ToString() == null) { d.Price4 = 0; } else { d.Price4 = double.Parse(row["Price4"].ToString()); }
+                    if (row["Price5"].ToString() == "" || row["Price5"].ToString() == null) { d.Price5 = 0; } else { d.Price5 = double.Parse(row["Price5"].ToString()); }
+                    batchOperation.InsertOrMerge(d);
+
+                    Util.DBExecute(string.Format("UPDATE Product SET Sync = 0 WHERE ID = {0}", row["ID"].ToString()));
+
+                    if (batchOperation.Count == 100)
+                    {
+                        azureTable.ExecuteBatch(batchOperation);
+                        batchOperation = new TableBatchOperation();
+                    }
+                }
+                if (batchOperation.Count > 0)
+                    azureTable.ExecuteBatch(batchOperation);
+            }
+            catch (Exception ex)
+            {
+                WriteErrorLog(ex.Message);
+                WriteErrorLog(ex.StackTrace);
+            }
+
+            //## CategoryProfit ##//
+            try
+            {
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+                dt = Util.DBQuery("SELECT * FROM CategoryProfit WHERE Sync = 1");
+
+                var azureTable = Param.AzureTableClient.GetTableReference("CategoryProfit");
+                TableBatchOperation batchOperation = new TableBatchOperation();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow row = dt.Rows[i];
+                    dynamic d = new DynamicEntity(Param.ShopId, row["ID"].ToString());
+                    if (row["Price"].ToString() == "" || row["Price"].ToString() == null) { d.Price = 0; } else { d.Price = double.Parse(row["Price"].ToString()); }
+                    if (row["Price1"].ToString() == "" || row["Price1"].ToString() == null) { d.Price1 = 0; } else { d.Price1 = double.Parse(row["Price1"].ToString()); }
+                    if (row["Price2"].ToString() == "" || row["Price2"].ToString() == null) { d.Price2 = 0; } else { d.Price2 = double.Parse(row["Price2"].ToString()); }
+                    if (row["Price3"].ToString() == "" || row["Price3"].ToString() == null) { d.Price3 = 0; } else { d.Price3 = double.Parse(row["Price3"].ToString()); }
+                    if (row["Price4"].ToString() == "" || row["Price4"].ToString() == null) { d.Price4 = 0; } else { d.Price4 = double.Parse(row["Price4"].ToString()); }
+                    if (row["Price5"].ToString() == "" || row["Price5"].ToString() == null) { d.Price5 = 0; } else { d.Price5 = double.Parse(row["Price5"].ToString()); }
+                    batchOperation.InsertOrMerge(d);
+
+                    Util.DBExecute(string.Format("UPDATE CategoryProfit SET Sync = 0 WHERE ID = {0}", row["ID"].ToString()));
+
+                    if (batchOperation.Count == 100)
+                    {
+                        azureTable.ExecuteBatch(batchOperation);
+                        batchOperation = new TableBatchOperation();
+                    }
+                }
+                if (batchOperation.Count > 0)
+                    azureTable.ExecuteBatch(batchOperation);
             }
             catch (Exception ex)
             {
@@ -632,8 +712,25 @@ namespace PowerPOS_Online
                     d.DiscountPercent = double.Parse(row["DiscountPercent"].ToString());
                     d.DiscountCash = double.Parse(row["DiscountCash"].ToString());
                     d.Paid = row["Paid"].ToString() == "True";
-                    d.Profit = double.Parse(row["Profit"].ToString());
-                    d.TotalPrice = double.Parse(row["TotalPrice"].ToString());
+
+                    if ((row["TotalPrice"].ToString() == "") || (row["TotalPrice"].ToString() == "0"))
+                    {
+                        d.Profit = 0;
+                    }
+                    else
+                    {
+                        d.Profit = double.Parse(row["Profit"].ToString());
+                    }
+
+                    if ((row["TotalPrice"].ToString() == "") || (row["TotalPrice"].ToString() == "0"))
+                    {
+                        d.TotalPrice = 0;
+                    }
+                    else
+                    {
+                        d.TotalPrice = double.Parse(row["TotalPrice"].ToString());
+                    }
+
                     d.PointReceived = int.Parse(row["PointReceived"].ToString());
                     d.PointUse = int.Parse(row["PointUse"].ToString());
                     d.Comment = row["Comment"].ToString();
@@ -671,9 +768,34 @@ namespace PowerPOS_Online
                 {
                     DataRow row = dt.Rows[i];
                     dynamic d = new DynamicEntity(Param.ShopId, row["SellNo"].ToString() + "-" + row["Product"].ToString());
-                    d.SellPrice = double.Parse(row["SellPrice"].ToString());
-                    d.Cost = double.Parse(row["Cost"].ToString());
-                    d.Quantity = int.Parse(row["Quantity"].ToString());
+
+                    if ((row["SellPrice"].ToString() == "") || (row["SellPrice"].ToString() == "0"))
+                    {
+                        d.SellPrice = 0;
+                    }
+                    else
+                    {
+                        d.SellPrice = double.Parse(row["SellPrice"].ToString());
+                    }
+
+                    if ((row["Cost"].ToString() == "") || (row["Cost"].ToString() == "0"))
+                    {
+                        d.Cost = 0;
+                    }
+                    else
+                    {
+                        d.Cost = double.Parse(row["Cost"].ToString());
+                    }
+
+                    if ((row["Quantity"].ToString() == "") || (row["Quantity"].ToString() == "0"))
+                    {
+                        d.Quantity = 0;
+                    }
+                    else
+                    {
+                        d.Quantity = int.Parse(row["Quantity"].ToString());
+                    }
+                    d.Comment = row["Comment"].ToString();
                     batchOperation.InsertOrMerge(d);
 
                     Util.DBExecute(string.Format("UPDATE SellDetail SET Sync = 0 WHERE SellNo = '{0}' AND Product = '{1}'", 
@@ -693,9 +815,194 @@ namespace PowerPOS_Online
                 WriteErrorLog(ex.Message);
                 WriteErrorLog(ex.StackTrace);
             }
+
+            //## Return ##//
+            try
+            {
+                dt = Util.DBQuery("SELECT * FROM ReturnProduct WHERE Sync = 1");
+
+                var azureTable = Param.AzureTableClient.GetTableReference("ReturnProduct");
+                azureTable.CreateIfNotExists();
+
+                TableBatchOperation batchOperation = new TableBatchOperation();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow row = dt.Rows[i];
+                    dynamic d = new DynamicEntity(Param.ShopId, row["SellNo"].ToString() + "-" + row["Barcode"].ToString());
+                    d.SellPrice = double.Parse(row["SellPrice"].ToString());
+                    d.ReturnDate = Convert.ToDateTime(row["ReturnDate"].ToString());
+                    d.Product = row["Product"].ToString();
+                    d.ReturnBy = row["ReturnBy"].ToString();
+                    batchOperation.InsertOrMerge(d);
+
+                    Util.DBExecute(string.Format("UPDATE ReturnProduct SET Sync = 0 WHERE SellNo = '{0}' AND Barcode = '{1}'", row["SellNo"].ToString(), row["Barcode"].ToString()));
+
+                    if (batchOperation.Count == 100)
+                    {
+                        azureTable.ExecuteBatch(batchOperation);
+                        batchOperation = new TableBatchOperation();
+                    }
+                }
+                if (batchOperation.Count > 0)
+                    azureTable.ExecuteBatch(batchOperation);
+            }
+            catch (Exception ex)
+            {
+                WriteErrorLog(ex.Message);
+                WriteErrorLog(ex.StackTrace);
+            }
+
+            //## Claim ##//
+            try
+            {
+                dt = Util.DBQuery("SELECT * FROM Claim WHERE Sync = 1");
+
+                var azureTable = Param.AzureTableClient.GetTableReference("Claim");
+                azureTable.CreateIfNotExists();
+
+                TableBatchOperation batchOperation = new TableBatchOperation();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow row = dt.Rows[i];
+                    dynamic d = new DynamicEntity(Param.ShopId, row["ClaimNo"].ToString() + "-" + row["Barcode"].ToString());
+                    d.ClaimType = row["ClaimType"].ToString();
+                    d.BarcodeClaim = row["BarcodeClaim"].ToString();
+                    d.Description = row["Description"].ToString();
+                    d.Firstname = row["Firstname"].ToString();
+                    d.Lastname = row["Lastname"].ToString();
+                    d.Nickname = row["Nickname"].ToString();
+                    d.Tel = row["Tel"].ToString();
+                    d.Email = row["Email"].ToString();
+                    d.Price = double.Parse(row["Price"].ToString());
+                    d.ClaimDate = Convert.ToDateTime(row["ClaimDate"].ToString());
+                    d.Product = row["Product"].ToString();
+                    d.ClaimBy = row["ClaimBy"].ToString();
+                    batchOperation.InsertOrMerge(d);
+
+                    Util.DBExecute(string.Format("UPDATE Claim SET Sync = 0 WHERE ClaimNo = '{0}' AND Barcode = '{1}'", row["ClaimNo"].ToString(), row["Barcode"].ToString()));
+
+                    if (batchOperation.Count == 100)
+                    {
+                        azureTable.ExecuteBatch(batchOperation);
+                        batchOperation = new TableBatchOperation();
+                    }
+                }
+                if (batchOperation.Count > 0)
+                    azureTable.ExecuteBatch(batchOperation);
+            }
+            catch (Exception ex)
+            {
+                WriteErrorLog(ex.Message);
+                WriteErrorLog(ex.StackTrace);
+            }
         }
 
+        public static void PrintStock()
+        {
+            DataTable dt = Util.DBQuery(string.Format(@"SELECT COUNT(*) Count FROM Product WHERE Shop = '{0}'", Param.ShopId));
 
+            var hight = 195 + int.Parse(dt.Rows[0]["Count"].ToString()) * 16;
+            //PaperSize paperSize = new PaperSize("Custom Size", 280, hight);
+            //PaperSize paperSize = new PaperSize("Custom Size", 380, hight);
+            PaperSize paperSize = new PaperSize("Custom Size", 400, hight);
+            paperSize.RawKind = (int)PaperKind.Custom;
+
+            PrintDocument pd = new PrintDocument();
+            pd.DefaultPageSettings.PaperSize = paperSize;
+            pd.PrintController = new System.Drawing.Printing.StandardPrintController();
+            pd.PrinterSettings.PrinterName = Param.DevicePrinter;
+            //pd.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
+            //pd.PrinterSettings.PrinterName = "GP-80250 Series";
+            //pd.PrinterSettings.PrinterName = "POS80";
+
+            pd.PrintPage += (_, g) =>
+            {
+                PrintStock(g);
+            };
+            pd.Print();
+        }
+
+        private static void PrintStock(PrintPageEventArgs g)
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+
+            var width = 280;
+            var gab = 5;
+
+            SolidBrush brush = new SolidBrush(Color.Black);
+            Font stringFont = new Font("Calibri", 6);
+            var pX = 0;
+            var pY = 0;
+            stringFont = new Font("DilleniaUPC", 17, FontStyle.Bold);
+            string measureString = "รายการสินค้า วันที่ " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"));
+            SizeF stringSize = g.Graphics.MeasureString(measureString, stringFont);
+            g.Graphics.DrawString(measureString, stringFont, brush, new PointF((width - stringSize.Width + gab) / 2, pY + 10));
+            pY += 40;
+
+//            DataTable dtCategory = Util.DBQuery(string.Format(@"SELECT DISTINCT p.Category,c.Name FROM Product p 
+//                            LEFT JOIN Category c   ON p.Category = c.ID
+//                            WHERE p.Shop = '{0}' 
+//                            ORDER BY Category", Param.ShopId));
+//            if (Param.RecordsCategory != Convert.ToInt32(dtCategory.Rows.Count))
+//            {
+//                for (int c = Param.RecordsCategory; c < dtCategory.Rows.Count; c++)
+//                {
+//                    stringFont = new Font("DilleniaUPC", 10);
+//                    g.Graphics.DrawString("-------------" + dtCategory.Rows[c]["Name"].ToString() + "-------------", stringFont, brush, new PointF(pX, pY));
+//                    pY += 20;
+                    stringFont = new Font("DilleniaUPC", 10);
+                    DataTable dt = Util.DBQuery(string.Format(@"SELECT p.Name,b.ProductCount,p.Category FROM Product p
+                            LEFT JOIN   (
+                                            SELECT Product, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                                        ) b
+                            ON b.Product = p.ID
+                            WHERE p.Shop = '{0}'
+                               AND b.ProductCount IS NOT NULL
+                             ORDER BY Category,Name"
+                    , Param.ShopId));
+                    //Param.Records = 0;
+                    if (Convert.ToInt32(dt.Rows.Count) != Param.Records)
+                    {
+                        for (int i = Param.Records; i < dt.Rows.Count; i++)
+                        {
+                            g.Graphics.DrawString(int.Parse(dt.Rows[i]["ProductCount"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX, pY));
+                            g.Graphics.DrawString(dt.Rows[i]["Name"].ToString(), stringFont, brush, new PointF(pX + 20, pY));
+                            pY += 15;
+                            Param.Records++;
+                            if (Param.Records == dt.Rows.Count)
+                            {
+                                 pY += 7;
+                                stringFont = new Font("DilleniaUPC", 14, FontStyle.Bold);
+                                g.Graphics.DrawString(string.Format("รวม {0} รายการ", dt.Rows.Count), stringFont, brush, new PointF(pX, pY));
+                                stringFont = new Font("Calibri", 10, FontStyle.Bold);
+
+                                pY += 15;
+                                stringFont = new Font("DilleniaUPC", 10);
+                                measureString = Param.Page.ToString();
+                                stringSize = g.Graphics.MeasureString(measureString, stringFont);
+                                g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY + 3));
+                            }
+
+                            if (Param.pageSize < pY)
+                            {
+                                stringFont = new Font("DilleniaUPC", 10);
+                                measureString = Param.Page.ToString();
+                                stringSize = g.Graphics.MeasureString(measureString, stringFont);
+                                g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY + 3));
+                                Param.Page++;
+                                Console.WriteLine(pY);
+                                //Param.RecordsCategory++;
+                                PrintStock();
+                                break;
+                            }
+
+                            Console.WriteLine(pY);
+                            Console.WriteLine(i);
+                        }
+                    }
+            //    //}
+            //}
+        }
 
 
         public static void PrintReceipt(string sellNo)

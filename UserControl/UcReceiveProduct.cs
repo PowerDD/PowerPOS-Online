@@ -19,6 +19,10 @@ namespace PowerPOS_Online
         private int _QTY = 0;
         private int _RECEIVED = 0;
         private bool _FIRST_LOAD;
+        int row = -1;
+        public static string productNo;
+        public static string OrderNo;
+        public static string ProductName;
 
         public UcReceiveProduct()
         {
@@ -51,12 +55,30 @@ namespace PowerPOS_Online
             }
             cbbOrderNo.SelectedIndex = 0;
 
+            DataTable dtab = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM Barcode WHERE ReceivedDate IS NOT NULL  AND OrderNo <> ''  ORDER BY OrderNo");
+            cbbOrder.Items.Clear();
+            cbbOrder.Items.Add("เลขที่ใบสั่งซื้อ");
+            if (dtab.Rows.Count == 0)
+            {
+                cbbOrder.Enabled = false;
+            }
+            else
+            {
+                cbbOrder.Enabled = true;
+                for (int i = 0; i < dtab.Rows.Count; i++)
+                {
+                    cbbOrder.Items.Add(dtab.Rows[i]["OrderNo"].ToString());
+                }
+            }
+            cbbOrder.SelectedIndex = 0;
+
             _FIRST_LOAD = false;
         }
 
         private void cbbOrderNo_SelectedIndexChanged(object sender, EventArgs e)
         {
             ptbProduct.Visible = false;
+            cbbOrder.SelectedIndex = 0;
             SearchData();
         }
 
@@ -132,6 +154,66 @@ namespace PowerPOS_Online
                     progressBar1.Maximum = _QTY;
                     progressBar1.Value = _RECEIVED;
                 }
+            }
+            txtBarcode.Focus();
+        }
+
+        private void SearchDataOrder()
+        {
+            if (cbbOrder.SelectedIndex == 0)
+            {
+                table1.BeginUpdate();
+                tableModel1.Rows.Clear();
+                table1.EndUpdate();
+
+                gbOrder.Height = 69;
+                progressBar1.Visible = false;
+                gbCost.Visible = false;
+            }
+            else if (!_FIRST_LOAD)
+            {
+                _QTY = 0;
+                _RECEIVED = 0;
+                DataTable dt = Util.DBQuery(string.Format(@"
+                    SELECT DISTINCT b.Product, p.Name, COUNT(*) ProductCount, IFNULL(r.ReceivedCount, 0) ReceivedCount
+                    FROM Barcode b
+                        LEFT JOIN Product p
+                            ON b.Product = p.ID
+                            AND p.Shop = '{0}'
+                        LEFT JOIN ( 
+                                SELECT DISTINCT Product, COUNT(*) ReceivedCount 
+                                FROM Barcode 
+                                WHERE ReceivedDate IS NOT NULL 
+                                AND ReceivedBy = '{2}' 
+                                AND OrderNo =  '{1}' 
+                                GROUP BY Product
+                        ) r
+                            ON b.Product = r.Product
+                    WHERE (b.ReceivedDate IS NULL OR b.ReceivedBy = '{2}')
+                        AND b.OrderNo = '{1}'
+                    GROUP BY b.Product
+                    ORDER BY p.Name
+                ", Param.ShopId, cbbOrder.SelectedItem.ToString(), Param.UserId));
+                table1.BeginUpdate();
+                tableModel1.Rows.Clear();
+                tableModel1.RowHeight = 22;
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    var progress = float.Parse(dt.Rows[i]["ReceivedCount"].ToString()) / float.Parse(dt.Rows[i]["ProductCount"].ToString()) * 100.0f;
+                    tableModel1.Rows.Add(new Row(
+                        new Cell[] {
+                        new Cell("" + (i+1)),
+                        new Cell(dt.Rows[i]["Product"].ToString()),
+                        new Cell(dt.Rows[i]["Name"].ToString()),
+                        new Cell(int.Parse(dt.Rows[i]["ProductCount"].ToString()).ToString("#,##0")),
+                        new Cell(int.Parse(dt.Rows[i]["ReceivedCount"].ToString()).ToString("#,##0")),
+                        new Cell((int)progress)
+                        }));
+                    _QTY += int.Parse(dt.Rows[i]["ProductCount"].ToString());
+                    _RECEIVED += int.Parse(dt.Rows[i]["ReceivedCount"].ToString());
+                }
+                table1.EndUpdate();
+
             }
             txtBarcode.Focus();
         }
@@ -281,6 +363,33 @@ namespace PowerPOS_Online
         private void txtBarcode_Enter(object sender, EventArgs e)
         {
             lblStatus.Text = "";
+        }
+
+        private void cbbOrder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ptbProduct.Visible = false;
+            cbbOrderNo.SelectedIndex = 0;
+            SearchDataOrder();
+        }
+
+        private void table1_CellDoubleClick(object sender, XPTable.Events.CellMouseEventArgs e)
+        {
+            if (e.Row < table1.RowCount)
+            {
+                row = e.Row;
+            }
+            if (row != -1)
+            {
+                productNo = tableModel1.Rows[row].Cells[1].Text;
+                if (cbbOrder.SelectedIndex == 0) { OrderNo = cbbOrderNo.SelectedItem.ToString(); } else { OrderNo = cbbOrder.SelectedItem.ToString(); }
+                ProductName = tableModel1.Rows[row].Cells[2].Text;
+                FmOrderDetail frm = new FmOrderDetail();
+                frm.Show();
+            }
+            else
+            {
+                MessageBox.Show("กรุณาเลือกรายการที่ต้องการดูรายละเอียดการขาย", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
     }
 }

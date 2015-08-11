@@ -33,6 +33,8 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.pnlLeft = new System.Windows.Forms.Panel();
+            this.gbOrder = new System.Windows.Forms.GroupBox();
+            this.cbbOrder = new System.Windows.Forms.ComboBox();
             this.pnlBarcode = new System.Windows.Forms.Panel();
             this.ptbProduct = new System.Windows.Forms.PictureBox();
             this.txtBarcode = new System.Windows.Forms.TextBox();
@@ -56,6 +58,7 @@
             this.tableModel1 = new XPTable.Models.TableModel();
             this.panel1.SuspendLayout();
             this.pnlLeft.SuspendLayout();
+            this.gbOrder.SuspendLayout();
             this.pnlBarcode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbProduct)).BeginInit();
             this.gbCost.SuspendLayout();
@@ -88,6 +91,7 @@
             // 
             // pnlLeft
             // 
+            this.pnlLeft.Controls.Add(this.gbOrder);
             this.pnlLeft.Controls.Add(this.pnlBarcode);
             this.pnlLeft.Controls.Add(this.gbCost);
             this.pnlLeft.Controls.Add(this.gbOrderNo);
@@ -97,6 +101,30 @@
             this.pnlLeft.Padding = new System.Windows.Forms.Padding(7, 10, 7, 0);
             this.pnlLeft.Size = new System.Drawing.Size(247, 709);
             this.pnlLeft.TabIndex = 6;
+            // 
+            // gbOrder
+            // 
+            this.gbOrder.Controls.Add(this.cbbOrder);
+            this.gbOrder.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.gbOrder.Location = new System.Drawing.Point(7, 647);
+            this.gbOrder.Name = "gbOrder";
+            this.gbOrder.Size = new System.Drawing.Size(233, 62);
+            this.gbOrder.TabIndex = 7;
+            this.gbOrder.TabStop = false;
+            this.gbOrder.Text = "ข้อมูลใบสั่งซื้อย้อนหลัง";
+            // 
+            // cbbOrder
+            // 
+            this.cbbOrder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbbOrder.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.cbbOrder.FormattingEnabled = true;
+            this.cbbOrder.Items.AddRange(new object[] {
+            "เลขที่ใบสั่งซื้อ"});
+            this.cbbOrder.Location = new System.Drawing.Point(14, 30);
+            this.cbbOrder.Name = "cbbOrder";
+            this.cbbOrder.Size = new System.Drawing.Size(204, 24);
+            this.cbbOrder.TabIndex = 0;
+            this.cbbOrder.SelectedIndexChanged += new System.EventHandler(this.cbbOrder_SelectedIndexChanged);
             // 
             // pnlBarcode
             // 
@@ -254,6 +282,7 @@
             this.table1.FullRowSelect = true;
             this.table1.GridLines = XPTable.Models.GridLines.Both;
             this.table1.GridLinesContrainedToData = false;
+            this.table1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.table1.Location = new System.Drawing.Point(247, 39);
             this.table1.Name = "table1";
             this.table1.NoItemsText = "";
@@ -263,6 +292,7 @@
             this.table1.TableModel = this.tableModel1;
             this.table1.Text = "table1";
             this.table1.UnfocusedBorderColor = System.Drawing.Color.Black;
+            this.table1.CellDoubleClick += new XPTable.Events.CellMouseEventHandler(this.table1_CellDoubleClick);
             this.table1.EndSort += new XPTable.Events.ColumnEventHandler(this.table1_EndSort);
             // 
             // columnModel1
@@ -340,6 +370,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.pnlLeft.ResumeLayout(false);
+            this.gbOrder.ResumeLayout(false);
             this.pnlBarcode.ResumeLayout(false);
             this.pnlBarcode.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbProduct)).EndInit();
@@ -377,5 +408,7 @@
         private XPTable.Models.TextColumn clReceived;
         private XPTable.Models.ProgressBarColumn clProgress;
         private XPTable.Models.TableModel tableModel1;
+        private System.Windows.Forms.GroupBox gbOrder;
+        private System.Windows.Forms.ComboBox cbbOrder;
     }
 }

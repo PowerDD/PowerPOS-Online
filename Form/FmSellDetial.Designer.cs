@@ -40,6 +40,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.table1 = new XPTable.Models.Table();
             this.columnModel1 = new XPTable.Models.ColumnModel();
             this.No = new XPTable.Models.TextColumn();
@@ -51,6 +53,7 @@
             this.tableModel1 = new XPTable.Models.TableModel();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.table1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -153,11 +156,31 @@
             // panel2
             // 
             this.panel2.Controls.Add(this.table1);
+            this.panel2.Controls.Add(this.panel3);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 71);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(619, 323);
             this.panel2.TabIndex = 1;
+            // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.btnCancel);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel3.Location = new System.Drawing.Point(0, 285);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(619, 38);
+            this.panel3.TabIndex = 14;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(532, 7);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 16;
+            this.btnCancel.Text = "ยกเลิก";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // table1
             // 
@@ -173,11 +196,12 @@
             this.table1.GridLines = XPTable.Models.GridLines.Both;
             this.table1.GridLinesContrainedToData = false;
             this.table1.HeaderFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.table1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.table1.Location = new System.Drawing.Point(0, 0);
             this.table1.Name = "table1";
             this.table1.NoItemsText = "";
             this.table1.SelectionStyle = XPTable.Models.SelectionStyle.Grid;
-            this.table1.Size = new System.Drawing.Size(619, 323);
+            this.table1.Size = new System.Drawing.Size(619, 285);
             this.table1.TabIndex = 13;
             this.table1.TableModel = this.tableModel1;
             this.table1.Text = "table1";
@@ -243,6 +267,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
+            this.panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.table1)).EndInit();
             this.ResumeLayout(false);
 
@@ -269,5 +294,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lblTotal;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Button btnCancel;
     }
 }

@@ -32,7 +32,7 @@ namespace PowerPOS_Online
 
         private void UcReturn_Load(object sender, EventArgs e)
         {
-            Util.InitialTable(table1);
+            Util.InitialTable(table1); 
             barcode = string.Empty;
             ptbProduct.SizeMode = PictureBoxSizeMode.StretchImage;
             txtBarcode.Focus();
@@ -73,9 +73,8 @@ namespace PowerPOS_Online
         private void bwSearch_DoWork(object sender, DoWorkEventArgs e)
         {
             var azureTable = Param.AzureTableClient.GetTableReference("BarcodeStock");
-            TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(
-                TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, barcode)
-            );
+            TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(TableQuery.CombineFilters(
+                TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId),TableOperators.And,TableQuery.GenerateFilterCondition( "RowKey", QueryComparisons.Equal, barcode)));
 
             barcodeEntityList = new List<BarcodeEntity>();
             foreach (BarcodeEntity entity in azureTable.ExecuteQuery(query))
@@ -112,7 +111,7 @@ namespace PowerPOS_Online
                         tableModel1.Rows.Add(new Row(
                             new Cell[] {
                     new Cell("" + (i+1)),
-                    new Cell(barcodeEntityList[i].SellDate.ToLocalTime().ToString("dd MMMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"))),
+                    new Cell(barcodeEntityList[i].SellDate.ToLocalTime().ToString("dd MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH"))),
                     new Cell(Param.CustomerNameHashtable.Contains(barcodeEntityList[i].Customer) ? Param.CustomerNameHashtable[barcodeEntityList[i].Customer].ToString() : barcodeEntityList[i].Customer)
                     //,
                     //new Cell(Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy") == "01/01/0544" ? "-" : Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy hh:mm:ss")),
@@ -295,19 +294,34 @@ namespace PowerPOS_Online
 
         private void btnReturn_Click(object sender, EventArgs e)
         {
-            DataTable dt = Util.DBQuery(string.Format(@"SELECT b.Barcode, b.SellNo, p.ID
+            DataTable dt;
+            dt = Util.DBQuery(string.Format(@"SELECT b.Barcode, b.SellNo, p.ID, b.SellPrice
                                             FROM Barcode b
                                                 LEFT JOIN Product p
                                                 ON b.product = p.id
                                             WHERE p.Shop = '{0}' AND Barcode = '{1}'", Param.ShopId, txtBarcode.Text));
 
+            Util.DBExecute(string.Format(@"INSERT INTO ReturnProduct (SellNo, ReturnDate, Product, Barcode, SellPrice, ReturnBy, Sync)
+                    SELECT '{0}', STRFTIME('%Y-%m-%d %H:%M:%S', 'NOW'), Product, Barcode, SellPrice, '{2}', 1 FROM Barcode WHERE SellNo = '{0}'AND Barcode = '{1}' GROUP BY Product",
+                    dt.Rows[0]["SellNo"].ToString(), dt.Rows[0]["Barcode"].ToString(), Param.UserId));
+
             Util.DBExecute(string.Format(@"UPDATE Barcode SET SellBy = '',SellNo = '',SellFinished = 'Flase',Customer = '',SellPrice = '',SellDate = null ,Sync = 1 WHERE Barcode = '{0}'", txtBarcode.Text));
 
             Util.DBExecute(string.Format(@"UPDATE SellHeader SET Profit = (SELECT SUM(SellPrice-Cost-OperationCost) FROM Barcode WHERE SellNo = '{0}')
                     , TotalPrice = (SELECT SUM(SellPrice) FROM Barcode WHERE SellNo = '{0}') ,Sync = 1 WHERE SellNo = '{0}'", dt.Rows[0]["SellNo"].ToString()));
-
-            Util.DBExecute(string.Format(@"UPDATE SellDetail SET SellPrice =  (SELECT SUM(SellPrice) FROM Barcode WHERE SellNo = '{0}' AND Product = '{1}'), Cost = (SELECT SUM(Cost) FROM Barcode WHERE SellNo = '{0}' AND Product = '{1}'), Quantity = (SELECT COUNT(*) FROM Barcode WHERE SellNo = '{0}' AND Product = '{1}'),
+            
+            Util.DBExecute(string.Format(@"UPDATE SellDetail SET SellPrice =  IFNULL((SELECT SUM(SellPrice) FROM Barcode WHERE SellNo = '{0}' AND Product = '{1}'),0)  , Cost = IFNULL((SELECT SUM(Cost) FROM Barcode WHERE SellNo = '{0}' AND Product = '{1}'),0), Quantity = IFNULL((SELECT COUNT(*) FROM Barcode WHERE SellNo = '{0}' AND Product = '{1}'),0),
                      Sync = 1 WHERE SellNo = '{0}'", dt.Rows[0]["SellNo"].ToString(), dt.Rows[0]["ID"].ToString()));
+
+            DataTable dtap = Util.DBQuery(string.Format(@"SELECT * FROM SellHeader WHERE SellNo = '{0}'", dt.Rows[0]["SellNo"].ToString()));
+
+            if (dtap.Rows[0]["TotalPrice"].ToString() == "0" || dtap.Rows[0]["TotalPrice"].ToString() == "")
+            {
+                Util.DBExecute(string.Format(@"UPDATE SellHeader SET Comment = 'คืนสินค้า' ,Sync = 1 WHERE SellNo = '{0}'", dt.Rows[0]["SellNo"].ToString()));
+                Util.DBExecute(string.Format(@"UPDATE SellDetail SET Comment = 'คืนสินค้า' ,Sync = 1 WHERE SellNo = '{0}'", dt.Rows[0]["SellNo"].ToString()));
+
+            }
+
             //txtBarcode.Focus();
             lblStatus.Visible = true;
             lblStatus.Text = "รับคืนสินค้าในชิ้นนี้แล้ว";
@@ -315,7 +329,8 @@ namespace PowerPOS_Online
             ptbProduct.Image = null;
             lblName.Visible = false;
             btnReturn.Visible = false;
-            lblStatus.ForeColor = Color.Green;            
+            lblStatus.ForeColor = Color.Green;       
+            
         }
     }
 }

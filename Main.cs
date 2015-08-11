@@ -31,6 +31,9 @@ namespace PowerPOS_Online
         {
             Param.InitialFinished = false;
             InitialCloudData();
+            //Param.ShopId = "00000002";
+            //Util.PrintStock();
+            //this.Dispose();
         }
 
         private void InitialCloudData()
@@ -235,6 +238,12 @@ namespace PowerPOS_Online
         {
             Util.ShowScreen(Param.Screen.Return);
             Param.SelectedScreen = (int)Param.Screen.Return;
+        }
+
+        private void mniStock_Click(object sender, EventArgs e)
+        {
+            Util.ShowScreen(Param.Screen.Stock);
+            Param.SelectedScreen = (int)Param.Screen.Stock;
         }
 
         private void btnUpdateData_Click(object sender, EventArgs e)

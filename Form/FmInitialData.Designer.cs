@@ -45,6 +45,8 @@
             this.bwLoadCustomer = new System.ComponentModel.BackgroundWorker();
             this.bwLoadSell = new System.ComponentModel.BackgroundWorker();
             this.bwLoadProvince = new System.ComponentModel.BackgroundWorker();
+            this.bwLoadReturnProduct = new System.ComponentModel.BackgroundWorker();
+            this.bwLoadClaim = new System.ComponentModel.BackgroundWorker();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -155,6 +157,16 @@
             this.bwLoadProvince.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwLoadProvince_DoWork);
             this.bwLoadProvince.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwLoadProvince_RunWorkerCompleted);
             // 
+            // bwLoadReturnProduct
+            // 
+            this.bwLoadReturnProduct.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwLoadReturnProduct_DoWork);
+            this.bwLoadReturnProduct.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwLoadReturnProduct_RunWorkerCompleted);
+            // 
+            // bwLoadClaim
+            // 
+            this.bwLoadClaim.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwLoadClaim_DoWork);
+            this.bwLoadClaim.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwLoadClaim_RunWorkerCompleted);
+            // 
             // FmInitialData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -191,5 +203,7 @@
         private System.ComponentModel.BackgroundWorker bwLoadCustomer;
         private System.ComponentModel.BackgroundWorker bwLoadSell;
         private System.ComponentModel.BackgroundWorker bwLoadProvince;
+        private System.ComponentModel.BackgroundWorker bwLoadReturnProduct;
+        private System.ComponentModel.BackgroundWorker bwLoadClaim;
     }
 }

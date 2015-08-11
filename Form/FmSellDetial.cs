@@ -20,6 +20,7 @@ namespace PowerPOS_Online
 
         private void FmSellDetial_Load(object sender, EventArgs e)
         {
+            Util.InitialTable(table1);
             DataTable dt = Util.DBQuery(string.Format(@"SELECT p.ID, p.Name, p.Price{2} Price, ProductCount, sd.SellPrice, sh.SellNo, sh.SellDate, sh.TotalPrice, c.Firstname, c.Lastname
                     FROM (SELECT Product, COUNT(*) ProductCount,SellNo FROM Barcode WHERE SellBy = '{0}' AND SellNo = '{3}' GROUP BY Product,SellNo) b 
                         LEFT JOIN Product p 
@@ -36,7 +37,7 @@ namespace PowerPOS_Online
             lblCustomer.Text = dt.Rows[0]["Firstname"].ToString() + " " + dt.Rows[0]["Lastname"].ToString();
             lblSellDate.Text = dt.Rows[0]["SellDate"].ToString();
             lblSellNo.Text = dt.Rows[0]["SellNo"].ToString();
-            lblTotal.Text = dt.Rows[0]["TotalPrice"].ToString();
+            lblTotal.Text = double.Parse(dt.Rows[0]["TotalPrice"].ToString()).ToString("#,##0.00");
             table1.BeginUpdate();
             tableModel1.Rows.Clear();
             tableModel1.RowHeight = 22;
@@ -59,6 +60,11 @@ namespace PowerPOS_Online
             }
             table1.EndUpdate();
 
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

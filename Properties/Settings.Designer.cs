@@ -172,5 +172,17 @@ namespace PowerPOS_Online.Properties {
                 this["LogoPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MemberType {
+            get {
+                return ((string)(this["MemberType"]));
+            }
+            set {
+                this["MemberType"] = value;
+            }
+        }
     }
 }

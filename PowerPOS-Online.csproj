@@ -128,6 +128,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\CategoryProfitEntity.cs" />
+    <Compile Include="Entity\ClaimEntity.cs" />
     <Compile Include="DynamicEntity.cs" />
     <Compile Include="Entity\BarcodeNoDateEntity.cs" />
     <Compile Include="Entity\BarcodeNoSellDateEntity.cs" />
@@ -138,6 +140,24 @@
     <Compile Include="Entity\CustomerEntity.cs" />
     <Compile Include="Entity\BarcodeEntity.cs" />
     <Compile Include="Entity\ProductUpdateEntity.cs" />
+    <Compile Include="FmProfitConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FmProfitConfig.Designer.cs">
+      <DependentUpon>FmProfitConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\FmBarcode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmBarcode.Designer.cs">
+      <DependentUpon>FmBarcode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\FmOrderDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmOrderDetail.Designer.cs">
+      <DependentUpon>FmOrderDetail.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form\FmSellDetial.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -231,6 +251,13 @@
     <Compile Include="Entity\SellHeaderEntity.cs" />
     <Compile Include="Entity\ProvinceEntity.cs" />
     <Compile Include="Entity\SellDetailEntity.cs" />
+    <Compile Include="Entity\ReturnEntity.cs" />
+    <Compile Include="UserControl\UcStock.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControl\UcStock.Designer.cs">
+      <DependentUpon>UcStock.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControl\UcReturn.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -318,6 +345,15 @@
     <Compile Include="Entity\UserGroupEntity.cs" />
     <Compile Include="Entity\UserUpdateEntity.cs" />
     <Compile Include="Util.cs" />
+    <EmbeddedResource Include="FmProfitConfig.resx">
+      <DependentUpon>FmProfitConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmBarcode.resx">
+      <DependentUpon>FmBarcode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmOrderDetail.resx">
+      <DependentUpon>FmOrderDetail.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form\FmSellDetial.resx">
       <DependentUpon>FmSellDetial.cs</DependentUpon>
     </EmbeddedResource>
@@ -392,6 +428,9 @@
     <EmbeddedResource Include="UserControl\UcShopInfo.resx">
       <DependentUpon>UcShopInfo.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UserControl\UcStock.resx">
+      <DependentUpon>UcStock.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserControl\UcUser.resx">
       <DependentUpon>UcUser.cs</DependentUpon>
     </EmbeddedResource>
@@ -436,6 +475,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\clock.png" />
     <None Include="Resources\Return.png" />
     <None Include="Resources\daily.png" />
     <None Include="Resources\table-money.png" />

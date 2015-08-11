@@ -28,6 +28,14 @@ namespace PowerPOS_Online
         private void FmAddCustomer_Load(object sender, EventArgs e)
         {
             //LoadData();
+            if (Param.SystemConfig.SellPrice == null)
+            {
+                cbbSellPrice.Items.Clear();
+                cbbSellPrice.Items.Add("ปลีก");
+                cbbSellPrice.Items.Add("ส่ง1");
+                cbbSellPrice.Items.Add("ส่ง2");
+                cbbSellPrice.SelectedIndex = 0;
+            }
         }
 
         private void LoadData()

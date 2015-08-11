@@ -41,6 +41,8 @@ namespace PowerPOS_Online
                 LEFT JOIN Customer c
                 ON h.Customer = c.ID
                 WHERE SellDate LIKE '{0}%'
+                  AND h.Customer <> 'Z000000'
+                  AND (h.Comment <> 'คืนสินค้า' OR h.Comment IS Null)   
                 ORDER BY SellDate DESC
             ", dtpStartDate.Value.ToString("yyyy-MM-dd") ));
 
@@ -71,7 +73,7 @@ namespace PowerPOS_Online
             }
             table1.EndUpdate();
 
-            dt = Util.DBQuery(string.Format(@"SELECT IFNULL(AVG(TotalPrice),0) Total
+            dt = Util.DBQuery(string.Format(@"SELECT TotalPrice,IFNULL(AVG(TotalPrice),0) Total
                 FROM SellHeader
                 WHERE SellDate BETWEEN '{0}' AND '{1}'
             ", dtpStartDate.Value.AddDays(-30).ToString("yyyy-MM-dd"), dtpStartDate.Value.AddDays(1).ToString("yyyy-MM-dd")));
@@ -146,10 +148,12 @@ namespace PowerPOS_Online
                 stringSize = g.MeasureString(measureString, stringFont);
                 g.DrawString(measureString, stringFont, drawBrush, (pictureBox1.Image.Width - stringSize.Width - 50) , 334);
 
-
-                //measureString = sumProfit.ToString("#,##0");
-                //stringSize = g.MeasureString(measureString, stringFont);
-                //g.DrawString(measureString, stringFont, drawBrush, (pictureBox1.Image.Width - stringSize.Width - 50), 428);
+                if (Param.SystemConfig.SellPrice == null)
+                {
+                    measureString = sumProfit.ToString("#,##0");
+                    stringSize = g.MeasureString(measureString, stringFont);
+                    g.DrawString(measureString, stringFont, drawBrush, (pictureBox1.Image.Width - stringSize.Width - 50), 428);
+                }
 
                 drawBrush = new SolidBrush(ColorTranslator.FromHtml("#fa3711"));
                 measureString = avgPrice.ToString("#,##0");

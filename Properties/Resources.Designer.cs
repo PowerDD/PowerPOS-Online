@@ -143,6 +143,16 @@ namespace PowerPOS_Online.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap clock {
+            get {
+                object obj = ResourceManager.GetObject("clock", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap color_swatch {
             get {
                 object obj = ResourceManager.GetObject("color-swatch", resourceCulture);
@@ -456,6 +466,16 @@ namespace PowerPOS_Online.Properties {
         internal static System.Drawing.Bitmap sitemap {
             get {
                 object obj = ResourceManager.GetObject("sitemap", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Stock {
+            get {
+                object obj = ResourceManager.GetObject("Stock", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -18,7 +18,7 @@ namespace PowerPOS_Online
 {
     public partial class FmInitialData : Form
     {
-        const int _PROGRESS_ALL = 9;
+        const int _PROGRESS_ALL = 11;
         public static int _PROGRESS_STEP = 0;
 
 
@@ -171,26 +171,27 @@ namespace PowerPOS_Online
                 'SellBy' VARCHAR,
                 'SellFinished' BOOL DEFAULT 0,
                 'Customer' VARCHAR,
+                'Stock' FLOAT DEFAULT 0,
                 'Sync' BOOL DEFAULT 0)");
 
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             StringBuilder sb = new StringBuilder(@"INSERT OR REPLACE INTO Barcode (Barcode, OrderNo, Product, Cost, OperationCost, 
-                    SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer) ");
+                    SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer, Stock) ");
             var i = 0;
             foreach (BarcodeEntity d in azureTable.ExecuteQuery(query))
             {
                 if (i != 0) sb.Append(" UNION ALL ");
-                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', {3}, {4}, {5}, {6}, '{7}', '{8}', {9}, '{10}', {11}, '{12}'",
+                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', {3}, {4}, {5}, {6}, '{7}', '{8}', {9}, '{10}', {11}, '{12}', '{13}'",
                     d.RowKey, d.OrderNo, d.Product, d.Cost, d.OperationCost == null ? 0 : d.OperationCost, d.SellPrice == null ? 0 : d.SellPrice,
                     d.ReceivedDate.ToString() == "1/1/0001 12:00:00 AM" ? "NULL" : "'" + d.ReceivedDate.ToString("yyyy-MM-dd HH:mm:ss") + "'", d.ReceivedBy, d.SellNo,
-                    d.SellDate.ToString() == "1/1/0001 12:00:00 AM" ? "NULL" : "'" + d.SellDate.ToString("yyyy-MM-dd HH:mm:ss") + "'", d.SellBy, d.SellFinished ? 1 : 0, d.Customer));
+                    d.SellDate.ToString() == "1/1/0001 12:00:00 AM" ? "NULL" : "'" + d.SellDate.ToString("yyyy-MM-dd HH:mm:ss") + "'", d.SellBy, d.SellFinished ? 1 : 0, d.Customer, d.Stock));
                 i++;
                 if (i % 500 == 0)
                 {
                     i = 0;
                     Util.DBExecute(sb.ToString());
                     sb = new StringBuilder(@"INSERT OR REPLACE INTO Barcode (Barcode, OrderNo, Product, Cost, OperationCost, 
-                    SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer) ");
+                    SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer, Stock) ");
                 }
             }
             Util.DBExecute(sb.ToString());
@@ -242,7 +243,7 @@ namespace PowerPOS_Online
                 AND ps.Shop = '{0}'
                 ", Param.ShopId, Param.ShopParent));
 
-            Util.DBExecute(string.Format(@"UPDATE Product SET Price = NULL, Price1 = NULL, Price2 = NULL, Price3 = NULL, Price4 = NULL, Price5 = NULL, Cost = NULL,
+            Util.DBExecute(string.Format(@"UPDATE Product SET Price4 = NULL, Price5 = NULL, Cost = NULL,
                 WebPrice = NULL, WebPrice1 = NULL, WebPrice2 = NULL, WebPrice3 = NULL, WebPrice4 = NULL, WebPrice5 = NULL
                 WHERE Shop = '{0}'", Param.ShopParent));
 
@@ -405,6 +406,40 @@ namespace PowerPOS_Online
             }
             if (i != 0)
                 Util.DBExecute(sb.ToString());
+
+
+            Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'CategoryProfit' (
+                    'ID' VARCHAR NOT NULL ,
+                    'Price' FLOAT DEFAULT 0,
+                    'Price1' FLOAT DEFAULT 0,
+                    'Price2' FLOAT DEFAULT 0,
+                    'Price3' FLOAT DEFAULT 0, 
+                    'Price4' FLOAT DEFAULT 0, 
+                    'Price5' FLOAT DEFAULT 0,
+                    'Sync' BOOL DEFAULT 0,
+                    PRIMARY KEY ('ID'))");
+
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            var azureTableA = Param.AzureTableClient.GetTableReference("CategoryProfit");
+            azureTableA.CreateIfNotExists();
+            var queryA = new TableQuery<CategoryProfitEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId));
+            const string comm = @"INSERT OR REPLACE INTO CategoryProfit (ID, Price, Price1, Price2, Price3, Price4, Price5) ";
+            var sbb = new StringBuilder(comm);
+
+            i = 0;
+            foreach (CategoryProfitEntity d in azureTableA.ExecuteQuery(queryA))
+            {
+                if (i != 0) sbb.Append(" UNION ALL ");
+                sbb.Append(string.Format(@" SELECT '{0}', {1}, {2}, {3}, {4}, {5}, {6}", d.RowKey, d.Price, d.Price1, d.Price2, d.Price3, d.Price4, d.Price5));
+                i++;
+                if (i % 500 == 0)
+                {
+                    i = 0;
+                    Util.DBExecute(sbb.ToString());
+                    sbb = new StringBuilder(comm);
+                }
+            }
+            Util.DBExecute(sbb.ToString());
         }
 
         private void LoadBrand(string shop)
@@ -480,6 +515,7 @@ namespace PowerPOS_Online
                 if (i != 0) sb.Append(" UNION ALL ");
                 sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, '{11}', '{12}', '{13}'",
                     d.PartitionKey, d.RowKey, d.Name, d.Price, d.Price1, d.Price2, d.Price3, d.Price4, d.Price5, d.Warranty, d.Cost, d.CoverImage, d.Category, d.Brand));
+              
                 i++;
                 if (i % 500 == 0)
                 {
@@ -648,6 +684,7 @@ namespace PowerPOS_Online
                 'SellPrice' DOUBLE NOT NULL,
                 'Cost' DOUBLE DEFAULT 0,
                 'Quantity' INT NOT NULL,
+                'Comment' VARCHAR,
                 'Sync' BOOL DEFAULT 0,
                 PRIMARY KEY ('SellNo', 'Product'))");
 
@@ -675,9 +712,112 @@ namespace PowerPOS_Online
                 }
             }
             Util.DBExecute(sbd.ToString());
+
         }
 
         private void bwLoadSell_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            _PROGRESS_STEP++;
+            pgbStatus.Value = (int)(_PROGRESS_STEP * 1.0 / _PROGRESS_ALL * 1.0 * 100);
+            Util.SetStatusMessage("กำลังโหลดข้อมูลการคืน", Param.StatusIcon.None);
+            bwLoadReturnProduct.RunWorkerAsync();
+        }
+
+        private void bwLoadReturnProduct_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int i = 0;
+            Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'ReturnProduct' (
+                'SellNo' VARCHAR NOT NULL,
+                'ReturnDate' VARCHAR,
+                'Product' VARCHAR NOT NULL,
+                'Barcode' VARCHAR NOT NULL,
+                'SellPrice' DOUBLE NOT NULL,
+                'ReturnBy' VARCHAR,
+                'Sync' BOOL DEFAULT 0,
+                PRIMARY KEY ('SellNo', 'Barcode'))");
+
+
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            var azureTable = Param.AzureTableClient.GetTableReference("ReturnProduct");
+            azureTable.CreateIfNotExists();
+            var query = new TableQuery<ReturnEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId));
+            const string command = @"INSERT OR REPLACE INTO ReturnProduct ( SellNo,Barcode, ReturnDate, SellPrice, Product,  ReturnBy) ";
+            var sb = new StringBuilder(command);
+
+            foreach (ReturnEntity d in azureTable.ExecuteQuery(query))
+            {
+                string[] val = d.RowKey.Split('-');
+
+                if (i != 0) sb.Append(" UNION ALL ");
+                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', '{3}', '{4}', '{5}'",
+                val[0].ToString(), val[1].ToString(), d.ReturnDate.ToString("yyyy-MM-dd HH:mm:ss"), d.SellPrice, d.Product, d.ReturnBy));
+                i++;
+                if (i % 500 == 0)
+                {
+                    i = 0;
+                    Util.DBExecute(sb.ToString());
+                    sb = new StringBuilder(command);
+                }
+            }
+            Util.DBExecute(sb.ToString());
+        }
+
+        private void bwLoadReturnProduct_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            _PROGRESS_STEP++;
+            pgbStatus.Value = (int)(_PROGRESS_STEP * 1.0 / _PROGRESS_ALL * 1.0 * 100);
+            Util.SetStatusMessage("กำลังโหลดข้อมูลเคลมสินค้า", Param.StatusIcon.None);
+            bwLoadClaim.RunWorkerAsync();
+        }
+
+        private void bwLoadClaim_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int i = 0;
+            Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'Claim' (
+                'ClaimNo' VARCHAR NOT NULL,
+                'ClaimType' VARCHAR,
+                'ClaimDate' VARCHAR,
+                'Product' VARCHAR NOT NULL,
+                'Barcode' VARCHAR NOT NULL,
+                'BarcodeClaim' VARCHAR,
+                'Description' VARCHAR NOT NULL,
+                'Price' DOUBLE NOT NULL,
+                'Firstname' VARCHAR,
+                'Lastname' VARCHAR,
+                'Nickname' VARCHAR,
+                'Tel' VARCHAR,
+                'Email' VARCHAR NOT NULL,
+                'ClaimBy' VARCHAR,
+                'Sync' BOOL DEFAULT 0,
+                PRIMARY KEY ('ClaimNo', 'Barcode'))");
+
+
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            var azureTable = Param.AzureTableClient.GetTableReference("Claim");
+            azureTable.CreateIfNotExists();
+            var query = new TableQuery<ClaimEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId));
+            const string command = @"INSERT OR REPLACE INTO Claim ( ClaimNo, Barcode, ClaimType, BarcodeClaim, ClaimDate, Description, Price, Product, Firstname, Lastname, Nickname, Tel, Email, ClaimBy) ";
+            var sb = new StringBuilder(command);
+
+            foreach (ClaimEntity d in azureTable.ExecuteQuery(query))
+            {
+                string[] val = d.RowKey.Split('-');
+
+                if (i != 0) sb.Append(" UNION ALL ");
+                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}'",
+                val[0].ToString(), val[1].ToString(), d.ClaimType, d.BarcodeClaim, d.ClaimDate.ToString("yyyy-MM-dd HH:mm:ss"), d.Description, d.Price, d.Product, d.Firstname, d.Lastname, d.Nickname, d.Tel, d.Email, d.ClaimBy));
+                i++;
+                if (i % 500 == 0)
+                {
+                    i = 0;
+                    Util.DBExecute(sb.ToString());
+                    sb = new StringBuilder(command);
+                }
+            }
+            Util.DBExecute(sb.ToString());
+        }
+
+        private void bwLoadClaim_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             _PROGRESS_STEP++;
             pgbStatus.Value = (int)(_PROGRESS_STEP * 1.0 / _PROGRESS_ALL * 1.0 * 100);
@@ -745,6 +885,20 @@ namespace PowerPOS_Online
             Util.SetStatusMessage("โหลดข้อมูลเสร็จเรียบร้อยแล้ว", Param.StatusIcon.Success);
             this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
+
+        private void bwLoadCategoryProfit_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+        }
+
+        private void bwLoadCategoryProfit_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+        }
+
+       
+
+
 
     }
 }

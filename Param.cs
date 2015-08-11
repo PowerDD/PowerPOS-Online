@@ -13,7 +13,7 @@ namespace PowerPOS_Online
 {
     public class Param
     {
-        public enum Screen { Sell, ReceiveProduct, Product, Customer, User, Brand, Category, Color, Report, ShopInfo, Config, Claim, Return };
+        public enum Screen { Sell, ReceiveProduct, Product, Customer, User, Brand, Category, Color, Report, ShopInfo, Config, Claim, Return, Stock };
         public enum StatusIcon { None, Loading, Success, Info };
 
         public static UcSell UcSell;
@@ -32,6 +32,7 @@ namespace PowerPOS_Online
         public static string ShopCustomer;
         public static string DevicePrefix;
         public static string DevicePrinter;
+        public static string MemberType;
         public static SQLiteConnection SQLiteConnection;
         public const string SQLiteFileName = "System.dll";
         public static bool InitialFinished = false;
@@ -47,6 +48,7 @@ namespace PowerPOS_Online
         public static int SelectCustomerAge;
         public static int SelectCustomerSellPrice;
 
+
         public static string ProductId;
         public static string CategoryName;
 
@@ -60,6 +62,10 @@ namespace PowerPOS_Online
         //public static ToolStripStatusLabel lblStatus;
         public static Label lblStatus;
         public static int SelectedScreen = -1;
+        public static int pageSize = 1100;
+        public static int Records = 0;
+        public static int RecordsCategory = 0;
+        public static int Page  = 1;
 
         public static dynamic SystemConfig;
         public static dynamic UserGroup;

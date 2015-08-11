@@ -36,6 +36,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.btnPrint = new System.Windows.Forms.Button();
             this.gbOrderNo = new System.Windows.Forms.GroupBox();
             this.cbNoPrice = new System.Windows.Forms.CheckBox();
             this.cbNoStock = new System.Windows.Forms.CheckBox();
@@ -90,6 +92,7 @@
             this.table1 = new XPTable.Models.Table();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panel5.SuspendLayout();
             this.gbOrderNo.SuspendLayout();
             this.pnlPrice.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -163,6 +166,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.panel5);
             this.panel3.Controls.Add(this.gbOrderNo);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel3.Location = new System.Drawing.Point(0, 39);
@@ -170,6 +174,26 @@
             this.panel3.Padding = new System.Windows.Forms.Padding(7, 10, 7, 0);
             this.panel3.Size = new System.Drawing.Size(247, 635);
             this.panel3.TabIndex = 8;
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.btnPrint);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel5.Location = new System.Drawing.Point(7, 594);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(233, 41);
+            this.panel5.TabIndex = 1;
+            // 
+            // btnPrint
+            // 
+            this.btnPrint.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.btnPrint.Location = new System.Drawing.Point(50, 7);
+            this.btnPrint.Name = "btnPrint";
+            this.btnPrint.Size = new System.Drawing.Size(120, 31);
+            this.btnPrint.TabIndex = 0;
+            this.btnPrint.Text = "พิมพ์รายการสินค้า";
+            this.btnPrint.UseVisualStyleBackColor = true;
+            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
             // 
             // gbOrderNo
             // 
@@ -324,6 +348,7 @@
             this.btnSave.Size = new System.Drawing.Size(29, 24);
             this.btnSave.TabIndex = 18;
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // panel4
             // 
@@ -367,7 +392,6 @@
             // 
             // btnConfig
             // 
-            this.btnConfig.Enabled = false;
             this.btnConfig.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.btnConfig.Image = global::PowerPOS_Online.Properties.Resources.gear;
             this.btnConfig.Location = new System.Drawing.Point(448, 83);
@@ -379,7 +403,6 @@
             // 
             // btnUsePercentPrice
             // 
-            this.btnUsePercentPrice.Enabled = false;
             this.btnUsePercentPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.btnUsePercentPrice.Location = new System.Drawing.Point(298, 83);
             this.btnUsePercentPrice.Name = "btnUsePercentPrice";
@@ -391,7 +414,6 @@
             // 
             // btnUseWebPrice
             // 
-            this.btnUseWebPrice.Enabled = false;
             this.btnUseWebPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.btnUseWebPrice.Location = new System.Drawing.Point(298, 53);
             this.btnUseWebPrice.Name = "btnUseWebPrice";
@@ -743,6 +765,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel3.ResumeLayout(false);
+            this.panel5.ResumeLayout(false);
             this.gbOrderNo.ResumeLayout(false);
             this.gbOrderNo.PerformLayout();
             this.pnlPrice.ResumeLayout(false);
@@ -819,5 +842,7 @@
         private XPTable.Models.NumberColumn clWebPrice2;
         private XPTable.Models.TableModel tableModel1;
         private XPTable.Models.Table table1;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Button btnPrint;
     }
 }
