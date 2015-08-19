@@ -84,6 +84,9 @@
             this.tmSync = new System.Windows.Forms.Timer(this.components);
             this.bwSync = new System.ComponentModel.BackgroundWorker();
             this.opdImportBarcode = new System.Windows.Forms.OpenFileDialog();
+            this.mniView = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniScreen = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -119,6 +122,7 @@
             this.mniProducts,
             this.mniData,
             this.mniReport,
+            this.mniView,
             this.mniHelp});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -588,6 +592,29 @@
             // 
             this.opdImportBarcode.FileName = "openFileDialog1";
             // 
+            // mniView
+            // 
+            this.mniView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniScreen,
+            this.mniMenu});
+            this.mniView.Name = "mniView";
+            this.mniView.Size = new System.Drawing.Size(53, 20);
+            this.mniView.Text = "มุมมอง";
+            // 
+            // mniScreen
+            // 
+            this.mniScreen.Name = "mniScreen";
+            this.mniScreen.Size = new System.Drawing.Size(152, 22);
+            this.mniScreen.Text = "ขนาดหน้าจอ";
+            this.mniScreen.Click += new System.EventHandler(this.mniScreen_Click);
+            // 
+            // mniMenu
+            // 
+            this.mniMenu.Name = "mniMenu";
+            this.mniMenu.Size = new System.Drawing.Size(152, 22);
+            this.mniMenu.Text = "ซ่อนแถบเมนู";
+            this.mniMenu.Click += new System.EventHandler(this.mniMenu_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -673,6 +700,9 @@
         private System.Windows.Forms.OpenFileDialog opdImportBarcode;
         private System.Windows.Forms.ToolStripButton btnReturn;
         private System.Windows.Forms.ToolStripButton btnStock;
+        private System.Windows.Forms.ToolStripMenuItem mniView;
+        private System.Windows.Forms.ToolStripMenuItem mniScreen;
+        private System.Windows.Forms.ToolStripMenuItem mniMenu;
     }
 }
 

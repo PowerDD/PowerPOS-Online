@@ -37,6 +37,7 @@
             this.cNo = new XPTable.Models.TextColumn();
             this.cSellDate = new XPTable.Models.TextColumn();
             this.cCustomerName = new XPTable.Models.TextColumn();
+            this.cSellPrice = new XPTable.Models.TextColumn();
             this.tableModel1 = new XPTable.Models.TableModel();
             this.bwGetProduct = new System.ComponentModel.BackgroundWorker();
             this.bwDownloadImage = new System.ComponentModel.BackgroundWorker();
@@ -100,7 +101,8 @@
             this.columnModel1.Columns.AddRange(new XPTable.Models.Column[] {
             this.cNo,
             this.cSellDate,
-            this.cCustomerName});
+            this.cCustomerName,
+            this.cSellPrice});
             // 
             // cNo
             // 
@@ -119,6 +121,13 @@
             this.cCustomerName.IsTextTrimmed = false;
             this.cCustomerName.Text = "ชื่อลูกค้า";
             this.cCustomerName.Width = 250;
+            // 
+            // cSellPrice
+            // 
+            this.cSellPrice.Alignment = XPTable.Models.ColumnAlignment.Right;
+            this.cSellPrice.IsTextTrimmed = false;
+            this.cSellPrice.Text = "ราคาขาย";
+            this.cSellPrice.Width = 100;
             // 
             // bwGetProduct
             // 
@@ -387,5 +396,6 @@
         private XPTable.Models.TextColumn cSellDate;
         private XPTable.Models.TextColumn cCustomerName;
         private XPTable.Models.Table table1;
+        private XPTable.Models.TextColumn cSellPrice;
     }
 }

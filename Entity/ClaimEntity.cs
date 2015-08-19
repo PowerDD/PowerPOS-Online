@@ -35,5 +35,7 @@ namespace PowerPOS_Online
         public string ClaimBy { get; set; }
         public DateTime ClaimDate { get; set; }
         public double Price { get; set; }
+
+        public double PriceCliam { get; set; }
     }
 }

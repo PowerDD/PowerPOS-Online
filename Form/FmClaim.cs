@@ -15,7 +15,7 @@ namespace PowerPOS_Online
         public FmClaim()
         {
             InitializeComponent();
-            this.Height = 317;
+            this.Height = 355;
         }
 
         private void checkRadio(object sender, EventArgs e)
@@ -23,86 +23,99 @@ namespace PowerPOS_Online
             txtBarcode.Enabled = rdbSwap.Checked;
             txtCash.Enabled = rdbCash.Checked;
             gbxCustomer.Enabled = rdbHq.Checked;
-            if (rdbSwap.Checked) txtBarcode.Focus();
-            else if (rdbCash.Checked) txtCash.Focus();
-            else if (rdbHq.Checked) txtMobile.Focus();
-
+            if (rdbSwap.Checked) { txtBarcode.Focus(); pnPrice.Visible = true; }
+            else if (rdbCash.Checked) { txtCash.Focus(); pnPrice.Visible = true; }
+            else if (rdbHq.Checked) { txtMobile.Focus(); pnPrice.Visible = false; }
+             
             gbxCustomer.Visible = rdbHq.Checked;
-            this.Height = (gbxCustomer.Visible) ? 495 : 317;
+            this.Height = (gbxCustomer.Visible) ? 535 : 355;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-//            if (MessageBox.Show("คุณแน่ใจหรือไม่ ที่จะทำการเคลมสินค้านี้ ?", "ยืนยันข้อมูล", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-//            {
-//                DataTable dt = Util.DBQuery(string.Format(@"SELECT IFNULL(SUBSTR(MAX(ClaimNo), 1, 5)||SUBSTR('0000'||(SUBSTR(MAX(ClaimNo), 6, 4)+1), -4, 4), SUBSTR(STRFTIME('%Y%m{0}'), 3)||'0001') ClaimNo
-//                    FROM ClaimNo
-//                    WHERE SUBSTR(ClaimNo, 1, 4) = SUBSTR(STRFTIME('%Y%m'), 3, 4)
-//                    AND SUBSTR(ClaimNo, 5, 1) = '{0}'", Param.DevicePrefix));
-//                var ClaimNo = dt.Rows[0]["ClaimNo"].ToString();
+            if (MessageBox.Show("คุณแน่ใจหรือไม่ ที่จะทำการเคลมสินค้านี้ ?", "ยืนยันข้อมูล", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                DataTable dt = Util.DBQuery(string.Format(@"SELECT IFNULL(SUBSTR(MAX(ClaimNo), 1,6)||SUBSTR('0000'||(SUBSTR(MAX(ClaimNo), 7, 4)+1), -4, 4), SUBSTR(STRFTIME('%Y%m{0}C'), 3)||'0001') ClaimNo
+                    FROM Claim
+                    WHERE SUBSTR(ClaimNo, 1, 4) = SUBSTR(STRFTIME('%Y%m'), 3, 4)
+                    AND SUBSTR(ClaimNo, 5, 1) = '{0}'", Param.DevicePrefix));
+                var ClaimNo = dt.Rows[0]["ClaimNo"].ToString();
+                if (rtbDetail.Text != "")
+                {
+                    if (rdbSwap.Checked)
+                    {
+                        //ClaimType = 1 , เพิ่มข้อมูลใส่คอลัมท์ BarcodeClaim, Description, Price
+                        if (txtBarcode.Text != "")
+                        {
+                            Util.DBExecute(string.Format(@"INSERT INTO Claim (ClaimNo, ClaimType, ClaimDate, Product, Barcode, BarcodeClaim, Price, Description, ClaimBy, Sync)
+                                        SELECT '{0}', '1', STRFTIME('%Y-%m-%d %H:%M:%S', 'NOW'), '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', 1 ",
+                            ClaimNo, UcClaim.Product, UcClaim.barcode, txtBarcode.Text, UcClaim.sellprice, rtbDetail.Text, Param.UserId));
 
-//                dt = Util.DBQuery(string.Format(@"SELECT b.Barcode, b.SellNo, p.Price{0} Price
-//                    FROM Barcode b
-//                        LEFT JOIN Product p
-//                        ON b.product = p.id
-//                    WHERE p.Shop = '{1}' AND b.sellBy = '{2}'", Param.SelectCustomerSellPrice == 0 ? "" : "" + Param.SelectCustomerSellPrice, Param.ShopId, Param.CpuId));
+                            Util.DBExecute(string.Format(@"UPDATE Barcode SET Comment = 'เคลมสินค้า(เปลี่ยนสินค้า)' ,Sync = 1 WHERE Barcode = '{0}'", UcClaim.barcode));
+                            Util.DBExecute(string.Format(@"UPDATE Barcode SET Comment = 'เปลี่ยนสินค้า[{1}]',SellDate = '{2}', SellBy = '{3}' ,Sync = 1 WHERE Barcode = '{0}'", txtBarcode.Text, UcClaim.barcode, UcClaim.SellDate, Param.UserId));
+                        }
+                        else
+                        {
+                            MessageBox.Show("กรุณากรอกบาร์โค้ดที่ต้องการเปลี่ยน", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+                    else if (rdbCash.Checked)
+                    {
+                        //ClaimType = 2 , เพิ่มข้อมูลใส่คอลัมท์ Price, Description
+                        if (Convert.ToDouble(txtCash.Text) <= Convert.ToInt32(lblSellPrice.Text))
+                        {
+                            Util.DBExecute(string.Format(@"INSERT INTO Claim (ClaimNo, ClaimType, ClaimDate, Product, Barcode, Price, PriceClaim, Description, ClaimBy, Sync)
+                                            SELECT '{0}', '2', STRFTIME('%Y-%m-%d %H:%M:%S', 'NOW'), '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', 1",
+                                ClaimNo, UcClaim.Product, UcClaim.barcode, UcClaim.sellprice, txtCash.Text, rtbDetail.Text, Param.UserId));
 
-//                for (int i = 0; i < dt.Rows.Count; i++)
-//                {
-//                    Util.DBExecute(string.Format(@"UPDATE Barcode
-//                        SET SellBy = '{0}', SellDate = STRFTIME('%Y-%m-%d %H:%M:%S', 'NOW'), SellNo = '{1}', Sync = 1, SellPrice = {2}, Customer = '{3}', SellFinished = 1
-//                        WHERE Barcode = '{4}' AND SellNo = '{5}'",
-//                        Param.UserId, SellNo, dt.Rows[i]["Price"].ToString(), Param.SelectCustomerId,
-//                        dt.Rows[i]["Barcode"].ToString(), dt.Rows[i]["SellNo"].ToString()));
-//                }
+                            Util.DBExecute(string.Format(@"UPDATE Barcode SET Comment = 'เคลมสินค้า(คืนเงิน)' ,Sync = 1 WHERE Barcode = '{0}'", UcClaim.barcode));
 
-//                Util.DBExecute(string.Format(@"INSERT INTO SellHeader (SellNo, Profit, TotalPrice, Customer, CustomerSex, CustomerAge, SellDate, SellBy)
-//                    SELECT '{0}', (SELECT SUM(SellPrice-Cost-OperationCost) FROM Barcode WHERE SellNo = '{0}'),
-//                    (SELECT SUM(SellPrice) FROM Barcode WHERE SellNo = '{0}'), '{1}', '{2}', {3}, STRFTIME('%Y-%m-%d %H:%M:%S', 'NOW'), '{4}'",
-//                    SellNo, Param.SelectCustomerId, Param.SelectCustomerSex, Param.SelectCustomerAge, Param.UserId));
 
-//                Util.DBExecute(string.Format(@"INSERT INTO SellDetail (SellNo, Product, SellPrice, Cost, Quantity, Sync)
-//                    SELECT '{0}', Product, SUM(SellPrice), SUM(Cost), COUNT(*), 1 FROM Barcode WHERE SellNo = '{0}' GROUP BY Product",
-//                    SellNo));
+                        }
+                        else
+                        {
+                            MessageBox.Show("กรุณาตรวจสอบจำนวนเงินอีกครั้ง", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+                    else if (rdbHq.Checked)
+                    {
+                        //ClaimType = 3 , เพิ่มข้อมูลใส่คอลัมท์ Firstname, Lastname, Nickname, Tel, Email, Description
+                        if (txtMobile.Text != "")
+                        {
+                            Util.DBExecute(string.Format(@"INSERT INTO Claim (ClaimNo, ClaimType, ClaimDate, Product, Barcode, Price, Description, Firstname, Lastname, Nickname, Tel, Email, ClaimBy, Sync)
+                                            SELECT '{0}', '3', STRFTIME('%Y-%m-%d %H:%M:%S', 'NOW'), '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', 1",
+                                ClaimNo, UcClaim.Product, UcClaim.barcode, UcClaim.sellprice, rtbDetail.Text, txtName.Text, txtLastname.Text, txtNickname.Text, txtMobile.Text, txtEmail.Text, Param.UserId));
 
-//                FmCashReceive dialog = new FmCashReceive();
-//                dialog.lblPrice.Text = lblPrice.Text;
-//                dialog.lblChange.Text = "0";
-//                dialog._TOTAL = int.Parse(lblPrice.Text.Replace(",", ""));
-//                dialog._SELL_NO = SellNo;
-//                var result = dialog.ShowDialog(this);
-//                if (result != DialogResult.OK)
-//                {
-//                    Util.DBExecute(string.Format(@"UPDATE SellHeader SET Cash = 0, PayType = 0, Paid = 0, Sync = 1 WHERE SellNo = '{0}'", SellNo));
-//                }
+                            Util.DBExecute(string.Format(@"UPDATE Barcode SET Comment = 'เคลมสินค้า(ส่งคืนสำนักงาน)' ,Sync = 1 WHERE Barcode = '{0}'", UcClaim.barcode));
 
-//                Param.SelectCustomerId = "000000";
-//                Param.SelectCustomerName = "ลูกค้าทั่วไป";
-//                Param.SelectCustomerSex = "";
-//                Param.SelectCustomerAge = 0;
-//                Param.SelectCustomerSellPrice = 0;
-//                lblStatus.Text = "";
-//                if (Param.SystemConfig.Bill.PrintType == "Y")
-//                {
-//                    var cnt = int.Parse(Param.SystemConfig.Bill.PrintCount.ToString());
-//                    for (int i = 1; i <= cnt; i++)
-//                        Util.PrintReceipt(SellNo);
-//                }
-//                else if (Param.SystemConfig.Bill.PrintType == "A")
-//                {
-//                    if (MessageBox.Show("คุณต้องการพิมพ์ใบเสร็จรับเงินหรือไม่ ?", "การพิมพ์", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-//                        Util.PrintReceipt(SellNo);
-//                }
+                        }
+                        else
+                        {
+                            MessageBox.Show("กรุณากรอกข้อมูลลูกค้า", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
 
-//                lblCustomerName.Text = "ลูกค้าทั่วไป";
-//                Param.SelectCustomerSex = "";
-//                Param.SelectCustomerAge = 0;
-//                Param.SelectCustomerSellPrice = 0;
-//                SelectCustomer(sender, (e));
-//                LoadData();
-//            }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("กรุณากรอกรายละเอียดการเคลม", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+
+            }
         }
 
+        private void FmClaim_Load(object sender, EventArgs e)
+        {
+            rdbSwap.Checked = true;
+            pnPrice.Visible = rdbSwap.Checked;
+            lblBarcode.Text = UcClaim.barcode;
+            lblSellPrice.Text = UcClaim.sellprice;
+        }
 
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

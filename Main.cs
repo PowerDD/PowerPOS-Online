@@ -29,6 +29,10 @@ namespace PowerPOS_Online
 
         private void Main_Load(object sender, EventArgs e)
         {
+            //int w = Screen.PrimaryScreen.Bounds.Width;
+            //int h = Screen.PrimaryScreen.Bounds.Height;
+            //this.Location = new Point(0, 0);
+            //this.Size = new Size(w, h);
             Param.InitialFinished = false;
             InitialCloudData();
             //Param.ShopId = "00000002";
@@ -271,6 +275,26 @@ namespace PowerPOS_Online
         {
             lblStatus.Visible = false;
             lblStatus.Text = "";
+        }
+
+        private void mniScreen_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void mniMenu_Click(object sender, EventArgs e)
+        {
+            if (mniMenu.Text == "ซ่อนแถบเมนู")
+            {
+                toolStrip1.Hide();
+                mniMenu.Text = "แสดงแถบเมนู";
+            }
+            else
+            {
+                toolStrip1.Show();
+                mniMenu.Text = "ซ่อนแถบเมนู";
+            }
+
         }
 
     }

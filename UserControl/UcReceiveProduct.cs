@@ -19,7 +19,8 @@ namespace PowerPOS_Online
         private int _QTY = 0;
         private int _RECEIVED = 0;
         private bool _FIRST_LOAD;
-        int row = -1;
+        private bool _SELECT_ORDER = false;
+        int row = -1;       
         public static string productNo;
         public static string OrderNo;
         public static string ProductName;
@@ -38,39 +39,79 @@ namespace PowerPOS_Online
 
         private void LoadData()
         {
-            DataTable dt = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM Barcode WHERE ReceivedDate IS NULL ORDER BY OrderNo");
-            cbbOrderNo.Items.Clear();
-            cbbOrderNo.Items.Add("เลขที่ใบสั่งซื้อ");
-            if (dt.Rows.Count == 0)
+            if (Param.SystemConfig.SellPrice != null)
             {
-                cbbOrderNo.Enabled = false;
-            }
-            else
-            {
-                cbbOrderNo.Enabled = true;
-                for (int i = 0; i < dt.Rows.Count; i++)
+                DataTable dt = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM Barcode WHERE ReceivedDate IS NULL ORDER BY OrderNo");
+                cbbOrderNo.Items.Clear();
+                cbbOrderNo.Items.Add("เลขที่ใบสั่งซื้อ");
+                if (dt.Rows.Count == 0)
                 {
-                    cbbOrderNo.Items.Add(dt.Rows[i]["OrderNo"].ToString());
+                    cbbOrderNo.Enabled = false;
                 }
-            }
-            cbbOrderNo.SelectedIndex = 0;
+                else
+                {
+                    cbbOrderNo.Enabled = true;
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        cbbOrderNo.Items.Add(dt.Rows[i]["OrderNo"].ToString());
+                    }
+                }
+                cbbOrderNo.SelectedIndex = 0;
 
-            DataTable dtab = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM Barcode WHERE ReceivedDate IS NOT NULL  AND OrderNo <> ''  ORDER BY OrderNo");
-            cbbOrder.Items.Clear();
-            cbbOrder.Items.Add("เลขที่ใบสั่งซื้อ");
-            if (dtab.Rows.Count == 0)
-            {
-                cbbOrder.Enabled = false;
+                DataTable dtab = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM Barcode WHERE OrderNo NOT IN (SELECT OrderNo  FROM Barcode WHERE ReceivedDate IS NULL ) AND OrderNo <> ''  ORDER BY OrderNo");
+                cbbOrder.Items.Clear();
+                cbbOrder.Items.Add("เลขที่ใบสั่งซื้อ");
+                if (dtab.Rows.Count == 0)
+                {
+                    cbbOrder.Enabled = false;
+                }
+                else
+                {
+                    cbbOrder.Enabled = true;
+                    for (int i = 0; i < dtab.Rows.Count; i++)
+                    {
+                        cbbOrder.Items.Add(dtab.Rows[i]["OrderNo"].ToString());
+                    }
+                }
+                cbbOrder.SelectedIndex = 0;
             }
             else
             {
-                cbbOrder.Enabled = true;
-                for (int i = 0; i < dtab.Rows.Count; i++)
+                DataTable dt = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM Barcode WHERE (ReceivedDate IS NULL OR (OperationCost = 0 OR OperationCost = '')) ORDER BY OrderNo");
+                cbbOrderNo.Items.Clear();
+                cbbOrderNo.Items.Add("เลขที่ใบสั่งซื้อ");
+                if (dt.Rows.Count == 0)
                 {
-                    cbbOrder.Items.Add(dtab.Rows[i]["OrderNo"].ToString());
+                    cbbOrderNo.Enabled = false;
                 }
+                else
+                {
+                    cbbOrderNo.Enabled = true;
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        cbbOrderNo.Items.Add(dt.Rows[i]["OrderNo"].ToString());
+                    }
+                }
+                cbbOrderNo.SelectedIndex = 0;
+
+                DataTable dtab = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM Barcode WHERE OrderNo NOT IN (SELECT OrderNo  FROM Barcode WHERE ReceivedDate IS NULL OR (OperationCost = 0 OR OperationCost = '')) AND OrderNo <> ''  ORDER BY OrderNo");
+                cbbOrder.Items.Clear();
+                cbbOrder.Items.Add("เลขที่ใบสั่งซื้อ");
+                if (dtab.Rows.Count == 0)
+                {
+                    cbbOrder.Enabled = false;
+                }
+                else
+                {
+                    cbbOrder.Enabled = true;
+                    for (int i = 0; i < dtab.Rows.Count; i++)
+                    {
+                        cbbOrder.Items.Add(dtab.Rows[i]["OrderNo"].ToString());
+                    }
+                }
+                cbbOrder.SelectedIndex = 0;
             }
-            cbbOrder.SelectedIndex = 0;
+          
 
             _FIRST_LOAD = false;
         }
@@ -78,7 +119,13 @@ namespace PowerPOS_Online
         private void cbbOrderNo_SelectedIndexChanged(object sender, EventArgs e)
         {
             ptbProduct.Visible = false;
-            cbbOrder.SelectedIndex = 0;
+            if (cbbOrder.SelectedIndex != 0 && _SELECT_ORDER == false)
+            {
+                _SELECT_ORDER = true;
+                cbbOrder.SelectedItem = "เลขที่ใบสั่งซื้อ";
+                _FIRST_LOAD = false;
+                _SELECT_ORDER = false;
+            }
             SearchData();
         }
 
@@ -93,7 +140,6 @@ namespace PowerPOS_Online
                 gbOrderNo.Height = 69;
                 progressBar1.Visible = false;
                 gbCost.Visible = false;
-
             }
             else if (!_FIRST_LOAD)
             {
@@ -160,7 +206,7 @@ namespace PowerPOS_Online
 
         private void SearchDataOrder()
         {
-            if (cbbOrder.SelectedIndex == 0)
+            if (cbbOrder.SelectedIndex == 0 )
             {
                 table1.BeginUpdate();
                 tableModel1.Rows.Clear();
@@ -322,8 +368,9 @@ namespace PowerPOS_Online
                     OperationCost = " + cost + @", ReceivedBy = '"+Param.UserId+@"', Sync = 1  
                     WHERE ReceivedDate IS NOT NULL AND SellBy = '' AND OrderNo = '" + cbbOrderNo.SelectedItem.ToString() + "'");
                 MessageBox.Show("รับสินค้าหมายเลขคำสั่งซื้อเลขที่ " + cbbOrderNo.SelectedItem.ToString() + "\n เสร็จเรียบร้อบแล้ว", "สถานะการทำงาน", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                SearchData();
+                tableModel1.Rows.Clear();
+                LoadData();
+                //SearchData();
             }
 
         }
@@ -332,31 +379,35 @@ namespace PowerPOS_Online
         {
             if (table1.TableModel.Rows.Count > 0)
             {
-                var row = e.TableModel.Selections.SelectedItems[0].Index;
-                Param.ProductId = table1.TableModel.Rows[row].Cells[1].Text;
-                DataTable dt = Util.DBQuery(string.Format(@"SELECT CoverImage FROM Product WHERE ID = '{0}' AND Shop = {1}", Param.ProductId, Param.ShopParent));
-                ptbProduct.Image = null;
-                ptbProduct.Visible = true;
+                try
+                {
+                    var row = e.TableModel.Selections.SelectedItems[0].Index;
+                    Param.ProductId = table1.TableModel.Rows[row].Cells[1].Text;
+                    DataTable dt = Util.DBQuery(string.Format(@"SELECT CoverImage FROM Product WHERE ID = '{0}' AND Shop = {1}", Param.ProductId, Param.ShopParent));
+                    ptbProduct.Image = null;
+                    ptbProduct.Visible = true;
 
-                var filename = @"Resource/Images/Product/" + Param.ProductId + ".jpg";
-                if (!File.Exists(filename))
-                {
-                    if (dt.Rows[0]["CoverImage"].ToString() != "")
-                    {
-                        DownloadImage(dt.Rows[0]["CoverImage"].ToString(), @"Resource/Images/Product/", Param.ProductId + ".jpg");
-                    }
-                }
-                else
-                {
-                    try { ptbProduct.Image = Image.FromFile(filename); }
-                    catch
+                    var filename = @"Resource/Images/Product/" + Param.ProductId + ".jpg";
+                    if (!File.Exists(filename))
                     {
                         if (dt.Rows[0]["CoverImage"].ToString() != "")
                         {
                             DownloadImage(dt.Rows[0]["CoverImage"].ToString(), @"Resource/Images/Product/", Param.ProductId + ".jpg");
                         }
                     }
+                    else
+                    {
+                        try { ptbProduct.Image = Image.FromFile(filename); }
+                        catch
+                        {
+                            if (dt.Rows[0]["CoverImage"].ToString() != "")
+                            {
+                                DownloadImage(dt.Rows[0]["CoverImage"].ToString(), @"Resource/Images/Product/", Param.ProductId + ".jpg");
+                            }
+                        }
+                    }
                 }
+                catch { }
             }
         }
 
@@ -368,7 +419,14 @@ namespace PowerPOS_Online
         private void cbbOrder_SelectedIndexChanged(object sender, EventArgs e)
         {
             ptbProduct.Visible = false;
-            cbbOrderNo.SelectedIndex = 0;
+            if (cbbOrderNo.SelectedIndex != 0 && _SELECT_ORDER == false)
+            {
+                _SELECT_ORDER = true;
+                cbbOrderNo.SelectedItem = "เลขที่ใบสั่งซื้อ";
+                _FIRST_LOAD = false;
+                _SELECT_ORDER = false;
+
+            }
             SearchDataOrder();
         }
 

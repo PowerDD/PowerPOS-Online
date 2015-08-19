@@ -74,7 +74,8 @@ namespace PowerPOS_Online
         {
             var azureTable = Param.AzureTableClient.GetTableReference("BarcodeStock");
             TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(TableQuery.CombineFilters(
-                TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId),TableOperators.And,TableQuery.GenerateFilterCondition( "RowKey", QueryComparisons.Equal, barcode)));
+                TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId),TableOperators.And,TableQuery.GenerateFilterCondition( "RowKey", QueryComparisons.Equal, barcode)
+            ));
 
             barcodeEntityList = new List<BarcodeEntity>();
             foreach (BarcodeEntity entity in azureTable.ExecuteQuery(query))
@@ -112,8 +113,8 @@ namespace PowerPOS_Online
                             new Cell[] {
                     new Cell("" + (i+1)),
                     new Cell(barcodeEntityList[i].SellDate.ToLocalTime().ToString("dd MMMM yyyy", CultureInfo.CreateSpecificCulture("th-TH"))),
-                    new Cell(Param.CustomerNameHashtable.Contains(barcodeEntityList[i].Customer) ? Param.CustomerNameHashtable[barcodeEntityList[i].Customer].ToString() : barcodeEntityList[i].Customer)
-                    //,
+                    new Cell(Param.CustomerNameHashtable.Contains(barcodeEntityList[i].Customer) ? Param.CustomerNameHashtable[barcodeEntityList[i].Customer].ToString() : barcodeEntityList[i].Customer),
+                    new Cell(barcodeEntityList[i].SellPrice.ToString())//,
                     //new Cell(Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy") == "01/01/0544" ? "-" : Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy hh:mm:ss")),
                     })
                         );
@@ -178,7 +179,15 @@ namespace PowerPOS_Online
 
                     btnReturn.Visible = remain > 0;
 
-                    lblWarranty.Text = "สินค้าชิ้นนี้" + ((remain > 0) ? " ขายไปแล้ว " + remain.ToString("#,###") + " วัน" : " ขายไปแล้ว " + (remain * -1).ToString("#,###") + " วัน");
+                    int day = Convert.ToInt32(remain);
+                    if (day == 0)
+                    {
+                        lblWarranty.Text = "สินค้าชิ้นนี้ขายไปแล้วในวันนี้";
+                    }
+                    else
+                    {
+                        lblWarranty.Text = "สินค้าชิ้นนี้" + ((day > 0) ? " ขายไปแล้ว " + day.ToString("#,###") + " วัน" : " ขายไปแล้ว " + (day * -1).ToString("#,###") + " วัน");
+                    }
                     lblWarranty.Visible = true;
 
                     //lblWarrantyStatus.Text = (productEntity.Warranty == 0) ? "ไม่สามารถเคลมสินค้าได้ค่ะ" : ((remain <= 0) ? "สินค้าหมดประกันแล้วค่ะ" : "");
@@ -324,7 +333,9 @@ namespace PowerPOS_Online
 
             //txtBarcode.Focus();
             lblStatus.Visible = true;
-            lblStatus.Text = "รับคืนสินค้าในชิ้นนี้แล้ว";
+            lblStatus.Text = "รับคืนสินค้าในชิ้นนี้แล้ว (" + dt.Rows[0]["Barcode"].ToString() + ")";
+            tableModel1.Rows.Clear();
+            txtBarcode.Text = "";
             lblWarranty.Visible = false;
             ptbProduct.Image = null;
             lblName.Visible = false;

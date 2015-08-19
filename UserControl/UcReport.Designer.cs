@@ -114,13 +114,13 @@
             this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniSaveImage});
             this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(137, 26);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(135, 26);
             // 
             // mniSaveImage
             // 
             this.mniSaveImage.Image = global::PowerPOS_Online.Properties.Resources.disk_return_black;
             this.mniSaveImage.Name = "mniSaveImage";
-            this.mniSaveImage.Size = new System.Drawing.Size(136, 22);
+            this.mniSaveImage.Size = new System.Drawing.Size(134, 22);
             this.mniSaveImage.Text = "บันทึกรูปภาพ";
             this.mniSaveImage.Click += new System.EventHandler(this.mniSaveImage_Click);
             // 
@@ -249,6 +249,7 @@
             this.table1.Text = "table1";
             this.table1.UnfocusedBorderColor = System.Drawing.Color.Black;
             this.table1.CellClick += new XPTable.Events.CellMouseEventHandler(this.table1_CellClick);
+            this.table1.CellDoubleClick += new XPTable.Events.CellMouseEventHandler(this.table1_CellDoubleClick);
             // 
             // contextMenuStrip1
             // 
@@ -256,13 +257,13 @@
             this.miPrintReceipt,
             this.miDetail});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(166, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(158, 48);
             // 
             // miPrintReceipt
             // 
             this.miPrintReceipt.Image = global::PowerPOS_Online.Properties.Resources.printer;
             this.miPrintReceipt.Name = "miPrintReceipt";
-            this.miPrintReceipt.Size = new System.Drawing.Size(165, 22);
+            this.miPrintReceipt.Size = new System.Drawing.Size(157, 22);
             this.miPrintReceipt.Text = "พิมพ์ใบเสร็จรับเงิน";
             this.miPrintReceipt.Click += new System.EventHandler(this.miPrintReceipt_Click);
             // 
@@ -270,7 +271,7 @@
             // 
             this.miDetail.Image = global::PowerPOS_Online.Properties.Resources.table_money;
             this.miDetail.Name = "miDetail";
-            this.miDetail.Size = new System.Drawing.Size(165, 22);
+            this.miDetail.Size = new System.Drawing.Size(157, 22);
             this.miDetail.Text = "รายละเอียดการขาย";
             this.miDetail.Click += new System.EventHandler(this.miDetail_Click);
             // 

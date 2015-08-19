@@ -494,8 +494,10 @@ namespace PowerPOS_Online
                     dynamic d = new DynamicEntity(Param.ShopId, row["Barcode"].ToString());
                     d.OrderNo = row["OrderNo"].ToString();
                     d.Product = row["Product"].ToString();
-                    d.Cost = double.Parse(row["Cost"].ToString());
-                    d.OperationCost = double.Parse(row["OperationCost"].ToString());
+                    //d.Cost = double.Parse(row["Cost"].ToString());
+                    if (row["Cost"].ToString() == "" || row["Cost"].ToString() == null) { d.Cost = 0; } else { d.Cost = double.Parse(row["Cost"].ToString()); }
+                    if (row["OperationCost"].ToString() == "" || row["OperationCost"].ToString() == null) { d.OperationCost = 0; } else { d.OperationCost = double.Parse(row["OperationCost"].ToString()); }
+                    //d.OperationCost = double.Parse(row["OperationCost"].ToString());
                     d.SellPrice = double.Parse(row["SellPrice"].ToString());
                     d.ReceivedDate = Convert.ToDateTime(row["ReceivedDate"].ToString());
                     d.ReceivedBy = row["ReceivedBy"].ToString();
@@ -511,7 +513,9 @@ namespace PowerPOS_Online
                     d.SellBy = row["SellBy"].ToString();
                     d.SellFinished = row["SellFinished"].ToString() == "True" ? true : false;
                     d.Customer = row["Customer"].ToString();
-                    d.Stock = row["Stock"].ToString();
+                    
+                    if (row["Stock"].ToString() == "" || row["Stock"].ToString() == null) { d.Stock = 0; } else { d.Stock = row["Stock"].ToString(); }
+                    if (row["Comment"].ToString() == "" || row["Comment"].ToString() == null) { d.Comment = ""; } else { d.Comment = row["Comment"].ToString(); }
                     batchOperation.InsertOrMerge(d);
 
                     Util.DBExecute(string.Format("UPDATE Barcode SET Sync = 0 WHERE Barcode = {0}", row["Barcode"].ToString()));
@@ -562,15 +566,20 @@ namespace PowerPOS_Online
                 {
                     DataRow row = dt.Rows[i];
                     dynamic d = new DynamicEntity(Param.ShopId, row["ID"].ToString());
-                    d.Price = double.Parse(row["Price"].ToString());
-                    d.Price1 = double.Parse(row["Price1"].ToString());
-                    d.Price2 = double.Parse(row["Price2"].ToString());
-                    d.Price3 = double.Parse(row["Price3"].ToString());
+                    //d.Price = double.Parse(row["Price"].ToString());
+                    //d.Price1 = double.Parse(row["Price1"].ToString());
+                    //d.Price2 = double.Parse(row["Price2"].ToString());
+                    //d.Price3 = double.Parse(row["Price3"].ToString());
+                    if (row["Price"].ToString() == "" || row["Price"].ToString() == null) { d.Price = 0; } else { d.Price = double.Parse(row["Price"].ToString()); }
+                    if (row["Price1"].ToString() == "" || row["Price1"].ToString() == null) { d.Price1 = 0; } else { d.Price1 = double.Parse(row["Price1"].ToString()); }
+                    if (row["Price2"].ToString() == "" || row["Price2"].ToString() == null) { d.Price2 = 0; } else { d.Price2 = double.Parse(row["Price2"].ToString()); }
+                    if (row["Price3"].ToString() == "" || row["Price3"].ToString() == null) { d.Price3 = 0; } else { d.Price3 = double.Parse(row["Price3"].ToString()); }
                     if (row["Price4"].ToString() == "" || row["Price4"].ToString() == null) { d.Price4 = 0; } else { d.Price4 = double.Parse(row["Price4"].ToString()); }
                     if (row["Price5"].ToString() == "" || row["Price5"].ToString() == null) { d.Price5 = 0; } else { d.Price5 = double.Parse(row["Price5"].ToString()); }
+                    if (row["Cost"].ToString() == "" || row["Cost"].ToString() == null) { d.Cost = 0; } else { d.Cost = double.Parse(row["Cost"].ToString()); }
                     batchOperation.InsertOrMerge(d);
 
-                    Util.DBExecute(string.Format("UPDATE Product SET Sync = 0 WHERE ID = {0}", row["ID"].ToString()));
+                    Util.DBExecute(string.Format("UPDATE Product SET Sync = '0' WHERE ID = '{0}' AND Shop = '{1}'", row["ID"].ToString(),Param.ShopId));
 
                     if (batchOperation.Count == 100)
                     {
@@ -864,7 +873,8 @@ namespace PowerPOS_Online
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     DataRow row = dt.Rows[i];
-                    dynamic d = new DynamicEntity(Param.ShopId, row["ClaimNo"].ToString() + "-" + row["Barcode"].ToString());
+                    dynamic d = new DynamicEntity(Param.ShopId, row["ClaimNo"].ToString());
+                    d.Barcode = row["Barcode"].ToString();
                     d.ClaimType = row["ClaimType"].ToString();
                     d.BarcodeClaim = row["BarcodeClaim"].ToString();
                     d.Description = row["Description"].ToString();
@@ -874,6 +884,7 @@ namespace PowerPOS_Online
                     d.Tel = row["Tel"].ToString();
                     d.Email = row["Email"].ToString();
                     d.Price = double.Parse(row["Price"].ToString());
+                    if (row["PriceClaim"].ToString() == "" || row["PriceClaim"].ToString() == null) { d.PriceClaim = 0; } else { d.PriceClaim = double.Parse(row["PriceClaim"].ToString()); }
                     d.ClaimDate = Convert.ToDateTime(row["ClaimDate"].ToString());
                     d.Product = row["Product"].ToString();
                     d.ClaimBy = row["ClaimBy"].ToString();
@@ -896,6 +907,191 @@ namespace PowerPOS_Online
                 WriteErrorLog(ex.StackTrace);
             }
         }
+
+        public static void PrintCheckStock()
+        {
+            DataTable dt = Util.DBQuery(string.Format(@"SELECT COUNT(*) Count FROM Product WHERE Shop = '{0}'", Param.ShopId));
+
+            var hight = 195 + int.Parse(dt.Rows[0]["Count"].ToString()) * 16;
+            //PaperSize paperSize = new PaperSize("Custom Size", 280, hight);
+            //PaperSize paperSize = new PaperSize("Custom Size", 380, hight);
+            PaperSize paperSize = new PaperSize("Custom Size", 400, hight);
+            paperSize.RawKind = (int)PaperKind.Custom;
+
+            PrintDocument pd = new PrintDocument();
+            pd.DefaultPageSettings.PaperSize = paperSize;
+            pd.PrintController = new System.Drawing.Printing.StandardPrintController();
+            pd.PrinterSettings.PrinterName = Param.DevicePrinter;
+            //pd.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
+            //pd.PrinterSettings.PrinterName = "GP-80250 Series";
+            //pd.PrinterSettings.PrinterName = "POS80";
+
+            pd.PrintPage += (_, g) =>
+            {
+                PrintCheckStock(g);
+            };
+            pd.Print();
+        }
+
+
+        private static void PrintCheckStock(PrintPageEventArgs g)
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            DataTable dt = new DataTable();
+            var width = 280;
+            var gab = 5;
+
+            SolidBrush brush = new SolidBrush(Color.Black);
+            Font stringFont = new Font("Calibri", 6);
+            var pX = 0;
+            var pY = 0;
+            stringFont = new Font("DilleniaUPC", 17, FontStyle.Bold);
+            string measureString = "รายงานสต็อกสินค้า วันที่ " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"));
+            SizeF stringSize = g.Graphics.MeasureString(measureString, stringFont);
+            g.Graphics.DrawString(measureString, stringFont, brush, new PointF((width - stringSize.Width + gab) / 2, pY + 10));
+            pY += 40;
+
+            stringFont = new Font("DilleniaUPC", 10);
+
+            if (UcStock.printType == 1)
+            {
+                Param.Records = 0;
+                dt = Util.DBQuery(string.Format(@"SELECT COUNT(b.ProductCount) ProductCount, COUNT(s.ProductStock) ProductStock, COUNT(n.CountStock ) CountStock  FROM Product p
+                    LEFT JOIN   (
+                                    SELECT Product, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                                ) b
+                    ON b.Product = p.ID
+                    LEFT JOIN   (
+                                    SELECT Product, COUNT(*) ProductStock FROM Barcode WHERE Product NOT IN (SELECT Product FROM Barcode WHERE Stock = 0 AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product) AND Stock = 1 AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                                ) s
+                    ON s.Product = p.ID
+                   LEFT JOIN   (
+                                    SELECT Product, COUNT(*) CountStock FROM Barcode WHERE Stock = 0 AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                                ) n
+                    ON n.Product = p.ID
+                    WHERE p.Shop = '{0}'
+                        AND b.ProductCount IS NOT NULL
+                        ORDER BY Category,Name"
+                , Param.ShopId));
+            }
+            else if (UcStock.printType == 2)
+            {
+                Param.Records = 0;
+                dt = Util.DBQuery(string.Format(@"SELECT p.Name,b.ProductCount,IFNULL(s.ProductStock,0) ProductStock,p.Category FROM Product p
+                    LEFT JOIN   (
+                                    SELECT Product, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                                ) b
+                    ON b.Product = p.ID
+                    LEFT JOIN   (
+                                    SELECT Product, COUNT(*) ProductStock FROM Barcode WHERE Stock AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                                ) s
+                    ON s.Product = p.ID
+                    WHERE p.Shop = '{0}'
+                        AND b.ProductCount IS NOT NULL
+                        ORDER BY Category,Name"
+                , Param.ShopId));
+            }
+            else if (UcStock.printType == 3)
+            {
+                Param.Records = 0;
+                dt = Util.DBQuery(string.Format(@"SELECT p.Name,b.ProductCount,s.ProductStock,p.Category FROM Product p
+                    LEFT JOIN   (
+                                    SELECT Product, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                                ) b
+                    ON b.Product = p.ID
+                    LEFT JOIN   (
+                                    SELECT Product, COUNT(*) ProductStock FROM Barcode WHERE Stock AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                                ) s
+                    ON s.Product = p.ID
+                    WHERE p.Shop = '{0}'
+                        AND b.ProductCount IS NOT NULL
+                        AND b.ProductCount = s.ProductStock
+                        ORDER BY Category,Name"
+                , Param.ShopId));
+            }
+            else if (UcStock.printType == 4)
+            {
+                Param.Records = 0;
+                dt = Util.DBQuery(string.Format(@"SELECT p.Name, b.ProductCount,b.ProductStock FROM Product p
+                    LEFT JOIN   (
+                                    SELECT bb.Product, COUNT(*) ProductCount,IFNULL(s.ProductStock,0) ProductStock   FROM Barcode bb
+                                    LEFT JOIN   (
+                                                            SELECT Product, COUNT(*) ProductStock FROM Barcode WHERE Stock = 1 AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                                        ) s
+                                  ON s.Product = bb.Product
+                                  WHERE bb.ReceivedDate IS NOT NULL AND (bb.SellNo = '' OR bb.SellNo IS NULL) 
+                                  GROUP BY bb.Product
+                                  HAVING  COUNT(*) > IFNULL(s.ProductStock,0) 
+                                ) b
+                    ON b.Product = p.ID                    
+                    WHERE p.Shop = '{0}'
+                        AND b.ProductCount IS NOT NULL"
+                , Param.ShopId));
+            }
+            //Param.Records = 0;
+            if (UcStock.printType == 1)
+            {
+                if (Convert.ToInt32(dt.Rows.Count) != Param.Records)
+                {
+                    for (int i = Param.Records; i < dt.Rows.Count; i++)
+                    {
+                        stringFont = new Font("DilleniaUPC", 14);
+                        g.Graphics.DrawString("จำนวนสินค้าที่นับครบ : ", stringFont, brush, new PointF(pX, pY));
+                        g.Graphics.DrawString(int.Parse(dt.Rows[i]["ProductStock"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX + 150, pY));
+                        pY += 15;
+                        g.Graphics.DrawString("จำนวนสินค้าที่นับไม่ครบ : ", stringFont, brush, new PointF(pX, pY));
+                        g.Graphics.DrawString(int.Parse(dt.Rows[i]["CountStock"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX + 150, pY));
+                        Param.Records++;
+                        if (Param.Records == dt.Rows.Count)
+                        {
+                            pY += 16;
+                            stringFont = new Font("DilleniaUPC", 14, FontStyle.Bold);
+                            g.Graphics.DrawString(string.Format("รวม {0} รายการ", int.Parse(dt.Rows[i]["ProductCount"].ToString()).ToString("#,##0")), stringFont, brush, new PointF(pX, pY));
+                            stringFont = new Font("Calibri", 10, FontStyle.Bold);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (Convert.ToInt32(dt.Rows.Count) != Param.Records)
+                {
+                    for (int i = Param.Records; i < dt.Rows.Count; i++)
+                    {
+                        g.Graphics.DrawString(int.Parse(dt.Rows[i]["ProductCount"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX, pY));
+                        g.Graphics.DrawString(int.Parse(dt.Rows[i]["ProductStock"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX + 10, pY));
+                        g.Graphics.DrawString(dt.Rows[i]["Name"].ToString(), stringFont, brush, new PointF(pX + 20, pY));
+                        pY += 15;
+                        Param.Records++;
+                        if (Param.Records == dt.Rows.Count)
+                        {
+                            pY += 7;
+                            stringFont = new Font("DilleniaUPC", 14, FontStyle.Bold);
+                            g.Graphics.DrawString(string.Format("รวม {0} รายการ", dt.Rows.Count), stringFont, brush, new PointF(pX, pY));
+                            stringFont = new Font("Calibri", 10, FontStyle.Bold);
+
+                            pY += 15;
+                            stringFont = new Font("DilleniaUPC", 10);
+                            measureString = Param.Page.ToString();
+                            stringSize = g.Graphics.MeasureString(measureString, stringFont);
+                            g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY + 3));
+                        }
+
+                        if (Param.pageSize < pY)
+                        {
+                            stringFont = new Font("DilleniaUPC", 10);
+                            measureString = Param.Page.ToString();
+                            stringSize = g.Graphics.MeasureString(measureString, stringFont);
+                            g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY + 3));
+                            Param.Page++;
+                            PrintStock();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
 
         public static void PrintStock()
         {
@@ -939,69 +1135,56 @@ namespace PowerPOS_Online
             g.Graphics.DrawString(measureString, stringFont, brush, new PointF((width - stringSize.Width + gab) / 2, pY + 10));
             pY += 40;
 
-//            DataTable dtCategory = Util.DBQuery(string.Format(@"SELECT DISTINCT p.Category,c.Name FROM Product p 
-//                            LEFT JOIN Category c   ON p.Category = c.ID
-//                            WHERE p.Shop = '{0}' 
-//                            ORDER BY Category", Param.ShopId));
-//            if (Param.RecordsCategory != Convert.ToInt32(dtCategory.Rows.Count))
-//            {
-//                for (int c = Param.RecordsCategory; c < dtCategory.Rows.Count; c++)
-//                {
-//                    stringFont = new Font("DilleniaUPC", 10);
-//                    g.Graphics.DrawString("-------------" + dtCategory.Rows[c]["Name"].ToString() + "-------------", stringFont, brush, new PointF(pX, pY));
-//                    pY += 20;
-                    stringFont = new Font("DilleniaUPC", 10);
-                    DataTable dt = Util.DBQuery(string.Format(@"SELECT p.Name,b.ProductCount,p.Category FROM Product p
-                            LEFT JOIN   (
-                                            SELECT Product, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
-                                        ) b
-                            ON b.Product = p.ID
-                            WHERE p.Shop = '{0}'
-                               AND b.ProductCount IS NOT NULL
-                             ORDER BY Category,Name"
-                    , Param.ShopId));
-                    //Param.Records = 0;
-                    if (Convert.ToInt32(dt.Rows.Count) != Param.Records)
+            stringFont = new Font("DilleniaUPC", 10);
+            DataTable dt = Util.DBQuery(string.Format(@"SELECT p.Name,b.ProductCount,p.Category FROM Product p
+                    LEFT JOIN   (
+                                    SELECT Product, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                                ) b
+                    ON b.Product = p.ID
+                    WHERE p.Shop = '{0}'
+                        AND b.ProductCount IS NOT NULL
+                        ORDER BY Category,Name"
+            , Param.ShopId));
+            //Param.Records = 0;
+            if (Convert.ToInt32(dt.Rows.Count) != Param.Records)
+            {
+                for (int i = Param.Records; i < dt.Rows.Count; i++)
+                {
+                    g.Graphics.DrawString(int.Parse(dt.Rows[i]["ProductCount"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX, pY));
+                    g.Graphics.DrawString(dt.Rows[i]["Name"].ToString(), stringFont, brush, new PointF(pX + 20, pY));
+                    pY += 15;
+                    Param.Records++;
+                    if (Param.Records == dt.Rows.Count)
                     {
-                        for (int i = Param.Records; i < dt.Rows.Count; i++)
-                        {
-                            g.Graphics.DrawString(int.Parse(dt.Rows[i]["ProductCount"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX, pY));
-                            g.Graphics.DrawString(dt.Rows[i]["Name"].ToString(), stringFont, brush, new PointF(pX + 20, pY));
-                            pY += 15;
-                            Param.Records++;
-                            if (Param.Records == dt.Rows.Count)
-                            {
-                                 pY += 7;
-                                stringFont = new Font("DilleniaUPC", 14, FontStyle.Bold);
-                                g.Graphics.DrawString(string.Format("รวม {0} รายการ", dt.Rows.Count), stringFont, brush, new PointF(pX, pY));
-                                stringFont = new Font("Calibri", 10, FontStyle.Bold);
+                            pY += 7;
+                        stringFont = new Font("DilleniaUPC", 14, FontStyle.Bold);
+                        g.Graphics.DrawString(string.Format("รวม {0} รายการ", dt.Rows.Count), stringFont, brush, new PointF(pX, pY));
+                        stringFont = new Font("Calibri", 10, FontStyle.Bold);
 
-                                pY += 15;
-                                stringFont = new Font("DilleniaUPC", 10);
-                                measureString = Param.Page.ToString();
-                                stringSize = g.Graphics.MeasureString(measureString, stringFont);
-                                g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY + 3));
-                            }
-
-                            if (Param.pageSize < pY)
-                            {
-                                stringFont = new Font("DilleniaUPC", 10);
-                                measureString = Param.Page.ToString();
-                                stringSize = g.Graphics.MeasureString(measureString, stringFont);
-                                g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY + 3));
-                                Param.Page++;
-                                Console.WriteLine(pY);
-                                //Param.RecordsCategory++;
-                                PrintStock();
-                                break;
-                            }
-
-                            Console.WriteLine(pY);
-                            Console.WriteLine(i);
-                        }
+                        pY += 15;
+                        stringFont = new Font("DilleniaUPC", 10);
+                        measureString = Param.Page.ToString();
+                        stringSize = g.Graphics.MeasureString(measureString, stringFont);
+                        g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY + 3));
                     }
-            //    //}
-            //}
+
+                    if (Param.pageSize < pY)
+                    {
+                        stringFont = new Font("DilleniaUPC", 10);
+                        measureString = Param.Page.ToString();
+                        stringSize = g.Graphics.MeasureString(measureString, stringFont);
+                        g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY + 3));
+                        Param.Page++;
+                        Console.WriteLine(pY);
+                        //Param.RecordsCategory++;
+                        PrintStock();
+                        break;
+                    }
+
+                    Console.WriteLine(pY);
+                    Console.WriteLine(i);
+                }
+            }
         }
 
 

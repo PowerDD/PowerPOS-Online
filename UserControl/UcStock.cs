@@ -18,6 +18,12 @@ namespace PowerPOS_Online
         private bool _FIRST_LOAD;
         private int _QTY = 0;
         private int _RECEIVED = 0;
+        public static int printType = 0;
+        int row = -1;
+        public static string productNo;
+        public static string OrderNo;
+        public static string ProductName;
+
         public UcStock()
         {
             InitializeComponent();
@@ -28,6 +34,7 @@ namespace PowerPOS_Online
             Util.InitialTable(table1);
             _FIRST_LOAD = true;
             LoadData();
+            cbbPrintType.SelectedIndex = 0;
         }
 
         private void LoadData()
@@ -170,5 +177,46 @@ namespace PowerPOS_Online
             }
         }
 
+        private void btnPrint_Click(object sender, EventArgs e)
+        {
+            printType = cbbPrintType.SelectedIndex;
+            if (printType != 0)
+            {
+                if (Param.SystemConfig.Bill.PrintType == "Y")
+                {
+                    var cnt = int.Parse(Param.SystemConfig.Bill.PrintCount.ToString());
+                    for (int i = 1; i <= cnt; i++)
+                        Util.PrintCheckStock();
+                }
+                else if (Param.SystemConfig.Bill.PrintType == "A")
+                {
+                    if (MessageBox.Show("คุณต้องการพิมพ์สต็อกสินค้าหรือไม่ ?", "การพิมพ์", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        Util.PrintCheckStock();
+                }
+            }
+            else
+            {
+                MessageBox.Show("กรุณาเลือกประเภทการพิมพ์", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void table1_CellDoubleClick(object sender, XPTable.Events.CellMouseEventArgs e)
+        {
+            if (e.Row < table1.RowCount)
+            {
+                row = e.Row;
+            }
+            if (row != -1)
+            {
+                productNo = tableModel1.Rows[row].Cells[1].Text;
+                ProductName = tableModel1.Rows[row].Cells[2].Text;
+                FmStockDetail frm = new FmStockDetail();
+                frm.Show();
+            }
+            else
+            {
+                MessageBox.Show("กรุณาเลือกรายการที่ต้องการดูรายละเอียดการขาย", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
     }
 }

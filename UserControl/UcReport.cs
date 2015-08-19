@@ -73,11 +73,11 @@ namespace PowerPOS_Online
             }
             table1.EndUpdate();
 
-            dt = Util.DBQuery(string.Format(@"SELECT TotalPrice,IFNULL(AVG(TotalPrice),0) Total
+            dt = Util.DBQuery(string.Format(@"SELECT SUM(TotalPrice) Total,COUNT(DISTINCT DATE(SellDate)) CountDate,(SUM(TotalPrice) /COUNT(DISTINCT DATE(SellDate)) ) AVG
                 FROM SellHeader
                 WHERE SellDate BETWEEN '{0}' AND '{1}'
             ", dtpStartDate.Value.AddDays(-30).ToString("yyyy-MM-dd"), dtpStartDate.Value.AddDays(1).ToString("yyyy-MM-dd")));
-            var avg30 = double.Parse(dt.Rows[0]["Total"].ToString());
+            var avg30 = double.Parse(dt.Rows[0]["AVG"].ToString());
 
             dt = Util.DBQuery(string.Format(@"
                 SELECT IFNULL(SUM(TotalPrice),0) TotalPrice FROM SellHeader WHERE SUBSTR(SellDate, 1, 10) = '{0}'
@@ -107,6 +107,7 @@ namespace PowerPOS_Online
                 chart.Add(double.Parse(dt.Rows[i]["TotalPrice"].ToString()));
                 if (chart[i] > max) max = chart[i];
             }
+
             DrawImage(sumPrice, sumProfit, avg30, max, chart);
 
         }
@@ -236,6 +237,11 @@ namespace PowerPOS_Online
             {
                 MessageBox.Show("กรุณาเลือกรายการที่ต้องการดูรายละเอียดการขาย", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void table1_CellDoubleClick(object sender, XPTable.Events.CellMouseEventArgs e)
+        {
+            miDetail_Click((sender), e);
         }
     }
 }

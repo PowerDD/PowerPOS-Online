@@ -244,7 +244,7 @@ namespace PowerPOS_Online
                     ORDER BY p.Name", Param.ShopId, txtSearch.Text.Trim(),
                            (cbbCategory.SelectedIndex != 0) ? "AND c.Name = '" + cbbCategory.SelectedItem.ToString() + "'" : "",
                            (cbbBrand.SelectedIndex != 0) ? "AND b.Name = '" + cbbBrand.SelectedItem.ToString() + "'" : "",
-                           (cbNoPrice.Checked) ? "AND p.Price = 0" : "",
+                           (cbNoPrice.Checked) ? "AND (p.Price = 0 OR p.Price = '' OR p.Price = null)" : "",
                            (cbNoStock.Checked) ? "AND IFNULL(cnt.ProductCount, 0) = 0" : ""
                        ));
                 }
@@ -314,7 +314,7 @@ namespace PowerPOS_Online
             }
             else if (Param.SystemConfig.Bill.PrintType == "A")
             {
-                if (MessageBox.Show("คุณต้องการพิมพ์ใบเสร็จรับเงินหรือไม่ ?", "การพิมพ์", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("คุณต้องการพิมพ์รายการสินค้าหรือไม่ ?", "การพิมพ์", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     Util.PrintStock();
             }
 
@@ -324,9 +324,14 @@ namespace PowerPOS_Online
         {
             if (MessageBox.Show("คุณแน่ใจหรือไม่ ที่จะกำหนดสินค้านี้ ?", "ยืนยันข้อมูล", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                Util.DBExecute(string.Format(@"UPDATE Product SET Price = '" + nudPrice.Value.ToString() + "', Price1 = '" + nudPrice1.Value.ToString() + "', Price2 = '" + nudPrice2.Value.ToString() + "',Sync = 1 WHERE ID = '{0}' AND shop = '{1}'",id,Param.ShopId));
+                Util.DBExecute(string.Format(@"UPDATE Product SET Cost = '" + lblCost.Text + "' , Price = '" + nudPrice.Value.ToString() + "', Price1 = '" + nudPrice1.Value.ToString() + "', Price2 = '" + nudPrice2.Value.ToString() + "',Sync = 1 WHERE ID = '{0}' AND shop = '{1}'",id,Param.ShopId));
                 SearchData();
             }
+        }
+
+        private void panel5_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

@@ -57,12 +57,16 @@
             this.bwDownloadImage = new System.ComponentModel.BackgroundWorker();
             this.bwGetShopName = new System.ComponentModel.BackgroundWorker();
             this.bwGetCustomerName = new System.ComponentModel.BackgroundWorker();
+            this.btnReceivedClaim = new System.Windows.Forms.Button();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.clBarcodeClaim = new XPTable.Models.TextColumn();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbProduct)).BeginInit();
             this.pnlBarcode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.table1)).BeginInit();
+            this.panel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -89,6 +93,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.panel5);
             this.panel3.Controls.Add(this.panel2);
             this.panel3.Controls.Add(this.pnlBarcode);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Left;
@@ -110,7 +115,7 @@
             this.panel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.panel2.Location = new System.Drawing.Point(7, 89);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(233, 378);
+            this.panel2.Size = new System.Drawing.Size(233, 325);
             this.panel2.TabIndex = 9;
             // 
             // ptbProduct
@@ -118,7 +123,7 @@
             this.ptbProduct.Dock = System.Windows.Forms.DockStyle.Top;
             this.ptbProduct.Location = new System.Drawing.Point(0, 132);
             this.ptbProduct.Name = "ptbProduct";
-            this.ptbProduct.Size = new System.Drawing.Size(233, 233);
+            this.ptbProduct.Size = new System.Drawing.Size(233, 230);
             this.ptbProduct.TabIndex = 3;
             this.ptbProduct.TabStop = false;
             this.ptbProduct.Visible = false;
@@ -141,7 +146,7 @@
             this.btnClaim.Padding = new System.Windows.Forms.Padding(20, 0, 20, 0);
             this.btnClaim.Size = new System.Drawing.Size(233, 33);
             this.btnClaim.TabIndex = 4;
-            this.btnClaim.Text = "เครมสินค้า";
+            this.btnClaim.Text = "เคลมสินค้า";
             this.btnClaim.UseVisualStyleBackColor = true;
             this.btnClaim.Visible = false;
             this.btnClaim.Click += new System.EventHandler(this.btnClaim_Click);
@@ -323,6 +328,30 @@
             this.bwGetCustomerName.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwGetCustomerName_DoWork);
             this.bwGetCustomerName.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwGetCustomerName_RunWorkerCompleted);
             // 
+            // btnReceivedClaim
+            // 
+            this.btnReceivedClaim.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.btnReceivedClaim.Location = new System.Drawing.Point(1, 5);
+            this.btnReceivedClaim.Name = "btnReceivedClaim";
+            this.btnReceivedClaim.Size = new System.Drawing.Size(233, 33);
+            this.btnReceivedClaim.TabIndex = 6;
+            this.btnReceivedClaim.Text = "รับเข้าสินค้าเคลม";
+            this.btnReceivedClaim.UseVisualStyleBackColor = true;
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.btnReceivedClaim);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel5.Location = new System.Drawing.Point(7, 427);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(233, 43);
+            this.panel5.TabIndex = 10;
+            // 
+            // clBarcodeClaim
+            // 
+            this.clBarcodeClaim.IsTextTrimmed = false;
+            this.clBarcodeClaim.Text = "เปลี่ยนสินค้าจาก";
+            // 
             // UcClaim
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -341,6 +370,7 @@
             this.pnlBarcode.ResumeLayout(false);
             this.pnlBarcode.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.table1)).EndInit();
+            this.panel5.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -374,5 +404,8 @@
         private System.ComponentModel.BackgroundWorker bwGetCustomerName;
         private XPTable.Models.TextColumn clSellDate;
         private XPTable.Models.TextColumn clReceivedDate;
+        private System.Windows.Forms.Button btnReceivedClaim;
+        private System.Windows.Forms.Panel panel5;
+        private XPTable.Models.TextColumn clBarcodeClaim;
     }
 }

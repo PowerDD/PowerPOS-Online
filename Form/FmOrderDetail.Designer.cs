@@ -136,9 +136,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(196, 20);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(163, 13);
+            this.label3.Size = new System.Drawing.Size(143, 13);
             this.label3.TabIndex = 19;
-            this.label3.Text = "บาร์โค้ดที่ยังไม่ได้รับเข้าระบบแล้ว";
+            this.label3.Text = "บาร์โค้ดที่ยังไม่ได้รับเข้าระบบ";
             // 
             // label2
             // 

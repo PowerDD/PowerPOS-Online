@@ -20,12 +20,14 @@ namespace PowerPOS_Online
     public partial class UcClaim : UserControl
     {
         private List<BarcodeEntity> barcodeEntityList;
-        private ProductEntity productEntity;
-        private string barcode;
+        private ProductEntity productEntity;        
         private bool downloading;
         private List<string> shopList;
         private List<string> customerList;
-
+        public static string barcode;
+        public static string sellprice;
+        public static string Product;
+        public static DateTime SellDate;
         public UcClaim()
         {
             InitializeComponent();
@@ -73,10 +75,10 @@ namespace PowerPOS_Online
 
         private void bwSearch_DoWork(object sender, DoWorkEventArgs e)
         {
-            var azureTable = Param.AzureTableClient.GetTableReference("Barcode");
-            TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(
-                TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, barcode)
-            );
+            var azureTable = Param.AzureTableClient.GetTableReference("BarcodeStock");
+            TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(TableQuery.CombineFilters(
+                TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId),TableOperators.And, TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, barcode)
+            ));
 
             barcodeEntityList = new List<BarcodeEntity>();
             foreach (BarcodeEntity entity in azureTable.ExecuteQuery(query))
@@ -88,12 +90,33 @@ namespace PowerPOS_Online
 
         private void bwSearch_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (barcodeEntityList.Count == 0)
+            var index = barcodeEntityList.Count - 1;
+            string[] val = barcodeEntityList[index].Comment.Split('(');
+            string[] Change = barcodeEntityList[index].Comment.Split('[');
+            if (barcodeEntityList.Count == 0 || (barcodeEntityList[index].SellDate.ToString() == "1/1/0001 12:00:00 AM" && Change[0].ToString() == ""))
             {
                 lblStatus.Text = "ไม่มีข้อมูลสินค้านี้ในระบบค่ะ";
                 lblStatus.ForeColor = Color.Red;
                 lblStatus.Visible = true;
                 txtBarcode.Enabled = true;
+            }
+            else if (val[0].ToString() == "เคลมสินค้า")
+            {
+                lblStatus.Text = "สินค้านี้ได้ทำการเคลมแล้ว";
+                lblStatus.ForeColor = Color.Red;
+                lblStatus.Visible = true;
+                txtBarcode.Enabled = true;
+            }
+            else if (Change[0].ToString() == "เปลี่ยนสินค้า")
+            {
+                lblStatus.Text = "สินค้าชิ้นนี้ได้ทำการขายแล้ว";
+                lblStatus.ForeColor = Color.Red;
+                lblStatus.Visible = true;
+                txtBarcode.Enabled = true;
+
+                //DataTable dt = Util.DBQuery(string.Format(@"SELECT BarcodeClaim
+                //    FROM Claim
+                //    WHERE Barcode = '{0}'", UcClaim.barcode));
             }
             else
             {
@@ -111,14 +134,14 @@ namespace PowerPOS_Online
                 {
                     tableModel1.Rows.Add(new Row(
                         new Cell[] {
-                    new Cell("" + (i+1)),
-                    new Cell(barcodeEntityList[i].SellDate.ToLocalTime().ToString("dd MMMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"))),
-                    new Cell(Param.ShopNameHashtable.Contains(barcodeEntityList[i].PartitionKey) ? Param.ShopNameHashtable[barcodeEntityList[i].PartitionKey].ToString() : barcodeEntityList[i].PartitionKey),
-                    new Cell(barcodeEntityList[i].ReceivedDate.ToLocalTime().ToString("dd MMMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"))),
-                    new Cell(Param.CustomerNameHashtable.Contains(barcodeEntityList[i].Customer) ? Param.CustomerNameHashtable[barcodeEntityList[i].Customer].ToString() : barcodeEntityList[i].Customer)
-                    //,
-                    //new Cell(Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy") == "01/01/0544" ? "-" : Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy hh:mm:ss")),
-                    })
+                new Cell("" + (i+1)),
+                new Cell(barcodeEntityList[i].SellDate.ToLocalTime().ToString("dd MMMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"))),
+                new Cell(Param.ShopNameHashtable.Contains(barcodeEntityList[i].PartitionKey) ? Param.ShopNameHashtable[barcodeEntityList[i].PartitionKey].ToString() : barcodeEntityList[i].PartitionKey),
+                new Cell(barcodeEntityList[i].ReceivedDate.ToLocalTime().ToString("dd MMMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"))),
+                new Cell(Param.CustomerNameHashtable.Contains(barcodeEntityList[i].Customer) ? Param.CustomerNameHashtable[barcodeEntityList[i].Customer].ToString() : barcodeEntityList[i].Customer)
+                            //,
+                            //new Cell(Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy") == "01/01/0544" ? "-" : Param.userEntityList[i].LastLogin.ToString("dd/MM/yyyy hh:mm:ss")),
+                        })
                     );
                     if (!Param.ShopNameHashtable.Contains(barcodeEntityList[i].PartitionKey))
                         shopList.Add(barcodeEntityList[i].PartitionKey);
@@ -128,6 +151,14 @@ namespace PowerPOS_Online
                 table1.EndUpdate();
                 bwGetProduct.RunWorkerAsync();
             }
+        }
+
+        private void DownloadImage(string url, string savePath, string fileName)
+        {
+            ptbProduct.ImageLocation = url;
+            DownloadImage d = new DownloadImage();
+            Thread thread = new Thread(() => d.Download(url, savePath, fileName));
+            thread.Start();
         }
 
         private void bwGetProduct_DoWork(object sender, DoWorkEventArgs e)
@@ -235,9 +266,15 @@ namespace PowerPOS_Online
 
         private void btnClaim_Click(object sender, EventArgs e)
         {
+            var index = barcodeEntityList.Count - 1;
+
             FmClaim fm = new FmClaim();
+            DataTable dt = Util.DBQuery(string.Format(@"SELECT SellPrice FROM Barcode WHERE Barcode = '{0}'", UcClaim.barcode));
+            sellprice = dt.Rows[0]["SellPrice"].ToString();            
+            Product = barcodeEntityList[index].Product;
+            SellDate = barcodeEntityList[index].SellDate;
             var result = fm.ShowDialog(this);
-            if (result == DialogResult.OK)
+            if (result == DialogResult.Yes)
             {
 
             }

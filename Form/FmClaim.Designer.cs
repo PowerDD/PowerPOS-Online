@@ -37,6 +37,7 @@
             this.rdbCash = new System.Windows.Forms.RadioButton();
             this.rdbSwap = new System.Windows.Forms.RadioButton();
             this.gbxCustomer = new System.Windows.Forms.GroupBox();
+            this.btnCustomer = new System.Windows.Forms.Button();
             this.txtEmail = new System.Windows.Forms.TextBox();
             this.txtMobile = new System.Windows.Forms.TextBox();
             this.txtNickname = new System.Windows.Forms.TextBox();
@@ -50,10 +51,16 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pnPrice = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.lblBarcode = new System.Windows.Forms.Label();
+            this.lblSellPrice = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.gbxDetail.SuspendLayout();
             this.gbxCustomer.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.pnPrice.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -148,6 +155,7 @@
             // 
             // gbxCustomer
             // 
+            this.gbxCustomer.Controls.Add(this.btnCustomer);
             this.gbxCustomer.Controls.Add(this.txtEmail);
             this.gbxCustomer.Controls.Add(this.txtMobile);
             this.gbxCustomer.Controls.Add(this.txtNickname);
@@ -162,11 +170,20 @@
             this.gbxCustomer.Enabled = false;
             this.gbxCustomer.Location = new System.Drawing.Point(11, 231);
             this.gbxCustomer.Name = "gbxCustomer";
-            this.gbxCustomer.Size = new System.Drawing.Size(305, 179);
+            this.gbxCustomer.Size = new System.Drawing.Size(305, 205);
             this.gbxCustomer.TabIndex = 3;
             this.gbxCustomer.TabStop = false;
             this.gbxCustomer.Text = "ข้อมูลลูกค้า";
             this.gbxCustomer.Visible = false;
+            // 
+            // btnCustomer
+            // 
+            this.btnCustomer.Location = new System.Drawing.Point(161, 171);
+            this.btnCustomer.Name = "btnCustomer";
+            this.btnCustomer.Size = new System.Drawing.Size(124, 28);
+            this.btnCustomer.TabIndex = 15;
+            this.btnCustomer.Text = "ค้นหาข้อมูลลูกค้า";
+            this.btnCustomer.UseVisualStyleBackColor = true;
             // 
             // txtEmail
             // 
@@ -262,10 +279,9 @@
             // 
             // btnSave
             // 
-            this.btnSave.Enabled = false;
             this.btnSave.Image = global::PowerPOS_Online.Properties.Resources.disk_return_black;
             this.btnSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnSave.Location = new System.Drawing.Point(203, 7);
+            this.btnSave.Location = new System.Drawing.Point(199, 6);
             this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(7, 0, 7, 0);
@@ -280,7 +296,7 @@
             // 
             this.btnCancel.Image = global::PowerPOS_Online.Properties.Resources.arrow_circle_225_left;
             this.btnCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCancel.Location = new System.Drawing.Point(118, 7);
+            this.btnCancel.Location = new System.Drawing.Point(114, 6);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(7, 0, 7, 0);
@@ -289,22 +305,82 @@
             this.btnCancel.Text = "ยกเลิก";
             this.btnCancel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.btnCancel);
             this.panel1.Controls.Add(this.btnSave);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(11, 410);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(11, 490);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(305, 52);
+            this.panel1.Size = new System.Drawing.Size(305, 42);
             this.panel1.TabIndex = 13;
+            // 
+            // pnPrice
+            // 
+            this.pnPrice.Controls.Add(this.label6);
+            this.pnPrice.Controls.Add(this.label7);
+            this.pnPrice.Controls.Add(this.lblBarcode);
+            this.pnPrice.Controls.Add(this.lblSellPrice);
+            this.pnPrice.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnPrice.Location = new System.Drawing.Point(11, 464);
+            this.pnPrice.Name = "pnPrice";
+            this.pnPrice.Size = new System.Drawing.Size(305, 26);
+            this.pnPrice.TabIndex = 16;
+            this.pnPrice.Visible = false;
+            // 
+            // label6
+            // 
+            this.label6.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.label6.ForeColor = System.Drawing.Color.Green;
+            this.label6.Location = new System.Drawing.Point(174, 5);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(56, 18);
+            this.label6.TabIndex = 13;
+            this.label6.Text = "ราคาขาย";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.label7.ForeColor = System.Drawing.Color.Green;
+            this.label7.Location = new System.Drawing.Point(2, 5);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(49, 14);
+            this.label7.TabIndex = 18;
+            this.label7.Text = "บาร์โค้ด";
+            // 
+            // lblBarcode
+            // 
+            this.lblBarcode.AutoSize = true;
+            this.lblBarcode.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.lblBarcode.ForeColor = System.Drawing.Color.Green;
+            this.lblBarcode.Location = new System.Drawing.Point(51, 5);
+            this.lblBarcode.Name = "lblBarcode";
+            this.lblBarcode.Size = new System.Drawing.Size(62, 14);
+            this.lblBarcode.TabIndex = 17;
+            this.lblBarcode.Text = "lblBarcode";
+            this.lblBarcode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblSellPrice
+            // 
+            this.lblSellPrice.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.lblSellPrice.ForeColor = System.Drawing.Color.Green;
+            this.lblSellPrice.Location = new System.Drawing.Point(227, 5);
+            this.lblSellPrice.Name = "lblSellPrice";
+            this.lblSellPrice.Size = new System.Drawing.Size(76, 16);
+            this.lblSellPrice.TabIndex = 15;
+            this.lblSellPrice.Text = "lblSellPrice";
+            this.lblSellPrice.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // FmClaim
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(327, 457);
+            this.ClientSize = new System.Drawing.Size(327, 543);
+            this.Controls.Add(this.pnPrice);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.gbxCustomer);
             this.Controls.Add(this.groupBox1);
@@ -316,12 +392,15 @@
             this.Padding = new System.Windows.Forms.Padding(11, 5, 11, 11);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "เคลมสินค้า";
+            this.Load += new System.EventHandler(this.FmClaim_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.gbxDetail.ResumeLayout(false);
             this.gbxCustomer.ResumeLayout(false);
             this.gbxCustomer.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.pnPrice.ResumeLayout(false);
+            this.pnPrice.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -350,5 +429,11 @@
         private System.Windows.Forms.Button btnSave;
         public System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button btnCustomer;
+        private System.Windows.Forms.Panel pnPrice;
+        private System.Windows.Forms.Label lblBarcode;
+        private System.Windows.Forms.Label lblSellPrice;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
     }
 }

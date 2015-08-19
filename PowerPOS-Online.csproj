@@ -140,10 +140,16 @@
     <Compile Include="Entity\CustomerEntity.cs" />
     <Compile Include="Entity\BarcodeEntity.cs" />
     <Compile Include="Entity\ProductUpdateEntity.cs" />
-    <Compile Include="FmProfitConfig.cs">
+    <Compile Include="FmStockDetail.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FmProfitConfig.Designer.cs">
+    <Compile Include="FmStockDetail.Designer.cs">
+      <DependentUpon>FmStockDetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\FmProfitConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmProfitConfig.Designer.cs">
       <DependentUpon>FmProfitConfig.cs</DependentUpon>
     </Compile>
     <Compile Include="Form\FmBarcode.cs">
@@ -345,7 +351,10 @@
     <Compile Include="Entity\UserGroupEntity.cs" />
     <Compile Include="Entity\UserUpdateEntity.cs" />
     <Compile Include="Util.cs" />
-    <EmbeddedResource Include="FmProfitConfig.resx">
+    <EmbeddedResource Include="FmStockDetail.resx">
+      <DependentUpon>FmStockDetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmProfitConfig.resx">
       <DependentUpon>FmProfitConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\FmBarcode.resx">

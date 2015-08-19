@@ -32,6 +32,7 @@ namespace PowerPOS_Online
         public string OrderNo { get; set; }
         public string Customer { get; set; }
         public string Stock { get; set; }
+        public string Comment { get; set; }
         public double Cost { get; set; }
         public double OperationCost { get; set; }
         public double SellPrice { get; set; }

@@ -41,7 +41,7 @@ namespace PowerPOS_Online
             if (dt.Rows[0]["ReceivedDate"].ToString() != "")
             {
                 lblOrderNo.Text = dt.Rows[0]["OrderNo"].ToString();
-                lblReceivedDate.Text = Convert.ToDateTime(dt.Rows[0]["ReceivedDate"]).ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"));
+                lblReceivedDate.Text = Convert.ToDateTime(dt.Rows[0]["ReceivedDate"]).ToLocalTime().ToString("dd MMMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"));
                 lblCost.Text = dt.Rows[0]["Cost"].ToString() + " บาท";
 
                 if (dt.Rows[0]["SellDate"].ToString() == "")
@@ -57,7 +57,7 @@ namespace PowerPOS_Online
                     lblStatus.Text = "ทำการขายสินค้าชิ้นนี้แล้ว";
                     lblStatus.ForeColor = Color.Green;
                     lblPrice.Text = dt.Rows[0]["SellPrice"].ToString() + " บาท";
-                    lblSellDate.Text = Convert.ToDateTime(dt.Rows[0]["SellDate"]).ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"));
+                    lblSellDate.Text = Convert.ToDateTime(dt.Rows[0]["SellDate"]).ToLocalTime().ToString("dd MMMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("th-TH"));
                     var remain = (dt.Rows[0]["Warranty"].ToString() == "0") ? 0 : Convert.ToInt32(dt.Rows[0]["Warranty"]) - (DateTime.Now - Convert.ToDateTime(dt.Rows[0]["SellDate"])).TotalDays;
                     lblWar.Text = Convert.ToInt32(remain).ToString() + " วัน";
                 }

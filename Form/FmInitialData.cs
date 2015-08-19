@@ -171,27 +171,28 @@ namespace PowerPOS_Online
                 'SellBy' VARCHAR,
                 'SellFinished' BOOL DEFAULT 0,
                 'Customer' VARCHAR,
+                'Comment' VARCHAR,
                 'Stock' FLOAT DEFAULT 0,
                 'Sync' BOOL DEFAULT 0)");
 
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             StringBuilder sb = new StringBuilder(@"INSERT OR REPLACE INTO Barcode (Barcode, OrderNo, Product, Cost, OperationCost, 
-                    SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer, Stock) ");
+                    SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer, Comment, Stock) ");
             var i = 0;
             foreach (BarcodeEntity d in azureTable.ExecuteQuery(query))
             {
                 if (i != 0) sb.Append(" UNION ALL ");
-                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', {3}, {4}, {5}, {6}, '{7}', '{8}', {9}, '{10}', {11}, '{12}', '{13}'",
+                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', {3}, {4}, {5}, {6}, '{7}', '{8}', {9}, '{10}', {11}, '{12}', '{13}', '{14}'",
                     d.RowKey, d.OrderNo, d.Product, d.Cost, d.OperationCost == null ? 0 : d.OperationCost, d.SellPrice == null ? 0 : d.SellPrice,
                     d.ReceivedDate.ToString() == "1/1/0001 12:00:00 AM" ? "NULL" : "'" + d.ReceivedDate.ToString("yyyy-MM-dd HH:mm:ss") + "'", d.ReceivedBy, d.SellNo,
-                    d.SellDate.ToString() == "1/1/0001 12:00:00 AM" ? "NULL" : "'" + d.SellDate.ToString("yyyy-MM-dd HH:mm:ss") + "'", d.SellBy, d.SellFinished ? 1 : 0, d.Customer, d.Stock));
+                    d.SellDate.ToString() == "1/1/0001 12:00:00 AM" ? "NULL" : "'" + d.SellDate.ToString("yyyy-MM-dd HH:mm:ss") + "'", d.SellBy, d.SellFinished ? 1 : 0, d.Customer, d.Comment, d.Stock));
                 i++;
                 if (i % 500 == 0)
                 {
                     i = 0;
                     Util.DBExecute(sb.ToString());
                     sb = new StringBuilder(@"INSERT OR REPLACE INTO Barcode (Barcode, OrderNo, Product, Cost, OperationCost, 
-                    SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer, Stock) ");
+                    SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer, Comment, Stock) ");
                 }
             }
             Util.DBExecute(sb.ToString());
@@ -232,8 +233,8 @@ namespace PowerPOS_Online
         {
             Util.DBExecute(string.Format(@"INSERT OR REPLACE INTO Product (Shop, ID, Name, CoverImage, Category, Brand, Price, Price1, Price2, Price3, Price4, Price5, Warranty,
                 WebPrice, WebPrice1, WebPrice2, WebPrice3, WebPrice4, WebPrice5, WebWarranty, Cost)
-                SELECT '{0}', p.ID, p.Name, p.CoverImage, p.Category, p.Brand, ps.Price, ps.Price1, ps.Price2, ps.Price3, ps.Price4, ps.Price5, ps.Warranty,
-                p.Price, p.Price1, p.Price2, p.Price3, p.Price4, p.Price5, p.Warranty, ps.Cost
+                SELECT '{0}', p.ID, p.Name, p.CoverImage, p.Category, p.Brand, ps.Price, ps.Price1, ps.Price2, ps.Price3, ps.Price4, ps.Price5, p.Warranty,
+                p.Price, p.Price1, p.Price2, p.Price3, p.Price4, p.Price5, ps.Warranty, ps.Cost
                 FROM (SELECT DISTINCT Product FROM Barcode) b
                 LEFT JOIN Product p
                 ON b.Product = p.ID
@@ -258,6 +259,10 @@ namespace PowerPOS_Online
                 Util.DBExecute(string.Format(@"UPDATE Product SET Price5 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price5,0) <> {1}", Param.ShopId, json.Price5));
                 Util.DBExecute(string.Format(@"UPDATE Product SET Warranty = IFNULL(WebWarranty,0), Sync = 1 WHERE Shop = '{0}' AND IFNULL(WebWarranty,0) <> IFNULL(Warranty,'')", Param.ShopId));
             }
+            else
+            {
+                Util.DBExecute(string.Format(@"UPDATE Product SET Sync = 1 WHERE Shop = '{0}'",Param.ShopId));
+            }
 
             DataTable dt = Util.DBQuery(string.Format(@"SELECT ID, Name, CoverImage, Price, Price1, Price2, Price3, Price4, Price5, Warranty, IFNULL(Cost,0) Cost, Category, Brand 
                 FROM Product
@@ -274,16 +279,25 @@ namespace PowerPOS_Online
                     ProductUpdateEntity data = new ProductUpdateEntity(Param.ShopId, dt.Rows[i]["ID"].ToString());
                     data.Name = dt.Rows[i]["Name"].ToString();
                     data.CoverImage = dt.Rows[i]["CoverImage"].ToString();
-                    data.Price = double.Parse(dt.Rows[i]["Price"].ToString());
-                    data.Price1 = double.Parse(dt.Rows[i]["Price1"].ToString());
-                    data.Price2 = double.Parse(dt.Rows[i]["Price2"].ToString());
-                    data.Price3 = double.Parse(dt.Rows[i]["Price3"].ToString());
-                    data.Price4 = double.Parse(dt.Rows[i]["Price4"].ToString());
-                    data.Price5 = double.Parse(dt.Rows[i]["Price5"].ToString());
-                    data.Cost = double.Parse(dt.Rows[i]["Cost"].ToString());
+                    if (dt.Rows[i]["Price"].ToString() == "" || dt.Rows[i]["Price"].ToString() == null) { data.Price = 0; } else { data.Price = double.Parse(dt.Rows[i]["Price"].ToString()); }
+                    if (dt.Rows[i]["Price1"].ToString() == "" || dt.Rows[i]["Price1"].ToString() == null) { data.Price1 = 0; } else { data.Price1 = double.Parse(dt.Rows[i]["Price1"].ToString()); }
+                    if (dt.Rows[i]["Price2"].ToString() == "" || dt.Rows[i]["Price2"].ToString() == null) { data.Price2 = 0; } else { data.Price2 = double.Parse(dt.Rows[i]["Price2"].ToString()); }
+                    if (dt.Rows[i]["Price3"].ToString() == "" || dt.Rows[i]["Price3"].ToString() == null) { data.Price3 = 0; } else { data.Price3 = double.Parse(dt.Rows[i]["Price3"].ToString()); }
+                    if (dt.Rows[i]["Price4"].ToString() == "" || dt.Rows[i]["Price4"].ToString() == null) { data.Price4 = 0; } else { data.Price4 = double.Parse(dt.Rows[i]["Price4"].ToString()); }
+                    if (dt.Rows[i]["Price5"].ToString() == "" || dt.Rows[i]["Price5"].ToString() == null) { data.Price5 = 0; } else { data.Price5 = double.Parse(dt.Rows[i]["Price5"].ToString()); }
+                    if (dt.Rows[i]["Cost"].ToString() == "" || dt.Rows[i]["Cost"].ToString() == null) { data.Cost = 0; } else { data.Cost = double.Parse(dt.Rows[i]["Cost"].ToString()); }
+                    if (dt.Rows[i]["Warranty"].ToString() == "" || dt.Rows[i]["Warranty"].ToString() == null) { data.Warranty = 0; } else { data.Warranty = int.Parse(dt.Rows[i]["Warranty"].ToString()); }
+
                     data.Category = dt.Rows[i]["Category"].ToString();
                     data.Brand = dt.Rows[i]["Brand"].ToString();
-                    data.Warranty = int.Parse(dt.Rows[i]["Warranty"].ToString());
+                    //data.Warranty = int.Parse(dt.Rows[i]["Warranty"].ToString());
+                    //data.Cost = double.Parse(dt.Rows[i]["Cost"].ToString());
+                    //data.Price = double.Parse(dt.Rows[i]["Price"].ToString());
+                    //data.Price1 = double.Parse(dt.Rows[i]["Price1"].ToString());
+                    //data.Price2 = double.Parse(dt.Rows[i]["Price2"].ToString());
+                    //data.Price3 = double.Parse(dt.Rows[i]["Price3"].ToString());
+                    //data.Price4 = double.Parse(dt.Rows[i]["Price4"].ToString());
+                    //data.Price5 = double.Parse(dt.Rows[i]["Price5"].ToString());                    
                     batchOperation.InsertOrMerge(data);
                     if (batchOperation.Count == 100)
                     {
@@ -291,7 +305,10 @@ namespace PowerPOS_Online
                         batchOperation = new TableBatchOperation();
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             if (batchOperation.Count > 0)
             {
@@ -775,18 +792,19 @@ namespace PowerPOS_Online
             int i = 0;
             Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'Claim' (
                 'ClaimNo' VARCHAR NOT NULL,
-                'ClaimType' VARCHAR,
-                'ClaimDate' VARCHAR,
+                'ClaimType' VARCHAR NOT NULL,
+                'ClaimDate' VARCHAR NOT NULL,
                 'Product' VARCHAR NOT NULL,
                 'Barcode' VARCHAR NOT NULL,
-                'BarcodeClaim' VARCHAR,
+                'BarcodeClaim' VARCHAR ,
                 'Description' VARCHAR NOT NULL,
                 'Price' DOUBLE NOT NULL,
+                'PriceClaim' DOUBLE ,
                 'Firstname' VARCHAR,
                 'Lastname' VARCHAR,
                 'Nickname' VARCHAR,
                 'Tel' VARCHAR,
-                'Email' VARCHAR NOT NULL,
+                'Email' VARCHAR,
                 'ClaimBy' VARCHAR,
                 'Sync' BOOL DEFAULT 0,
                 PRIMARY KEY ('ClaimNo', 'Barcode'))");
@@ -796,16 +814,14 @@ namespace PowerPOS_Online
             var azureTable = Param.AzureTableClient.GetTableReference("Claim");
             azureTable.CreateIfNotExists();
             var query = new TableQuery<ClaimEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId));
-            const string command = @"INSERT OR REPLACE INTO Claim ( ClaimNo, Barcode, ClaimType, BarcodeClaim, ClaimDate, Description, Price, Product, Firstname, Lastname, Nickname, Tel, Email, ClaimBy) ";
+            const string command = @"INSERT OR REPLACE INTO Claim ( ClaimNo, Barcode, ClaimType, BarcodeClaim, ClaimDate, Description, Price, PriceClaim, Product, Firstname, Lastname, Nickname, Tel, Email, ClaimBy) ";
             var sb = new StringBuilder(command);
 
             foreach (ClaimEntity d in azureTable.ExecuteQuery(query))
             {
-                string[] val = d.RowKey.Split('-');
-
                 if (i != 0) sb.Append(" UNION ALL ");
                 sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}'",
-                val[0].ToString(), val[1].ToString(), d.ClaimType, d.BarcodeClaim, d.ClaimDate.ToString("yyyy-MM-dd HH:mm:ss"), d.Description, d.Price, d.Product, d.Firstname, d.Lastname, d.Nickname, d.Tel, d.Email, d.ClaimBy));
+                d.ClaimNo, d.Barcode, d.ClaimType, d.BarcodeClaim, d.ClaimDate.ToString("yyyy-MM-dd HH:mm:ss"), d.Description, d.Price, d.PriceCliam, d.Product, d.Firstname, d.Lastname, d.Nickname, d.Tel, d.Email, d.ClaimBy));
                 i++;
                 if (i % 500 == 0)
                 {
