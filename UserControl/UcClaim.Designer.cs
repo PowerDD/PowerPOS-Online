@@ -33,6 +33,9 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.btnCheckClaim = new System.Windows.Forms.Button();
+            this.btnReceivedClaim = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.ptbProduct = new System.Windows.Forms.PictureBox();
             this.panel4 = new System.Windows.Forms.Panel();
@@ -57,16 +60,15 @@
             this.bwDownloadImage = new System.ComponentModel.BackgroundWorker();
             this.bwGetShopName = new System.ComponentModel.BackgroundWorker();
             this.bwGetCustomerName = new System.ComponentModel.BackgroundWorker();
-            this.btnReceivedClaim = new System.Windows.Forms.Button();
-            this.panel5 = new System.Windows.Forms.Panel();
             this.clBarcodeClaim = new XPTable.Models.TextColumn();
+            this.bwSearchBarcode = new System.ComponentModel.BackgroundWorker();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panel5.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbProduct)).BeginInit();
             this.pnlBarcode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.table1)).BeginInit();
-            this.panel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -100,8 +102,39 @@
             this.panel3.Location = new System.Drawing.Point(0, 39);
             this.panel3.Name = "panel3";
             this.panel3.Padding = new System.Windows.Forms.Padding(7, 7, 7, 0);
-            this.panel3.Size = new System.Drawing.Size(247, 470);
+            this.panel3.Size = new System.Drawing.Size(247, 527);
             this.panel3.TabIndex = 13;
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.btnCheckClaim);
+            this.panel5.Controls.Add(this.btnReceivedClaim);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel5.Location = new System.Drawing.Point(7, 444);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(233, 83);
+            this.panel5.TabIndex = 10;
+            // 
+            // btnCheckClaim
+            // 
+            this.btnCheckClaim.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.btnCheckClaim.Location = new System.Drawing.Point(0, 8);
+            this.btnCheckClaim.Name = "btnCheckClaim";
+            this.btnCheckClaim.Size = new System.Drawing.Size(233, 33);
+            this.btnCheckClaim.TabIndex = 7;
+            this.btnCheckClaim.Text = "ตรวจสอบการเคลมสินค้า";
+            this.btnCheckClaim.UseVisualStyleBackColor = true;
+            this.btnCheckClaim.Click += new System.EventHandler(this.btnCheckClaim_Click);
+            // 
+            // btnReceivedClaim
+            // 
+            this.btnReceivedClaim.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.btnReceivedClaim.Location = new System.Drawing.Point(0, 47);
+            this.btnReceivedClaim.Name = "btnReceivedClaim";
+            this.btnReceivedClaim.Size = new System.Drawing.Size(233, 33);
+            this.btnReceivedClaim.TabIndex = 6;
+            this.btnReceivedClaim.Text = "รับเข้าสินค้าเคลม";
+            this.btnReceivedClaim.UseVisualStyleBackColor = true;
             // 
             // panel2
             // 
@@ -115,7 +148,7 @@
             this.panel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.panel2.Location = new System.Drawing.Point(7, 89);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(233, 325);
+            this.panel2.Size = new System.Drawing.Size(233, 349);
             this.panel2.TabIndex = 9;
             // 
             // ptbProduct
@@ -123,7 +156,7 @@
             this.ptbProduct.Dock = System.Windows.Forms.DockStyle.Top;
             this.ptbProduct.Location = new System.Drawing.Point(0, 132);
             this.ptbProduct.Name = "ptbProduct";
-            this.ptbProduct.Size = new System.Drawing.Size(233, 230);
+            this.ptbProduct.Size = new System.Drawing.Size(233, 233);
             this.ptbProduct.TabIndex = 3;
             this.ptbProduct.TabStop = false;
             this.ptbProduct.Visible = false;
@@ -225,9 +258,9 @@
             // 
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatus.ForeColor = System.Drawing.Color.Green;
-            this.lblStatus.Location = new System.Drawing.Point(14, 56);
+            this.lblStatus.Location = new System.Drawing.Point(0, 56);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(204, 23);
+            this.lblStatus.Size = new System.Drawing.Size(233, 23);
             this.lblStatus.TabIndex = 2;
             this.lblStatus.Text = "ไม่พบข้อมูลสินค้าชิ้นนี้";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -256,7 +289,7 @@
             this.table1.Name = "table1";
             this.table1.NoItemsText = "";
             this.table1.SelectionStyle = XPTable.Models.SelectionStyle.Grid;
-            this.table1.Size = new System.Drawing.Size(706, 470);
+            this.table1.Size = new System.Drawing.Size(706, 527);
             this.table1.TabIndex = 14;
             this.table1.TableModel = this.tableModel1;
             this.table1.Text = "table1";
@@ -328,29 +361,15 @@
             this.bwGetCustomerName.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwGetCustomerName_DoWork);
             this.bwGetCustomerName.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwGetCustomerName_RunWorkerCompleted);
             // 
-            // btnReceivedClaim
-            // 
-            this.btnReceivedClaim.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.btnReceivedClaim.Location = new System.Drawing.Point(1, 5);
-            this.btnReceivedClaim.Name = "btnReceivedClaim";
-            this.btnReceivedClaim.Size = new System.Drawing.Size(233, 33);
-            this.btnReceivedClaim.TabIndex = 6;
-            this.btnReceivedClaim.Text = "รับเข้าสินค้าเคลม";
-            this.btnReceivedClaim.UseVisualStyleBackColor = true;
-            // 
-            // panel5
-            // 
-            this.panel5.Controls.Add(this.btnReceivedClaim);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel5.Location = new System.Drawing.Point(7, 427);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(233, 43);
-            this.panel5.TabIndex = 10;
-            // 
             // clBarcodeClaim
             // 
             this.clBarcodeClaim.IsTextTrimmed = false;
             this.clBarcodeClaim.Text = "เปลี่ยนสินค้าจาก";
+            // 
+            // bwSearchBarcode
+            // 
+            this.bwSearchBarcode.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwSearchBarcode_DoWork);
+            this.bwSearchBarcode.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwSearchBarcode_RunWorkerCompleted);
             // 
             // UcClaim
             // 
@@ -360,17 +379,17 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
             this.Name = "UcClaim";
-            this.Size = new System.Drawing.Size(953, 509);
+            this.Size = new System.Drawing.Size(953, 566);
             this.Load += new System.EventHandler(this.UcClaim_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel3.ResumeLayout(false);
+            this.panel5.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ptbProduct)).EndInit();
             this.pnlBarcode.ResumeLayout(false);
             this.pnlBarcode.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.table1)).EndInit();
-            this.panel5.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -407,5 +426,7 @@
         private System.Windows.Forms.Button btnReceivedClaim;
         private System.Windows.Forms.Panel panel5;
         private XPTable.Models.TextColumn clBarcodeClaim;
+        private System.Windows.Forms.Button btnCheckClaim;
+        private System.ComponentModel.BackgroundWorker bwSearchBarcode;
     }
 }

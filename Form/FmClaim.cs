@@ -52,7 +52,10 @@ namespace PowerPOS_Online
                             ClaimNo, UcClaim.Product, UcClaim.barcode, txtBarcode.Text, UcClaim.sellprice, rtbDetail.Text, Param.UserId));
 
                             Util.DBExecute(string.Format(@"UPDATE Barcode SET Comment = 'เคลมสินค้า(เปลี่ยนสินค้า)' ,Sync = 1 WHERE Barcode = '{0}'", UcClaim.barcode));
-                            Util.DBExecute(string.Format(@"UPDATE Barcode SET Comment = 'เปลี่ยนสินค้า[{1}]',SellDate = '{2}', SellBy = '{3}' ,Sync = 1 WHERE Barcode = '{0}'", txtBarcode.Text, UcClaim.barcode, UcClaim.SellDate, Param.UserId));
+                            Util.DBExecute(string.Format(@"UPDATE Barcode SET Comment = 'เปลี่ยนสินค้า[{1}]',SellPrice = '{4}', SellDate = '{2}', SellBy = '{3}' ,Sync = 1 WHERE Barcode = '{0}'", txtBarcode.Text, UcClaim.barcode, UcClaim.SellDate, Param.UserId, UcClaim.sellprice));
+
+                            MessageBox.Show("บันทึกข้อมูลเรียบร้อยแล้ว", "แจ้งการบันทึกข้อมูล", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            txtClear();
                         }
                         else
                         {
@@ -70,7 +73,8 @@ namespace PowerPOS_Online
 
                             Util.DBExecute(string.Format(@"UPDATE Barcode SET Comment = 'เคลมสินค้า(คืนเงิน)' ,Sync = 1 WHERE Barcode = '{0}'", UcClaim.barcode));
 
-
+                            MessageBox.Show("บันทึกข้อมูลเรียบร้อยแล้ว", "แจ้งการบันทึกข้อมูล", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            txtClear();
                         }
                         else
                         {
@@ -88,20 +92,19 @@ namespace PowerPOS_Online
 
                             Util.DBExecute(string.Format(@"UPDATE Barcode SET Comment = 'เคลมสินค้า(ส่งคืนสำนักงาน)' ,Sync = 1 WHERE Barcode = '{0}'", UcClaim.barcode));
 
+                            MessageBox.Show("บันทึกข้อมูลเรียบร้อยแล้ว", "แจ้งการบันทึกข้อมูล", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            txtClear();
                         }
                         else
                         {
                             MessageBox.Show("กรุณากรอกข้อมูลลูกค้า", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
-
                     }
                 }
                 else
                 {
                     MessageBox.Show("กรุณากรอกรายละเอียดการเคลม", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
-
-
             }
         }
 
@@ -116,6 +119,18 @@ namespace PowerPOS_Online
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void txtClear()
+        {
+            txtBarcode.Text = "";
+            txtCash.Text = "";
+            rtbDetail.Text = "";
+            txtName.Text = "";
+            txtLastname.Text = "";
+            txtNickname.Text = "";
+            txtMobile.Text = "";
+            txtEmail.Text = "";
         }
     }
 }

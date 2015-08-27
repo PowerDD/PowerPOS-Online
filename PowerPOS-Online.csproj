@@ -43,11 +43,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;ป</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -67,6 +67,11 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DevExpress.Data.v15.1, Version=15.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Printing.v15.1.Core, Version=15.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Sparkline.v15.1.Core, Version=15.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Utils.v15.1, Version=15.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraEditors.v15.1, Version=15.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -102,6 +107,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Data.SQLite, Version=1.0.97.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>packages\System.Data.SQLite.Core.1.0.97.0\lib\net45\System.Data.SQLite.dll</HintPath>
       <Private>True</Private>
@@ -128,7 +134,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\BarcodeEntity2.cs" />
     <Compile Include="Entity\CategoryProfitEntity.cs" />
+    <Compile Include="Entity\ClaimEntity3.cs" />
+    <Compile Include="Entity\ClaimEntity2.cs" />
     <Compile Include="Entity\ClaimEntity.cs" />
     <Compile Include="DynamicEntity.cs" />
     <Compile Include="Entity\BarcodeNoDateEntity.cs" />
@@ -140,10 +149,16 @@
     <Compile Include="Entity\CustomerEntity.cs" />
     <Compile Include="Entity\BarcodeEntity.cs" />
     <Compile Include="Entity\ProductUpdateEntity.cs" />
-    <Compile Include="FmStockDetail.cs">
+    <Compile Include="Form\FmClaimHistory.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FmStockDetail.Designer.cs">
+    <Compile Include="Form\FmClaimHistory.Designer.cs">
+      <DependentUpon>FmClaimHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\FmStockDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmStockDetail.Designer.cs">
       <DependentUpon>FmStockDetail.cs</DependentUpon>
     </Compile>
     <Compile Include="Form\FmProfitConfig.cs">
@@ -351,7 +366,10 @@
     <Compile Include="Entity\UserGroupEntity.cs" />
     <Compile Include="Entity\UserUpdateEntity.cs" />
     <Compile Include="Util.cs" />
-    <EmbeddedResource Include="FmStockDetail.resx">
+    <EmbeddedResource Include="Form\FmClaimHistory.resx">
+      <DependentUpon>FmClaimHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmStockDetail.resx">
       <DependentUpon>FmStockDetail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\FmProfitConfig.resx">

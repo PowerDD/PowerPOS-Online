@@ -46,6 +46,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.pnlLeft = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.btnNewCount = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cbbPrintType = new System.Windows.Forms.ComboBox();
             this.btnPrint = new System.Windows.Forms.Button();
@@ -56,6 +57,8 @@
             this.lblStatus = new System.Windows.Forms.Label();
             this.gbCategory = new System.Windows.Forms.GroupBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.bwDownloadImage = new System.ComponentModel.BackgroundWorker();
+            this.bwGetProduct = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.table1)).BeginInit();
             this.panel1.SuspendLayout();
             this.pnlLeft.SuspendLayout();
@@ -147,6 +150,7 @@
             this.table1.TableModel = this.tableModel1;
             this.table1.Text = "table1";
             this.table1.UnfocusedBorderColor = System.Drawing.Color.Black;
+            this.table1.CellClick += new XPTable.Events.CellMouseEventHandler(this.table1_CellClick);
             this.table1.CellDoubleClick += new XPTable.Events.CellMouseEventHandler(this.table1_CellDoubleClick);
             // 
             // label1
@@ -223,20 +227,33 @@
             // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.btnNewCount);
             this.panel5.Controls.Add(this.groupBox1);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel5.Location = new System.Drawing.Point(7, 618);
+            this.panel5.Location = new System.Drawing.Point(7, 590);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(233, 91);
+            this.panel5.Size = new System.Drawing.Size(233, 119);
             this.panel5.TabIndex = 7;
+            // 
+            // btnNewCount
+            // 
+            this.btnNewCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.btnNewCount.Location = new System.Drawing.Point(14, 3);
+            this.btnNewCount.Name = "btnNewCount";
+            this.btnNewCount.Size = new System.Drawing.Size(200, 33);
+            this.btnNewCount.TabIndex = 0;
+            this.btnNewCount.Text = "เริ่มต้นนับสต็อกสินค้าใหม่";
+            this.btnNewCount.UseVisualStyleBackColor = true;
+            this.btnNewCount.Click += new System.EventHandler(this.btnNewCount_Click);
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.cbbPrintType);
             this.groupBox1.Controls.Add(this.btnPrint);
-            this.groupBox1.Location = new System.Drawing.Point(3, 5);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.groupBox1.Location = new System.Drawing.Point(0, 36);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(227, 83);
+            this.groupBox1.Size = new System.Drawing.Size(233, 83);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             // 
@@ -251,7 +268,7 @@
             "พิมพ์รายงานทั้งหมด",
             "พิมพ์รายงานที่ครบ",
             "พิมพ์รายงานที่ไม่ครบ"});
-            this.cbbPrintType.Location = new System.Drawing.Point(36, 16);
+            this.cbbPrintType.Location = new System.Drawing.Point(34, 15);
             this.cbbPrintType.Name = "cbbPrintType";
             this.cbbPrintType.Size = new System.Drawing.Size(160, 24);
             this.cbbPrintType.TabIndex = 1;
@@ -276,13 +293,14 @@
             this.pnlBarcode.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlBarcode.Location = new System.Drawing.Point(7, 58);
             this.pnlBarcode.Name = "pnlBarcode";
-            this.pnlBarcode.Size = new System.Drawing.Size(233, 353);
+            this.pnlBarcode.Size = new System.Drawing.Size(233, 321);
             this.pnlBarcode.TabIndex = 6;
             // 
             // ptbProduct
             // 
+            this.ptbProduct.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.ptbProduct.ImageLocation = "";
-            this.ptbProduct.Location = new System.Drawing.Point(0, 83);
+            this.ptbProduct.Location = new System.Drawing.Point(0, 88);
             this.ptbProduct.Name = "ptbProduct";
             this.ptbProduct.Size = new System.Drawing.Size(233, 233);
             this.ptbProduct.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -340,6 +358,11 @@
             this.progressBar1.Step = 1;
             this.progressBar1.TabIndex = 9;
             // 
+            // bwGetProduct
+            // 
+            this.bwGetProduct.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwGetProduct_DoWork);
+            this.bwGetProduct.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwGetProduct_RunWorkerCompleted);
+            // 
             // UcStock
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -392,5 +415,8 @@
         private System.Windows.Forms.Button btnPrint;
         private System.Windows.Forms.ComboBox cbbPrintType;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.ComponentModel.BackgroundWorker bwDownloadImage;
+        private System.ComponentModel.BackgroundWorker bwGetProduct;
+        private System.Windows.Forms.Button btnNewCount;
     }
 }

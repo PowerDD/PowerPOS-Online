@@ -29,6 +29,7 @@ namespace PowerPOS_Online
             Param.SelectCustomerSellPrice = 0;
             Param.UcSell = this;
             LoadData();
+            txtBarcode.Focus();
             SelectCustomer(sender, e);
         }
 
@@ -136,12 +137,16 @@ namespace PowerPOS_Online
 
             if (e.KeyCode == Keys.Return)
             {
-                DataTable dt = Util.DBQuery(string.Format(@"SELECT p.Name, p.ID, IFNULL(p.Price, 0) Price, IFNULL(p.Price1, 0) Price1, IFNULL(p.Price2, 0) Price2, ReceivedDate, ReceivedBy, SellDate, SellBy 
+                DataTable dt = Util.DBQuery(string.Format(@"SELECT p.Name, p.ID, IFNULL(p.Price, 0) Price, IFNULL(p.Price1, 0) Price1, IFNULL(p.Price2, 0) Price2, ReceivedDate, ReceivedBy, SellDate, SellBy, Comment 
                     FROM Barcode b 
                         LEFT JOIN Product p 
                         ON b.Product = p.ID 
                     WHERE Barcode = '{0}' AND Shop = '{1}'", txtBarcode.Text, Param.ShopId));
                 lblStatus.Visible = true;
+
+                string[] claim = dt.Rows[0]["Comment"].ToString().Split('(');
+                string[] change = dt.Rows[0]["Comment"].ToString().Split('[');
+
 
                 if (dt.Rows.Count == 0)
                 {
@@ -170,6 +175,11 @@ namespace PowerPOS_Online
                         Param.SelectedScreen = (int)Param.Screen.ReceiveProduct;
                     }
                 }
+                else if (claim[0].ToString() == "เคลมสินค้า" || change[0].ToString() == "เปลี่ยนสินค้า")
+                {
+                    lblStatus.Text = "สินค้าชิ้นนี้ได้ทำการเคลมแล้ว";
+                    lblStatus.ForeColor = Color.Red;
+                }
                 else if (dt.Rows[0]["SellDate"].ToString() != "")
                 {
                     lblStatus.Text = "สินค้าชิ้นนี้ได้ขายออกจากระบบไปแล้ว";
@@ -179,7 +189,7 @@ namespace PowerPOS_Online
                 {
                     lblStatus.Text = "มีสินค้าชิ้นนี้ในรายการขายแล้ว";
                     lblStatus.ForeColor = Color.Red;
-                }
+                }               
                 else if (int.Parse(dt.Rows[0]["Price"].ToString()) == 0 || int.Parse(dt.Rows[0]["Price1"].ToString()) == 0)
                 {
                     lblStatus.Text = "สินค้าชิ้นนี้ยังไม่ได้กำหนดราคาขาย";

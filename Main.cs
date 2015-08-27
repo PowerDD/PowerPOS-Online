@@ -21,6 +21,7 @@ namespace PowerPOS_Online
         public Main()
         {
             InitializeComponent();
+            DevExpress.LookAndFeel.UserLookAndFeel.Default.SkinName = "DevExpress Dark Style";
             Param.UserId = "0000";
             Util.ConnectSQLiteDatabase();
             this.Opacity = 0;

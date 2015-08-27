@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            XPTable.Models.DataSourceColumnBinder dataSourceColumnBinder2 = new XPTable.Models.DataSourceColumnBinder();
-            XPTable.Renderers.DragDropRenderer dragDropRenderer2 = new XPTable.Renderers.DragDropRenderer();
+            XPTable.Models.DataSourceColumnBinder dataSourceColumnBinder1 = new XPTable.Models.DataSourceColumnBinder();
+            XPTable.Renderers.DragDropRenderer dragDropRenderer1 = new XPTable.Renderers.DragDropRenderer();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblRecords = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -732,10 +732,10 @@
             this.table1.BorderColor = System.Drawing.Color.Black;
             this.table1.ColumnModel = this.columnModel1;
             this.table1.DataMember = null;
-            this.table1.DataSourceColumnBinder = dataSourceColumnBinder2;
+            this.table1.DataSourceColumnBinder = dataSourceColumnBinder1;
             this.table1.Dock = System.Windows.Forms.DockStyle.Fill;
-            dragDropRenderer2.ForeColor = System.Drawing.Color.Red;
-            this.table1.DragDropRenderer = dragDropRenderer2;
+            dragDropRenderer1.ForeColor = System.Drawing.Color.Red;
+            this.table1.DragDropRenderer = dragDropRenderer1;
             this.table1.EnableHeaderContextMenu = false;
             this.table1.FullRowSelect = true;
             this.table1.GridLines = XPTable.Models.GridLines.Both;

@@ -513,9 +513,9 @@ namespace PowerPOS_Online
                     d.SellBy = row["SellBy"].ToString();
                     d.SellFinished = row["SellFinished"].ToString() == "True" ? true : false;
                     d.Customer = row["Customer"].ToString();
-                    
                     if (row["Stock"].ToString() == "" || row["Stock"].ToString() == null) { d.Stock = 0; } else { d.Stock = row["Stock"].ToString(); }
                     if (row["Comment"].ToString() == "" || row["Comment"].ToString() == null) { d.Comment = ""; } else { d.Comment = row["Comment"].ToString(); }
+                    if (row["Ship"].ToString() == "" || row["Ship"].ToString() == null) { d.Ship = 0; } else { d.Ship = row["Ship"].ToString(); }
                     batchOperation.InsertOrMerge(d);
 
                     Util.DBExecute(string.Format("UPDATE Barcode SET Sync = 0 WHERE Barcode = {0}", row["Barcode"].ToString()));

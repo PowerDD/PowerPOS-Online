@@ -33,8 +33,14 @@ namespace PowerPOS_Online
         private void UcReceiveProduct_Load(object sender, EventArgs e)
         {
             Util.InitialTable(table1);
+            if (Param.SystemConfig.SellPrice != null) rdbNonShip.Checked = true; else rdbShip.Checked = true;
             _FIRST_LOAD = true;
             LoadData();
+        }
+
+        private void checkRadio(object sender, EventArgs e)
+        {
+            nudCost.Enabled = rdbShip.Checked;
         }
 
         private void LoadData()
@@ -77,7 +83,7 @@ namespace PowerPOS_Online
             }
             else
             {
-                DataTable dt = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM Barcode WHERE (ReceivedDate IS NULL OR (OperationCost = 0 OR OperationCost = '')) ORDER BY OrderNo");
+                DataTable dt = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM Barcode WHERE (ReceivedDate IS NULL OR (OperationCost = 0 OR OperationCost = '')) AND Ship <> 2 ORDER BY OrderNo");
                 cbbOrderNo.Items.Clear();
                 cbbOrderNo.Items.Add("เลขที่ใบสั่งซื้อ");
                 if (dt.Rows.Count == 0)
@@ -94,7 +100,7 @@ namespace PowerPOS_Online
                 }
                 cbbOrderNo.SelectedIndex = 0;
 
-                DataTable dtab = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM Barcode WHERE OrderNo NOT IN (SELECT OrderNo  FROM Barcode WHERE ReceivedDate IS NULL OR (OperationCost = 0 OR OperationCost = '')) AND OrderNo <> ''  ORDER BY OrderNo");
+                DataTable dtab = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM Barcode WHERE OrderNo NOT IN (SELECT OrderNo  FROM Barcode WHERE ReceivedDate IS NULL OR (OperationCost = 0 OR OperationCost = '') AND Ship <> 2) AND OrderNo <> ''  ORDER BY OrderNo");
                 cbbOrder.Items.Clear();
                 cbbOrder.Items.Add("เลขที่ใบสั่งซื้อ");
                 if (dtab.Rows.Count == 0)
@@ -137,7 +143,7 @@ namespace PowerPOS_Online
                 tableModel1.Rows.Clear();
                 table1.EndUpdate();
 
-                gbOrderNo.Height = 69;
+                gbOrderNo.Height = 53;
                 progressBar1.Visible = false;
                 gbCost.Visible = false;
             }
@@ -188,14 +194,14 @@ namespace PowerPOS_Online
                 ptbProduct.Visible = false;
                 if (_QTY == 0 || _RECEIVED == 0)
                 {
-                    gbOrderNo.Height = 69;
+                    gbOrderNo.Height = 53;
                     progressBar1.Visible = false;
                     gbCost.Visible = false;
                 }
                 else if (_RECEIVED != 0)
                 {
                     gbCost.Visible = true;
-                    gbOrderNo.Height = 96;
+                    gbOrderNo.Height = 79;
                     progressBar1.Visible = true;
                     progressBar1.Maximum = _QTY;
                     progressBar1.Value = _RECEIVED;
@@ -364,9 +370,17 @@ namespace PowerPOS_Online
             if (MessageBox.Show("เฉลี่ยค่าดำเนินการ = " + cost + " บาท/ชิ้น", "ยืนยันข้อมูล", MessageBoxButtons.OKCancel, MessageBoxIcon.Question)
                 == DialogResult.OK)
             {
+                double ship = 0;
+                if (rdbShip.Checked == true)
+                {
+                    ship = 1;
+                }
+                else
+                {
+                    ship = 2;
+                }
                 Util.DBExecute(@"UPDATE Barcode SET 
-                    OperationCost = " + cost + @", ReceivedBy = '"+Param.UserId+@"', Sync = 1  
-                    WHERE ReceivedDate IS NOT NULL AND SellBy = '' AND OrderNo = '" + cbbOrderNo.SelectedItem.ToString() + "'");
+                    OperationCost = " + cost + @", ReceivedBy = '"+Param.UserId+@"', Sync = 1, Ship = '" + ship + "' WHERE ReceivedDate IS NOT NULL AND SellBy = '' AND OrderNo = '" + cbbOrderNo.SelectedItem.ToString() + "'");
                 MessageBox.Show("รับสินค้าหมายเลขคำสั่งซื้อเลขที่ " + cbbOrderNo.SelectedItem.ToString() + "\n เสร็จเรียบร้อบแล้ว", "สถานะการทำงาน", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 tableModel1.Rows.Clear();
                 LoadData();

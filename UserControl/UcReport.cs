@@ -72,13 +72,14 @@ namespace PowerPOS_Online
                 sumProfit += double.Parse(dt.Rows[i]["Profit"].ToString());
             }
             table1.EndUpdate();
-
-            dt = Util.DBQuery(string.Format(@"SELECT SUM(TotalPrice) Total,COUNT(DISTINCT DATE(SellDate)) CountDate,(SUM(TotalPrice) /COUNT(DISTINCT DATE(SellDate)) ) AVG
+            try
+            {
+                dt = Util.DBQuery(string.Format(@"SELECT SUM(TotalPrice) Total,COUNT(DISTINCT DATE(SellDate)) CountDate,(SUM(TotalPrice) /COUNT(DISTINCT DATE(SellDate)) ) AVG
                 FROM SellHeader
                 WHERE SellDate BETWEEN '{0}' AND '{1}'
             ", dtpStartDate.Value.AddDays(-30).ToString("yyyy-MM-dd"), dtpStartDate.Value.AddDays(1).ToString("yyyy-MM-dd")));
-            var avg30 = double.Parse(dt.Rows[0]["AVG"].ToString());
-
+                var avg30 = double.Parse(dt.Rows[0]["AVG"].ToString());
+            
             dt = Util.DBQuery(string.Format(@"
                 SELECT IFNULL(SUM(TotalPrice),0) TotalPrice FROM SellHeader WHERE SUBSTR(SellDate, 1, 10) = '{0}'
                 UNION ALL SELECT IFNULL(SUM(TotalPrice),0) TotalPrice FROM SellHeader WHERE SUBSTR(SellDate, 1, 10) = '{1}'
@@ -109,7 +110,8 @@ namespace PowerPOS_Online
             }
 
             DrawImage(sumPrice, sumProfit, avg30, max, chart);
-
+            }
+            catch { }
         }
 
         private void dtpStartDate_ValueChanged(object sender, EventArgs e)

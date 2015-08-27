@@ -44,12 +44,12 @@
             this.imageColumn1 = new XPTable.Models.ImageColumn();
             this.No = new XPTable.Models.TextColumn();
             this.Barcode = new XPTable.Models.TextColumn();
+            this.Order = new XPTable.Models.TextColumn();
             this.tableModel1 = new XPTable.Models.TableModel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.Order = new XPTable.Models.TextColumn();
-            this.lblProductName = new System.Windows.Forms.Label();
             this.gbDetail = new System.Windows.Forms.GroupBox();
+            this.lblProductName = new System.Windows.Forms.Label();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -105,18 +105,20 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(214, 20);
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.label3.Location = new System.Drawing.Point(214, 18);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(159, 13);
+            this.label3.Size = new System.Drawing.Size(160, 16);
             this.label3.TabIndex = 19;
             this.label3.Text = "บาร์โค้ดที่ยังไม่ได้ตรวจสอบสต็อก";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(39, 20);
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.label2.Location = new System.Drawing.Point(36, 18);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(141, 13);
+            this.label2.Size = new System.Drawing.Size(142, 16);
             this.label2.TabIndex = 18;
             this.label2.Text = "บาร์โค้ดที่ตรวจสอบสต็อกแล้ว";
             // 
@@ -142,11 +144,15 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(440, 15);
+            this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.btnCancel.Image = global::PowerPOS_Online.Properties.Resources.arrow_circle_225_left;
+            this.btnCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnCancel.Location = new System.Drawing.Point(456, 8);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.Size = new System.Drawing.Size(66, 32);
             this.btnCancel.TabIndex = 15;
             this.btnCancel.Text = "ยกเลิก";
+            this.btnCancel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
@@ -197,9 +203,17 @@
             // 
             // Barcode
             // 
+            this.Barcode.Editable = false;
             this.Barcode.IsTextTrimmed = false;
             this.Barcode.Text = "บาร์โค้ด";
             this.Barcode.Width = 300;
+            // 
+            // Order
+            // 
+            this.Order.Editable = false;
+            this.Order.IsTextTrimmed = false;
+            this.Order.Text = "เลขที่ใบสั่งซื้อ";
+            this.Order.Width = 150;
             // 
             // panel2
             // 
@@ -220,22 +234,6 @@
             this.panel1.Size = new System.Drawing.Size(530, 79);
             this.panel1.TabIndex = 4;
             // 
-            // Order
-            // 
-            this.Order.IsTextTrimmed = false;
-            this.Order.Text = "เลขที่ใบสั่งซื้อ";
-            this.Order.Width = 150;
-            // 
-            // lblProductName
-            // 
-            this.lblProductName.AutoSize = true;
-            this.lblProductName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.lblProductName.Location = new System.Drawing.Point(71, 41);
-            this.lblProductName.Name = "lblProductName";
-            this.lblProductName.Size = new System.Drawing.Size(105, 16);
-            this.lblProductName.TabIndex = 8;
-            this.lblProductName.Text = "lblProductName";
-            // 
             // gbDetail
             // 
             this.gbDetail.Controls.Add(this.label5);
@@ -247,6 +245,16 @@
             this.gbDetail.Size = new System.Drawing.Size(515, 70);
             this.gbDetail.TabIndex = 9;
             this.gbDetail.TabStop = false;
+            // 
+            // lblProductName
+            // 
+            this.lblProductName.AutoSize = true;
+            this.lblProductName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.lblProductName.Location = new System.Drawing.Point(71, 41);
+            this.lblProductName.Name = "lblProductName";
+            this.lblProductName.Size = new System.Drawing.Size(105, 16);
+            this.lblProductName.TabIndex = 8;
+            this.lblProductName.Text = "lblProductName";
             // 
             // FmStockDetail
             // 

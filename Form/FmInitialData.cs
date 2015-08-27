@@ -173,26 +173,27 @@ namespace PowerPOS_Online
                 'Customer' VARCHAR,
                 'Comment' VARCHAR,
                 'Stock' FLOAT DEFAULT 0,
+                'Ship' FLOAT ,
                 'Sync' BOOL DEFAULT 0)");
 
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             StringBuilder sb = new StringBuilder(@"INSERT OR REPLACE INTO Barcode (Barcode, OrderNo, Product, Cost, OperationCost, 
-                    SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer, Comment, Stock) ");
+                    SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer, Comment, Stock, Ship) ");
             var i = 0;
             foreach (BarcodeEntity d in azureTable.ExecuteQuery(query))
             {
                 if (i != 0) sb.Append(" UNION ALL ");
-                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', {3}, {4}, {5}, {6}, '{7}', '{8}', {9}, '{10}', {11}, '{12}', '{13}', '{14}'",
+                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', {3}, {4}, {5}, {6}, '{7}', '{8}', {9}, '{10}', {11}, '{12}', '{13}', '{14}','{15}'",
                     d.RowKey, d.OrderNo, d.Product, d.Cost, d.OperationCost == null ? 0 : d.OperationCost, d.SellPrice == null ? 0 : d.SellPrice,
                     d.ReceivedDate.ToString() == "1/1/0001 12:00:00 AM" ? "NULL" : "'" + d.ReceivedDate.ToString("yyyy-MM-dd HH:mm:ss") + "'", d.ReceivedBy, d.SellNo,
-                    d.SellDate.ToString() == "1/1/0001 12:00:00 AM" ? "NULL" : "'" + d.SellDate.ToString("yyyy-MM-dd HH:mm:ss") + "'", d.SellBy, d.SellFinished ? 1 : 0, d.Customer, d.Comment, d.Stock));
+                    d.SellDate.ToString() == "1/1/0001 12:00:00 AM" ? "NULL" : "'" + d.SellDate.ToString("yyyy-MM-dd HH:mm:ss") + "'", d.SellBy, d.SellFinished ? 1 : 0, d.Customer, d.Comment, d.Stock, d.Ship));
                 i++;
                 if (i % 500 == 0)
                 {
                     i = 0;
                     Util.DBExecute(sb.ToString());
                     sb = new StringBuilder(@"INSERT OR REPLACE INTO Barcode (Barcode, OrderNo, Product, Cost, OperationCost, 
-                    SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer, Comment, Stock) ");
+                    SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer, Comment, Stock, Ship) ");
                 }
             }
             Util.DBExecute(sb.ToString());
@@ -231,10 +232,9 @@ namespace PowerPOS_Online
 
         private void bwInitialShopProduct_DoWork(object sender, DoWorkEventArgs e)
         {
-            Util.DBExecute(string.Format(@"INSERT OR REPLACE INTO Product (Shop, ID, Name, CoverImage, Category, Brand, Price, Price1, Price2, Price3, Price4, Price5, Warranty,
-                WebPrice, WebPrice1, WebPrice2, WebPrice3, WebPrice4, WebPrice5, WebWarranty, Cost)
-                SELECT '{0}', p.ID, p.Name, p.CoverImage, p.Category, p.Brand, ps.Price, ps.Price1, ps.Price2, ps.Price3, ps.Price4, ps.Price5, p.Warranty,
-                p.Price, p.Price1, p.Price2, p.Price3, p.Price4, p.Price5, ps.Warranty, ps.Cost
+            int i = 0;
+            DataTable dt = Util.DBQuery(string.Format(@"SELECT '{0}', p.ID, p.Name, p.CoverImage, p.Category, p.Brand, p.Price, p.Price1, p.Price2, p.Price3, p.Price4, p.Price5, p.Warranty,
+                p.Price WebPrice, p.Price1 WebPrice1, p.Price2 WebPrice2, p.Price3 WebPrice3, p.Price4 WebPrice4, p.Price5 WebPrice5, ps.Warranty WebWarranty, ps.Cost
                 FROM (SELECT DISTINCT Product FROM Barcode) b
                 LEFT JOIN Product p
                 ON b.Product = p.ID
@@ -244,14 +244,25 @@ namespace PowerPOS_Online
                 AND ps.Shop = '{0}'
                 ", Param.ShopId, Param.ShopParent));
 
-            Util.DBExecute(string.Format(@"UPDATE Product SET Price4 = NULL, Price5 = NULL, Cost = NULL,
-                WebPrice = NULL, WebPrice1 = NULL, WebPrice2 = NULL, WebPrice3 = NULL, WebPrice4 = NULL, WebPrice5 = NULL
-                WHERE Shop = '{0}'", Param.ShopParent));
+            while (i < dt.Rows.Count)
+            {
+                Util.DBExecute(string.Format(@"INSERT OR REPLACE INTO Product (Shop, ID, Name, CoverImage, Category, Brand, Price, Price1, Price2, Price3, Price4, Price5, Warranty,
+                WebPrice, WebPrice1, WebPrice2, WebPrice3, WebPrice4, WebPrice5, WebWarranty, Cost) 
+                VALUES ('{0}','{1}','{2}','{3}','{4}','{5}',{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20})"
+                , Param.ShopId ,dt.Rows[i]["ID"].ToString(), dt.Rows[i]["Name"].ToString(), dt.Rows[i]["CoverImage"].ToString(), dt.Rows[i]["Category"].ToString(), dt.Rows[i]["Brand"].ToString(), dt.Rows[i]["Price"].ToString(), dt.Rows[i]["Price1"].ToString()
+                , dt.Rows[i]["Price2"].ToString(), dt.Rows[i]["Price3"].ToString(), dt.Rows[i]["Price4"].ToString(), dt.Rows[i]["Price5"].ToString(), dt.Rows[i]["Warranty"].ToString(), dt.Rows[i]["WebPrice"].ToString(), dt.Rows[i]["WebPrice1"].ToString(), dt.Rows[i]["WebPrice2"].ToString()
+                , dt.Rows[i]["WebPrice3"].ToString(), dt.Rows[i]["WebPrice4"].ToString(), dt.Rows[i]["WebPrice5"].ToString(), dt.Rows[i]["WebWarranty"].ToString(), dt.Rows[i]["Cost"].ToString()));
+                i++;
+            }
+
+
 
             if (Param.SystemConfig.SellPrice != null)
             {
                 var json = Param.SystemConfig.SellPrice;
+                Console.WriteLine(json.Price);
                 Util.DBExecute(string.Format(@"UPDATE Product SET Price = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price,0) <> {1}", Param.ShopId, json.Price));
+                //Console.WriteLine(string.Format(@"UPDATE Product SET Price = (SELECT {1} FROM Product WHERE Shop = '{2}'), Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price,0) <> {1}", Param.ShopId, json.Price, Param.ShopParent));
                 Util.DBExecute(string.Format(@"UPDATE Product SET Price1 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price1,0) <> {1}", Param.ShopId, json.Price1));
                 Util.DBExecute(string.Format(@"UPDATE Product SET Price2 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price2,0) <> {1}", Param.ShopId, json.Price2));
                 Util.DBExecute(string.Format(@"UPDATE Product SET Price3 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price3,0) <> {1}", Param.ShopId, json.Price3));
@@ -264,7 +275,12 @@ namespace PowerPOS_Online
                 Util.DBExecute(string.Format(@"UPDATE Product SET Sync = 1 WHERE Shop = '{0}'",Param.ShopId));
             }
 
-            DataTable dt = Util.DBQuery(string.Format(@"SELECT ID, Name, CoverImage, Price, Price1, Price2, Price3, Price4, Price5, Warranty, IFNULL(Cost,0) Cost, Category, Brand 
+
+            Util.DBExecute(string.Format(@"UPDATE Product SET Price4 = NULL, Price5 = NULL, Cost = NULL,
+                WebPrice = NULL, WebPrice1 = NULL, WebPrice2 = NULL, WebPrice3 = NULL, WebPrice4 = NULL, WebPrice5 = NULL
+                WHERE Shop = '{0}'", Param.ShopParent));
+
+            dt = Util.DBQuery(string.Format(@"SELECT ID, Name, CoverImage, Price, Price1, Price2, Price3, Price4, Price5, Warranty, IFNULL(Cost,0) Cost, Category, Brand 
                 FROM Product
                 WHERE Shop = '{0}'
                 AND Sync = 1", Param.ShopId));
@@ -272,7 +288,7 @@ namespace PowerPOS_Online
 
             var azureTable = Param.AzureTableClient.GetTableReference("Product");
             TableBatchOperation batchOperation = new TableBatchOperation();
-            for (int i = 0; i < dt.Rows.Count; i++)
+            for (i = 0; i < dt.Rows.Count; i++)
             {
                 try
                 {
@@ -332,7 +348,7 @@ namespace PowerPOS_Online
             dt = Util.DBQuery(string.Format(@"SELECT ID, Name FROM Brand WHERE Shop = '{0}' AND Sync = 1", Param.ShopId));
             azureTable = Param.AzureTableClient.GetTableReference("Brand");
             batchOperation = new TableBatchOperation();
-            for (int i = 0; i < dt.Rows.Count; i++)
+            for (i = 0; i < dt.Rows.Count; i++)
             {
                 try
                 {
@@ -365,7 +381,7 @@ namespace PowerPOS_Online
             dt = Util.DBQuery(string.Format(@"SELECT ID, Name FROM Category WHERE Shop = '{0}' AND Sync = 1", Param.ShopId));
             azureTable = Param.AzureTableClient.GetTableReference("Category");
             batchOperation = new TableBatchOperation();
-            for (int i = 0; i < dt.Rows.Count; i++)
+            for (i = 0; i < dt.Rows.Count; i++)
             {
                 try
                 {
@@ -820,8 +836,8 @@ namespace PowerPOS_Online
             foreach (ClaimEntity d in azureTable.ExecuteQuery(query))
             {
                 if (i != 0) sb.Append(" UNION ALL ");
-                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}'",
-                d.ClaimNo, d.Barcode, d.ClaimType, d.BarcodeClaim, d.ClaimDate.ToString("yyyy-MM-dd HH:mm:ss"), d.Description, d.Price, d.PriceCliam, d.Product, d.Firstname, d.Lastname, d.Nickname, d.Tel, d.Email, d.ClaimBy));
+                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}'",
+                d.RowKey, d.Barcode, d.ClaimType, d.BarcodeClaim, d.ClaimDate.ToString("yyyy-MM-dd HH:mm:ss"), d.Description, d.Price, d.PriceClaim, d.Product, d.Firstname, d.Lastname, d.Nickname, d.Tel, d.Email, d.ClaimBy));
                 i++;
                 if (i % 500 == 0)
                 {

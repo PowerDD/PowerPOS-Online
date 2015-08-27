@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            DevExpress.XtraSplashScreen.SplashScreenManager splashScreenManager1 = new DevExpress.XtraSplashScreen.SplashScreenManager(this, null, true, true);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
@@ -60,6 +61,9 @@
             this.mniShop = new System.Windows.Forms.ToolStripMenuItem();
             this.mniReport = new System.Windows.Forms.ToolStripMenuItem();
             this.mniReportSell = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniView = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniScreen = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.mniHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.mniRegister = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -84,9 +88,6 @@
             this.tmSync = new System.Windows.Forms.Timer(this.components);
             this.bwSync = new System.ComponentModel.BackgroundWorker();
             this.opdImportBarcode = new System.Windows.Forms.OpenFileDialog();
-            this.mniView = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniScreen = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -108,7 +109,7 @@
             this.lblStatus.Image = global::PowerPOS_Online.Properties.Resources.loading;
             this.lblStatus.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(116, 17);
+            this.lblStatus.Size = new System.Drawing.Size(114, 17);
             this.lblStatus.Text = "กำลังตรวจสอบข้อมูล";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblStatus.Visible = false;
@@ -362,6 +363,29 @@
             this.mniReportSell.Text = "ยอดขาย";
             this.mniReportSell.Click += new System.EventHandler(this.mniReportSell_Click);
             // 
+            // mniView
+            // 
+            this.mniView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniScreen,
+            this.mniMenu});
+            this.mniView.Name = "mniView";
+            this.mniView.Size = new System.Drawing.Size(53, 20);
+            this.mniView.Text = "มุมมอง";
+            // 
+            // mniScreen
+            // 
+            this.mniScreen.Name = "mniScreen";
+            this.mniScreen.Size = new System.Drawing.Size(134, 22);
+            this.mniScreen.Text = "ขนาดหน้าจอ";
+            this.mniScreen.Click += new System.EventHandler(this.mniScreen_Click);
+            // 
+            // mniMenu
+            // 
+            this.mniMenu.Name = "mniMenu";
+            this.mniMenu.Size = new System.Drawing.Size(134, 22);
+            this.mniMenu.Text = "ซ่อนแถบเมนู";
+            this.mniMenu.Click += new System.EventHandler(this.mniMenu_Click);
+            // 
             // mniHelp
             // 
             this.mniHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -494,7 +518,7 @@
             this.btnStock.Image = global::PowerPOS_Online.Properties.Resources.Stock;
             this.btnStock.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnStock.Name = "btnStock";
-            this.btnStock.Size = new System.Drawing.Size(81, 83);
+            this.btnStock.Size = new System.Drawing.Size(79, 83);
             this.btnStock.Text = "ตรวจสอบสต็อก";
             this.btnStock.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnStock.Click += new System.EventHandler(this.mniStock_Click);
@@ -526,7 +550,7 @@
             this.btnUpdateData.Image = global::PowerPOS_Online.Properties.Resources.refresh;
             this.btnUpdateData.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnUpdateData.Name = "btnUpdateData";
-            this.btnUpdateData.Size = new System.Drawing.Size(75, 83);
+            this.btnUpdateData.Size = new System.Drawing.Size(73, 83);
             this.btnUpdateData.Text = "ปรับปรุงข้อมูล";
             this.btnUpdateData.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnUpdateData.Click += new System.EventHandler(this.btnUpdateData_Click);
@@ -537,7 +561,7 @@
             this.btnChangePassword.Image = global::PowerPOS_Online.Properties.Resources.key;
             this.btnChangePassword.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnChangePassword.Name = "btnChangePassword";
-            this.btnChangePassword.Size = new System.Drawing.Size(83, 83);
+            this.btnChangePassword.Size = new System.Drawing.Size(77, 83);
             this.btnChangePassword.Text = "เปลี่ยนรหัสผ่าน";
             this.btnChangePassword.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnChangePassword.Click += new System.EventHandler(this.mniChangePassword_Click);
@@ -564,7 +588,7 @@
             this.btnExit.Image = global::PowerPOS_Online.Properties.Resources.exit;
             this.btnExit.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(73, 83);
+            this.btnExit.Size = new System.Drawing.Size(71, 83);
             this.btnExit.Text = "ออกจากระบบ";
             this.btnExit.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnExit.Click += new System.EventHandler(this.mniLogout_Click);
@@ -592,28 +616,9 @@
             // 
             this.opdImportBarcode.FileName = "openFileDialog1";
             // 
-            // mniView
+            // splashScreenManager1
             // 
-            this.mniView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mniScreen,
-            this.mniMenu});
-            this.mniView.Name = "mniView";
-            this.mniView.Size = new System.Drawing.Size(53, 20);
-            this.mniView.Text = "มุมมอง";
-            // 
-            // mniScreen
-            // 
-            this.mniScreen.Name = "mniScreen";
-            this.mniScreen.Size = new System.Drawing.Size(152, 22);
-            this.mniScreen.Text = "ขนาดหน้าจอ";
-            this.mniScreen.Click += new System.EventHandler(this.mniScreen_Click);
-            // 
-            // mniMenu
-            // 
-            this.mniMenu.Name = "mniMenu";
-            this.mniMenu.Size = new System.Drawing.Size(152, 22);
-            this.mniMenu.Text = "ซ่อนแถบเมนู";
-            this.mniMenu.Click += new System.EventHandler(this.mniMenu_Click);
+            splashScreenManager1.ClosingDelay = 500;
             // 
             // Main
             // 
