@@ -45,7 +45,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;ป</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -67,11 +67,6 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.Data.v15.1, Version=15.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
-    <Reference Include="DevExpress.Printing.v15.1.Core, Version=15.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
-    <Reference Include="DevExpress.Sparkline.v15.1.Core, Version=15.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
-    <Reference Include="DevExpress.Utils.v15.1, Version=15.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
-    <Reference Include="DevExpress.XtraEditors.v15.1, Version=15.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -134,10 +129,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\ChangePriceEntity.cs" />
     <Compile Include="Entity\BarcodeEntity2.cs" />
     <Compile Include="Entity\CategoryProfitEntity.cs" />
-    <Compile Include="Entity\ClaimEntity3.cs" />
-    <Compile Include="Entity\ClaimEntity2.cs" />
     <Compile Include="Entity\ClaimEntity.cs" />
     <Compile Include="DynamicEntity.cs" />
     <Compile Include="Entity\BarcodeNoDateEntity.cs" />
@@ -149,6 +143,18 @@
     <Compile Include="Entity\CustomerEntity.cs" />
     <Compile Include="Entity\BarcodeEntity.cs" />
     <Compile Include="Entity\ProductUpdateEntity.cs" />
+    <Compile Include="Form\FmChangeSellPrice.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmChangeSellPrice.Designer.cs">
+      <DependentUpon>FmChangeSellPrice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\FmSelectProduct.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmSelectProduct.Designer.cs">
+      <DependentUpon>FmSelectProduct.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form\FmClaimHistory.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -273,6 +279,13 @@
     <Compile Include="Entity\ProvinceEntity.cs" />
     <Compile Include="Entity\SellDetailEntity.cs" />
     <Compile Include="Entity\ReturnEntity.cs" />
+    <Compile Include="Entity\PurchaseOrderEntity.cs" />
+    <Compile Include="Form\FmReturnSellDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FmReturnSellDetail.Designer.cs">
+      <DependentUpon>FmReturnSellDetail.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControl\UcStock.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -366,8 +379,14 @@
     <Compile Include="Entity\UserGroupEntity.cs" />
     <Compile Include="Entity\UserUpdateEntity.cs" />
     <Compile Include="Util.cs" />
+    <EmbeddedResource Include="Form\FmChangeSellPrice.resx">
+      <DependentUpon>FmChangeSellPrice.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form\FmClaimHistory.resx">
       <DependentUpon>FmClaimHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmSelectProduct.resx">
+      <DependentUpon>FmSelectProduct.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\FmStockDetail.resx">
       <DependentUpon>FmStockDetail.cs</DependentUpon>
@@ -407,6 +426,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form\FmInitialData.resx">
       <DependentUpon>FmInitialData.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\FmLicense.resx">
       <DependentUpon>FmLicense.cs</DependentUpon>
@@ -427,6 +447,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\FmReturnSellDetail.resx">
+      <DependentUpon>FmReturnSellDetail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControl\UcBrand.resx">
       <DependentUpon>UcBrand.cs</DependentUpon>
@@ -482,7 +505,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

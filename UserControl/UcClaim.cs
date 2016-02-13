@@ -14,6 +14,7 @@ using System.IO;
 using System.Collections;
 using System.Globalization;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace PowerPOS_Online
 {
@@ -78,6 +79,8 @@ namespace PowerPOS_Online
 
         private void bwSearch_DoWork(object sender, DoWorkEventArgs e)
         {
+            //dynamic json = JsonConvert.DeserializeObject(Util.GetApiData("/claim/info", "shop=" + Param.ShopId + "&barcode='140916151107023'"));
+
             var azureTable = Param.AzureTableClient.GetTableReference("Barcode");
             TableQuery<BarcodeEntity> query = new TableQuery<BarcodeEntity>().Where(
                 TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, barcode)
@@ -151,7 +154,7 @@ namespace PowerPOS_Online
             TableOperation retrieveOperation = TableOperation.Retrieve<ProductEntity>(barcodeEntityList[index].PartitionKey, barcodeEntityList[index].Product);
             TableResult retrievedResult = azureTable.Execute(retrieveOperation);
             productEntity = (ProductEntity)retrievedResult.Result;
-            
+
             var filename = @"Resource/Images/Product/" + barcodeEntityList[index].Product + ".jpg";
             if (!File.Exists(filename))
             {
@@ -263,7 +266,7 @@ namespace PowerPOS_Online
 
             FmClaim fm = new FmClaim();
             //DataTable dt = Util.DBQuery(string.Format(@"SELECT SellPrice FROM Barcode WHERE Barcode = '{0}'", UcClaim.barcode));
-            sellprice = barcodeEntityList2[index].SellPrice.ToString();            
+            sellprice = barcodeEntityList2[index].SellPrice.ToString();
             Product = barcodeEntityList2[index].Product;
             SellDate = barcodeEntityList2[index].SellDate;
             var result = fm.ShowDialog(this);

@@ -51,21 +51,54 @@ namespace PowerPOS_Online
             }
         }
 
+        //public static string GetApiData(string method, string parameter)
+        //{
+        //    using (WebClient wc = new WebClient())
+        //    {
+        //        wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+        //        wc.Encoding = System.Text.Encoding.UTF8;
+        //        return wc.UploadString(new Uri(Param.ApiUrl + method), parameter + "&apiKey=" + Param.ApiKey);
+        //    }
+        //}
+
+
+
         public static string GetCpuId()
         {
-            string cpuid = "";
-            try
-            {
-                ManagementObjectSearcher mbs = new ManagementObjectSearcher("Select ProcessorID From Win32_processor");
-                ManagementObjectCollection mbsList = mbs.Get();
+            //string cpuid = "";
+            //try
+            //{
+            //    ManagementObjectSearcher mbs = new ManagementObjectSearcher("Select ProcessorID From Win32_processor");
+            //    ManagementObjectCollection mbsList = mbs.Get();
 
-                foreach (ManagementObject mo in mbsList)
-                {
-                    cpuid = mo["ProcessorID"].ToString();
-                }
-                return cpuid;
+            //    foreach (ManagementObject mo in mbsList)
+            //    {
+            //        cpuid = mo["ProcessorID"].ToString();
+            //    }
+            //    return cpuid;
+            //}
+            //catch (Exception) { return cpuid; }
+
+            string cpuInfo = string.Empty;
+            ManagementClass mc = new ManagementClass("win32_processor");
+            ManagementObjectCollection moc = mc.GetInstances();
+
+            foreach (ManagementObject mo in moc)
+            {
+                cpuInfo = mo.Properties["processorID"].Value.ToString();
+                break;
             }
-            catch (Exception) { return cpuid; }
+            
+            //Then use this code to get the HD ID:
+
+            string drive = "C";
+            ManagementObject dsk = new ManagementObject(
+                @"win32_logicaldisk.deviceid=""" + drive + @":""");
+            dsk.Get();
+            string volumeSerial = dsk["VolumeSerialNumber"].ToString();
+
+            string uniqueId = cpuInfo + volumeSerial;
+            return uniqueId;
         }
 
         public static void ConnectSQLiteDatabase()
@@ -566,10 +599,11 @@ namespace PowerPOS_Online
                 {
                     DataRow row = dt.Rows[i];
                     dynamic d = new DynamicEntity(Param.ShopId, row["ID"].ToString());
-                    //d.Price = double.Parse(row["Price"].ToString());
-                    //d.Price1 = double.Parse(row["Price1"].ToString());
-                    //d.Price2 = double.Parse(row["Price2"].ToString());
-                    //d.Price3 = double.Parse(row["Price3"].ToString());
+                    d.Brand = row["Brand"].ToString();
+                    d.Category = row["Category"].ToString();
+                    d.Name = row["Name"].ToString();
+                    d.CoverImage = row["CoverImage"].ToString();
+                    if (row["Warranty"].ToString() == "" || row["Warranty"].ToString() == null) { d.Warranty = 0; } else { d.Warranty = int.Parse(row["Warranty"].ToString()); }
                     if (row["Price"].ToString() == "" || row["Price"].ToString() == null) { d.Price = 0; } else { d.Price = double.Parse(row["Price"].ToString()); }
                     if (row["Price1"].ToString() == "" || row["Price1"].ToString() == null) { d.Price1 = 0; } else { d.Price1 = double.Parse(row["Price1"].ToString()); }
                     if (row["Price2"].ToString() == "" || row["Price2"].ToString() == null) { d.Price2 = 0; } else { d.Price2 = double.Parse(row["Price2"].ToString()); }
@@ -577,6 +611,8 @@ namespace PowerPOS_Online
                     if (row["Price4"].ToString() == "" || row["Price4"].ToString() == null) { d.Price4 = 0; } else { d.Price4 = double.Parse(row["Price4"].ToString()); }
                     if (row["Price5"].ToString() == "" || row["Price5"].ToString() == null) { d.Price5 = 0; } else { d.Price5 = double.Parse(row["Price5"].ToString()); }
                     if (row["Cost"].ToString() == "" || row["Cost"].ToString() == null) { d.Cost = 0; } else { d.Cost = double.Parse(row["Cost"].ToString()); }
+                    if (row["Quantity"].ToString() == "" || row["Quantity"].ToString() == null) { d.Quantity = 0; } else { d.Quantity = double.Parse(row["Quantity"].ToString()); }
+
                     batchOperation.InsertOrMerge(d);
 
                     Util.DBExecute(string.Format("UPDATE Product SET Sync = '0' WHERE ID = '{0}' AND Shop = '{1}'", row["ID"].ToString(),Param.ShopId));
@@ -825,6 +861,49 @@ namespace PowerPOS_Online
                 WriteErrorLog(ex.StackTrace);
             }
 
+            //## PurchaseOrder ##//
+            try
+            {
+                dt = Util.DBQuery("SELECT * FROM PurchaseOrder WHERE Sync = 1");
+
+                var azureTable = Param.AzureTableClient.GetTableReference("PurchaseOrder");
+                azureTable.CreateIfNotExists();
+
+                TableBatchOperation batchOperation = new TableBatchOperation();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow row = dt.Rows[i];
+                    dynamic d = new DynamicEntity(Param.ShopId, row["OrderNo"].ToString() + "-" + row["Product"].ToString());
+                    d.ReceivedDate = Convert.ToDateTime(row["ReceivedDate"].ToString());
+                    if ((row["ReceivedQty"].ToString() == "") || (row["ReceivedQty"].ToString() == "0"))
+                    {
+                        d.ReceivedQty = 0;
+                    }
+                    else
+                    {
+                        d.ReceivedQty = double.Parse(row["ReceivedQty"].ToString());
+                    }
+                    d.ReceivedBy = row["ReceivedBy"].ToString();
+                    batchOperation.InsertOrMerge(d);
+
+                    Util.DBExecute(string.Format("UPDATE PurchaseOrder SET Sync = 0 WHERE OrderNo = '{0}' AND Product = '{1}'",
+                        row["OrderNo"].ToString(), row["Product"].ToString()));
+
+                    if (batchOperation.Count == 100)
+                    {
+                        azureTable.ExecuteBatch(batchOperation);
+                        batchOperation = new TableBatchOperation();
+                    }
+                }
+                if (batchOperation.Count > 0)
+                    azureTable.ExecuteBatch(batchOperation);
+            }
+            catch (Exception ex)
+            {
+                WriteErrorLog(ex.Message);
+                WriteErrorLog(ex.StackTrace);
+            }
+
             //## Return ##//
             try
             {
@@ -842,6 +921,7 @@ namespace PowerPOS_Online
                     d.ReturnDate = Convert.ToDateTime(row["ReturnDate"].ToString());
                     d.Product = row["Product"].ToString();
                     d.ReturnBy = row["ReturnBy"].ToString();
+                    d.Quantity = int.Parse(row["Quantity"].ToString());
                     batchOperation.InsertOrMerge(d);
 
                     Util.DBExecute(string.Format("UPDATE ReturnProduct SET Sync = 0 WHERE SellNo = '{0}' AND Barcode = '{1}'", row["SellNo"].ToString(), row["Barcode"].ToString()));
@@ -1190,7 +1270,7 @@ namespace PowerPOS_Online
 
         public static void PrintReceipt(string sellNo)
         {
-            DataTable dt = Util.DBQuery(string.Format(@"SELECT COUNT(*) cnt FROM Barcode WHERE SellNo = '{0}'", sellNo));
+            DataTable dt = Util.DBQuery(string.Format(@"SELECT COUNT(*) cnt FROM SellDetail WHERE SellNo = '{0}'", sellNo));
 
             var hight = 195 + int.Parse(dt.Rows[0]["cnt"].ToString()) * 13;
             //PaperSize paperSize = new PaperSize("Custom Size", 280, hight);
@@ -1250,7 +1330,7 @@ namespace PowerPOS_Online
 
 
             SolidBrush brush = new SolidBrush(Color.Black);
-            Font stringFont = new Font("Calibri", 6);
+            Font stringFont = new Font("Cordia New", 6);
             if (Param.SystemConfig.Bill.Logo == Param.LogoUrl && Param.SystemConfig.Bill.PrintLogo == "Y")
             {
                 g.Graphics.DrawString("http:// www.", stringFont, brush, new PointF(62, 49));
@@ -1279,39 +1359,40 @@ namespace PowerPOS_Online
             g.Graphics.DrawString(measureString, stringFont, brush, new PointF((width - stringSize.Width + gab) / 2, pY + 5));
             pY += 30;
 
-            stringFont = new Font("DilleniaUPC", 9);
-            DataTable dt = Util.DBQuery(string.Format(@"SELECT Name, ProductCount, SellPrice
-                    FROM (SELECT product, SUM(SellPrice) SellPrice, COUNT(*) ProductCount FROM Barcode WHERE SellNo = '{0}' GROUP BY product) b 
-                        LEFT JOIN Product p 
-                        ON b.Product = p.ID
-                        AND p.Shop = '{1}'
-                ", sellNo, Param.ShopParent));
+            stringFont = new Font("Cordia New", 10);
+            DataTable dtDetail = new DataTable();
+            dtDetail = Util.DBQuery(@"SELECT p.Name Name, sd.Quantity ProductCount, sd.SellPrice SellPrice 
+                            FROM  SellDetail sd 
+                            LEFT JOIN Product p ON sd.Product = p.ID 
+                            WHERE Shop = '" + Param.ShopId + "' AND sd.SellNo = '"+ sellNo  + "' AND sd.Quantity <> 0");
+
+                    
             var sumQty = 0;
             var sumPrice = 0;
-            for (int i = 0; i < dt.Rows.Count; i++)
+            for (int i = 0; i < dtDetail.Rows.Count; i++)
             {
-                g.Graphics.DrawString(int.Parse(dt.Rows[i]["ProductCount"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX, pY));
-                g.Graphics.DrawString(dt.Rows[i]["Name"].ToString(), stringFont, brush, new PointF(pX + 16, pY));
+                g.Graphics.DrawString(int.Parse(dtDetail.Rows[i]["ProductCount"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX, pY));
+                g.Graphics.DrawString(dtDetail.Rows[i]["Name"].ToString(), stringFont, brush, new PointF(pX + 16, pY));
 
                 g.Graphics.FillRectangle(new SolidBrush(Color.White), pX + 230, pY + 3, 150, 10);
-                g.Graphics.DrawString("@" + (int.Parse(dt.Rows[i]["SellPrice"].ToString()) / int.Parse(dt.Rows[i]["ProductCount"].ToString())).ToString("#,##0"),
-                    stringFont, brush, new PointF(pX + 232, pY));
-                measureString = int.Parse(dt.Rows[i]["SellPrice"].ToString()).ToString("#,##0");
+                g.Graphics.DrawString("@" + (int.Parse(dtDetail.Rows[i]["SellPrice"].ToString()) / int.Parse(dtDetail.Rows[i]["ProductCount"].ToString())).ToString("#,##0"),
+                    stringFont, brush, new PointF(pX + 230, pY));
+                measureString = int.Parse(dtDetail.Rows[i]["SellPrice"].ToString()).ToString("#,##0");
                 stringSize = g.Graphics.MeasureString(measureString, stringFont);
                 g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY));
-                sumQty += int.Parse(dt.Rows[i]["ProductCount"].ToString());
-                sumPrice += int.Parse(dt.Rows[i]["SellPrice"].ToString());
+                sumQty += int.Parse(dtDetail.Rows[i]["ProductCount"].ToString());
+                sumPrice += int.Parse(dtDetail.Rows[i]["SellPrice"].ToString());
                 pY += 13;
             }
 
             pY += 4;
-            stringFont = new Font("DilleniaUPC", 12, FontStyle.Bold);
-            g.Graphics.DrawString(string.Format("รวม {0} รายการ ({1} ชิ้น)", dt.Rows.Count, sumQty), stringFont, brush, new PointF(pX, pY));
+            stringFont = new Font("Cordia New", 12, FontStyle.Bold);
+            g.Graphics.DrawString(string.Format("รวม {0} รายการ ({1} ชิ้น)", dtDetail.Rows.Count, sumQty), stringFont, brush, new PointF(pX, pY));
             measureString = "" + sumPrice.ToString("#,##0");
             stringSize = g.Graphics.MeasureString(measureString, stringFont);
             g.Graphics.DrawString(measureString, stringFont, brush, new PointF(width - stringSize.Width + gab, pY));
             pY += 17;
-            stringFont = new Font("DilleniaUPC", 11);
+            stringFont = new Font("Cordia New", 11);
             g.Graphics.DrawString("เงินสด  " + int.Parse(dtHeader.Rows[0]["Cash"].ToString()).ToString("#,##0"), stringFont, brush, new PointF(pX, pY));
             measureString = "เงินทอน  " + (int.Parse(dtHeader.Rows[0]["Cash"].ToString()) - sumPrice).ToString("#,##0");
             stringSize = g.Graphics.MeasureString(measureString, stringFont);
@@ -1321,11 +1402,11 @@ namespace PowerPOS_Online
             g.Graphics.DrawLine(new Pen(Color.Black, 0.25f), pX, pY, pX + width, pY);
             pY += 5;
 
-            stringFont = new Font("DilleniaUPC", 9);
-            g.Graphics.DrawString("ชื่อลูกค้า " + dtHeader.Rows[0]["Firstname"].ToString() + " " + dtHeader.Rows[0]["Lastname"].ToString() +
-                ((dtHeader.Rows[0]["Mobile"].ToString() != "") ?
-                " (" + dtHeader.Rows[0]["Mobile"].ToString().Substring(0, 3) + "-" + dtHeader.Rows[0]["Mobile"].ToString().Substring(3, 4) + "-" + dtHeader.Rows[0]["Mobile"].ToString().Substring(7) + ")"
-                : "")
+            stringFont = new Font("Cordia New", 10);
+            g.Graphics.DrawString("ชื่อลูกค้า " + dtHeader.Rows[0]["Firstname"].ToString() + " " + dtHeader.Rows[0]["Lastname"].ToString() //+
+                //((dtHeader.Rows[0]["Mobile"].ToString() != "") ?
+                //" (" + dtHeader.Rows[0]["Mobile"].ToString().Substring(0, 3) + "-" + dtHeader.Rows[0]["Mobile"].ToString().Substring(3, 4) + "-" + dtHeader.Rows[0]["Mobile"].ToString().Substring(7) + ")"
+                //: "")
                 , stringFont, brush, new PointF(pX, pY));
 
             /*stringFont = new Font("DilleniaUPC", 11);

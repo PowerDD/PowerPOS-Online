@@ -13,6 +13,11 @@ namespace PowerPOS_Online
 {
     public partial class FmSelectCustomer : Form
     {
+        public static string Firstname;
+        public static string Lastname;
+        public static string Nickname;
+        public static string tel;
+
         public FmSelectCustomer()
         {
             InitializeComponent();
@@ -33,8 +38,7 @@ namespace PowerPOS_Online
                     OR Nickname LIKE '%{0}%'
                     OR CardNo LIKE '%{0}%'
                     OR CitizenID LIKE '%{0}%'
-                    OR Mobile LIKE '%{0}%'
-                    LIMIT 10", txtSearch.Text.Trim()));
+                    OR Mobile LIKE '%{0}%'", txtSearch.Text.Trim()));
 
             table1.BeginUpdate();
             tableModel1.Rows.Clear();
@@ -86,6 +90,12 @@ namespace PowerPOS_Online
                     //Param.SelectCustomerAge = Param.SelectCustomerAge == DateTime.Today.Year ? 0 : Param.SelectCustomerAge;
                     Param.SelectCustomerSex = table1.TableModel.Rows[row].Cells[9].Text;
                     Param.SelectCustomerSellPrice = int.Parse(table1.TableModel.Rows[row].Cells[10].Text);
+
+                    Firstname = table1.TableModel.Rows[row].Cells[2].Text;
+                    Lastname = table1.TableModel.Rows[row].Cells[3].Text;
+                    Nickname = table1.TableModel.Rows[row].Cells[4].Text;
+                    tel = table1.TableModel.Rows[row].Cells[6].Text;
+
                     this.DialogResult = DialogResult.OK;
                     //this.Dispose();
                 }

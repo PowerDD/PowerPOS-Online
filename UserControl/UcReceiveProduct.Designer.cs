@@ -48,6 +48,9 @@
             this.rdbShip = new System.Windows.Forms.RadioButton();
             this.rdbNonShip = new System.Windows.Forms.RadioButton();
             this.label3 = new System.Windows.Forms.Label();
+            this.gbOrderNoSerial = new System.Windows.Forms.GroupBox();
+            this.progressBar2 = new System.Windows.Forms.ProgressBar();
+            this.cbbOrderNoSerial = new System.Windows.Forms.ComboBox();
             this.gbOrderNo = new System.Windows.Forms.GroupBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.cbbOrderNo = new System.Windows.Forms.ComboBox();
@@ -69,6 +72,7 @@
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCost)).BeginInit();
             this.pnShip.SuspendLayout();
+            this.gbOrderNoSerial.SuspendLayout();
             this.gbOrderNo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.table1)).BeginInit();
             this.SuspendLayout();
@@ -100,6 +104,7 @@
             this.pnlLeft.Controls.Add(this.gbOrder);
             this.pnlLeft.Controls.Add(this.pnlBarcode);
             this.pnlLeft.Controls.Add(this.gbCost);
+            this.pnlLeft.Controls.Add(this.gbOrderNoSerial);
             this.pnlLeft.Controls.Add(this.gbOrderNo);
             this.pnlLeft.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlLeft.Location = new System.Drawing.Point(0, 39);
@@ -139,7 +144,7 @@
             this.pnlBarcode.Controls.Add(this.label2);
             this.pnlBarcode.Controls.Add(this.lblStatus);
             this.pnlBarcode.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlBarcode.Location = new System.Drawing.Point(7, 184);
+            this.pnlBarcode.Location = new System.Drawing.Point(7, 263);
             this.pnlBarcode.Name = "pnlBarcode";
             this.pnlBarcode.Size = new System.Drawing.Size(233, 353);
             this.pnlBarcode.TabIndex = 6;
@@ -194,7 +199,7 @@
             this.gbCost.Controls.Add(this.pnShip);
             this.gbCost.Controls.Add(this.label3);
             this.gbCost.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbCost.Location = new System.Drawing.Point(7, 89);
+            this.gbCost.Location = new System.Drawing.Point(7, 168);
             this.gbCost.Name = "gbCost";
             this.gbCost.Size = new System.Drawing.Size(233, 95);
             this.gbCost.TabIndex = 5;
@@ -286,6 +291,39 @@
             this.label3.TabIndex = 4;
             this.label3.Text = "ค่าขนส่ง, ค่าดำเนินการต่างๆ สำหรับใบสั่งซื้อนี้";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // gbOrderNoSerial
+            // 
+            this.gbOrderNoSerial.Controls.Add(this.progressBar2);
+            this.gbOrderNoSerial.Controls.Add(this.cbbOrderNoSerial);
+            this.gbOrderNoSerial.Dock = System.Windows.Forms.DockStyle.Top;
+            this.gbOrderNoSerial.Location = new System.Drawing.Point(7, 89);
+            this.gbOrderNoSerial.Name = "gbOrderNoSerial";
+            this.gbOrderNoSerial.Size = new System.Drawing.Size(233, 79);
+            this.gbOrderNoSerial.TabIndex = 8;
+            this.gbOrderNoSerial.TabStop = false;
+            this.gbOrderNoSerial.Text = "ข้อมูลใบสั่งซื้อ (สินค้าไม่ติดบาร์โค้ด Remax)";
+            // 
+            // progressBar2
+            // 
+            this.progressBar2.Location = new System.Drawing.Point(14, 49);
+            this.progressBar2.Name = "progressBar2";
+            this.progressBar2.Size = new System.Drawing.Size(204, 23);
+            this.progressBar2.Step = 1;
+            this.progressBar2.TabIndex = 9;
+            // 
+            // cbbOrderNoSerial
+            // 
+            this.cbbOrderNoSerial.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbbOrderNoSerial.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.cbbOrderNoSerial.FormattingEnabled = true;
+            this.cbbOrderNoSerial.Items.AddRange(new object[] {
+            "เลขที่ใบสั่งซื้อ"});
+            this.cbbOrderNoSerial.Location = new System.Drawing.Point(14, 19);
+            this.cbbOrderNoSerial.Name = "cbbOrderNoSerial";
+            this.cbbOrderNoSerial.Size = new System.Drawing.Size(204, 24);
+            this.cbbOrderNoSerial.TabIndex = 0;
+            this.cbbOrderNoSerial.SelectedIndexChanged += new System.EventHandler(this.cbbOrderNoSerial_SelectedIndexChanged);
             // 
             // gbOrderNo
             // 
@@ -430,6 +468,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudCost)).EndInit();
             this.pnShip.ResumeLayout(false);
             this.pnShip.PerformLayout();
+            this.gbOrderNoSerial.ResumeLayout(false);
             this.gbOrderNo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.table1)).EndInit();
             this.ResumeLayout(false);
@@ -468,5 +507,8 @@
         private System.Windows.Forms.RadioButton rdbShip;
         private System.Windows.Forms.Panel pnShip;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.GroupBox gbOrderNoSerial;
+        private System.Windows.Forms.ProgressBar progressBar2;
+        private System.Windows.Forms.ComboBox cbbOrderNoSerial;
     }
 }

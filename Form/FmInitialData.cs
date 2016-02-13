@@ -13,6 +13,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using XPTable.Models;
+using XPTable.Renderers;
 
 namespace PowerPOS_Online
 {
@@ -180,6 +182,7 @@ namespace PowerPOS_Online
             StringBuilder sb = new StringBuilder(@"INSERT OR REPLACE INTO Barcode (Barcode, OrderNo, Product, Cost, OperationCost, 
                     SellPrice, ReceivedDate, ReceivedBy, SellNo, SellDate, SellBy, SellFinished, Customer, Comment, Stock, Ship) ");
             var i = 0;
+
             foreach (BarcodeEntity d in azureTable.ExecuteQuery(query))
             {
                 if (i != 0) sb.Append(" UNION ALL ");
@@ -233,51 +236,221 @@ namespace PowerPOS_Online
         private void bwInitialShopProduct_DoWork(object sender, DoWorkEventArgs e)
         {
             int i = 0;
-            DataTable dt = Util.DBQuery(string.Format(@"SELECT '{0}', p.ID, p.Name, p.CoverImage, p.Category, p.Brand, p.Price, p.Price1, p.Price2, p.Price3, p.Price4, p.Price5, p.Warranty,
-                p.Price WebPrice, p.Price1 WebPrice1, p.Price2 WebPrice2, p.Price3 WebPrice3, p.Price4 WebPrice4, p.Price5 WebPrice5, ps.Warranty WebWarranty, ps.Cost
-                FROM (SELECT DISTINCT Product FROM Barcode) b
-                LEFT JOIN Product p
-                ON b.Product = p.ID
-                AND p.Shop = '{1}'
-                LEFT JOIN Product ps
-                ON b.Product = ps.ID
-                AND ps.Shop = '{0}'
-                ", Param.ShopId, Param.ShopParent));
+            DataTable dt;
+            Console.WriteLine(Param.MemberType);
 
+            //PurchaseOrder
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            var azureTableOrder = Param.AzureTableClient.GetTableReference("PurchaseOrder");
+            azureTableOrder.CreateIfNotExists();
+            TableQuery<PurchaseOrderEntity> queryOrder = new TableQuery<PurchaseOrderEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId));
+
+            Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'PurchaseOrder' (
+                'Shop'  VARCHAR NOT NULL,
+                'OrderNo' VARCHAR NOT NULL,
+                'Product' VARCHAR NOT NULL,
+                'Quantity' FLOAT NOT NULL,
+                'ReceivedQty' FLOAT ,
+                'PriceCost' FLOAT NOT NULL DEFAULT 0 ,
+                'PriceTotal' FLOAT NOT NULL DEFAULT 0 ,
+                'OrderDate' VARCHAR NOT NULL,
+                'ReceivedDate' VARCHAR,
+                'ReceivedBy' VARCHAR,
+                'Sync' BOOL DEFAULT 0,
+                PRIMARY KEY ('Shop', 'OrderNo', 'Product'))");
+
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            StringBuilder sb = new StringBuilder(@"INSERT OR REPLACE INTO PurchaseOrder (Shop, OrderNo, Product, Quantity, ReceivedQty, PriceCost, PriceTotal, ReceivedDate, ReceivedBy) ");
+            i = 0;
+
+            foreach (PurchaseOrderEntity d in azureTableOrder.ExecuteQuery(queryOrder))
+            {
+                string[] val = d.RowKey.Split('-');
+
+                if (i != 0) sb.Append(" UNION ALL ");
+                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', {7}, '{8}'",
+                    Param.ShopId, val[0].ToString(), val[1].ToString(), d.Quantity == null ? 0 : d.Quantity, d.ReceivedQty == null ? 0 : d.ReceivedQty,
+                    d.PriceCost == null ? 0 : d.PriceCost, d.PriceTotal == null ? 0 : d.PriceTotal,
+                    d.ReceivedDate.ToString() == "1/1/0001 12:00:00 AM" ? "''" : "'" + d.ReceivedDate.ToString("yyyy-MM-dd HH:mm:ss") + "'", d.ReceivedBy));
+                i++;
+                if (i % 500 == 0)
+                {
+                    i = 0;
+                    Util.DBExecute(sb.ToString());
+                    sb = new StringBuilder(@"INSERT OR REPLACE INTO PurchaseOrder (Shop, OrderNo, Product, Quantity, ReceivedQty, PriceCost, PriceTotal, ReceivedDate, ReceivedBy) ");
+                }
+            }
+            Util.DBExecute(sb.ToString());
+
+            //if (Param.MemberType != "Sales")
+            //{
+            //    //dt = Util.DBQuery(string.Format(@"SELECT '{0}', p.ID, p.Name, p.CoverImage, p.Category, p.Brand, p.Price, p.Price1, p.Price2, p.Price3, p.Price4, p.Price5, p.Warranty,
+            //    //p.Price WebPrice, p.Price1 WebPrice1, p.Price2 WebPrice2, p.Price3 WebPrice3, p.Price4 WebPrice4, p.Price5 WebPrice5, ps.Warranty WebWarranty, ps.Cost, p.Barcode
+            //    //FROM (SELECT DISTINCT Product FROM Barcode) b
+            //    //LEFT JOIN Product p
+            //    //ON b.Product = p.ID
+            //    //AND p.Shop = '{1}'
+            //    //LEFT JOIN Product ps
+            //    //ON b.Product = ps.ID
+            //    //AND ps.Shop = '{0}'
+            //    //", Param.ShopId, Param.ShopParent));
+
+            //    //while (i < dt.Rows.Count)
+            //    //{
+            //    //    Util.DBExecute(string.Format(@"INSERT OR REPLACE INTO Product (Shop, ID, Name, CoverImage, Category, Brand, Price, Price1, Price2, Price3, Price4, Price5, Warranty,
+            //    //    WebPrice, WebPrice1, WebPrice2, WebPrice3, WebPrice4, WebPrice5, WebWarranty, Cost, Barcode) 
+            //    //    VALUES ('{0}','{1}','{2}','{3}','{4}','{5}',{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},'{21}')"
+            //    //    , Param.ShopId, dt.Rows[i]["ID"].ToString(), dt.Rows[i]["Name"].ToString(), dt.Rows[i]["CoverImage"].ToString(), dt.Rows[i]["Category"].ToString(), dt.Rows[i]["Brand"].ToString(), dt.Rows[i]["Price"].ToString(), dt.Rows[i]["Price1"].ToString()
+            //    //    , dt.Rows[i]["Price2"].ToString(), dt.Rows[i]["Price3"].ToString(), dt.Rows[i]["Price4"].ToString(), dt.Rows[i]["Price5"].ToString(), dt.Rows[i]["Warranty"].ToString(), dt.Rows[i]["WebPrice"].ToString(), dt.Rows[i]["WebPrice1"].ToString(), dt.Rows[i]["WebPrice2"].ToString()
+            //    //    , dt.Rows[i]["WebPrice3"].ToString(), dt.Rows[i]["WebPrice4"].ToString(), dt.Rows[i]["WebPrice5"].ToString(), dt.Rows[i]["WebWarranty"].ToString(), dt.Rows[i]["Cost"].ToString(), dt.Rows[i]["Barcode"].ToString()));
+            //    //    i++;
+            //    //}
+            //}
+            //else
+            //{
+            //    //Util.DBExecute(string.Format(@"INSERT OR REPLACE INTO Product (Shop, ID, Name, CoverImage, Category, Brand, Price, Price1, Price2, Price3, Price4, Price5, Warranty,
+            //    //    WebPrice, WebPrice1, WebPrice2, WebPrice3, WebPrice4, WebPrice5, WebWarranty, Cost) 
+            //    //    SELECT '{0}', p.ID, p.Name, p.CoverImage, p.Category, p.Brand, p.Price, p.Price1, p.Price2, p.Price3, p.Price4, p.Price5, p.Warranty,
+            //    //    p.Price WebPrice, p.Price1 WebPrice1, p.Price2 WebPrice2, p.Price3 WebPrice3, p.Price4 WebPrice4, p.Price5 WebPrice5, ps.Warranty WebWarranty, ps.Cost
+            //    //    FROM (SELECT DISTINCT Product FROM Barcode) b
+            //    //    LEFT JOIN Product p
+            //    //    ON b.Product = p.ID
+            //    //    AND p.Shop = '{1}'
+            //    //    LEFT JOIN Product ps
+            //    //    ON b.Product = ps.ID
+            //    //    AND ps.Shop = '{0}'", Param.ShopId, Param.ShopParent));
+            //    //i++;
+
+            //}
+
+            dt = Util.DBQuery(string.Format(@"SELECT DISTINCT shop, ID,Name,CoverImage, Category, Brand, Price,Price1, Price2, Price3, Price4, Price5, Warranty, webPrice, webPrice1, webPrice2, webPrice3, webPrice4, webPrice5, webWarranty, Cost, Barcode FROM 
+            (SELECT '{0}' shop, p.ID, p.Name, p.CoverImage, p.Category, p.Brand, p.Price, p.Price1, p.Price2, p.Price3, p.Price4, p.Price5, p.Warranty,
+            p.Price WebPrice, p.Price1 WebPrice1, p.Price2 WebPrice2, p.Price3 WebPrice3, p.Price4 WebPrice4, p.Price5 WebPrice5, ps.Warranty WebWarranty, ps.Cost, p.Barcode
+            FROM (SELECT DISTINCT Product FROM Barcode) b
+            LEFT JOIN Product p ON b.Product = p.ID AND p.Shop = '{1}'
+            LEFT JOIN Product ps ON b.Product = ps.ID AND ps.Shop = '{0}'
+            WHERE NOT EXISTS(SELECT *
+                                FROM Product pp
+                                WHERE ps.id = pp.id
+                                AND pp.shop = '{0}')
+            UNION ALL 
+            SELECT '{0}' shop, p.ID, p.Name, p.CoverImage, p.Category, p.Brand, p.Price, p.Price1, p.Price2, p.Price3, p.Price4, p.Price5, p.Warranty,
+            p.Price WebPrice, p.Price1 WebPrice1, p.Price2 WebPrice2, p.Price3 WebPrice3, p.Price4 WebPrice4, p.Price5 WebPrice5, ps.Warranty WebWarranty, ps.Cost, p.Barcode
+            FROM (SELECT DISTINCT Product FROM PurchaseOrder) b
+            LEFT JOIN Product p ON b.Product = p.ID AND p.Shop = '{1}'
+            LEFT JOIN Product ps ON b.Product = ps.ID AND ps.Shop = '{0}'
+            WHERE NOT EXISTS (SELECT *
+                                FROM Product pp
+                                WHERE ps.id = pp.id
+                                AND pp.shop = '{0}')) pp
+            ", Param.ShopId, Param.ShopParent));
+
+            i = 0;
             while (i < dt.Rows.Count)
             {
                 Util.DBExecute(string.Format(@"INSERT OR REPLACE INTO Product (Shop, ID, Name, CoverImage, Category, Brand, Price, Price1, Price2, Price3, Price4, Price5, Warranty,
-                WebPrice, WebPrice1, WebPrice2, WebPrice3, WebPrice4, WebPrice5, WebWarranty, Cost) 
-                VALUES ('{0}','{1}','{2}','{3}','{4}','{5}',{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20})"
-                , Param.ShopId ,dt.Rows[i]["ID"].ToString(), dt.Rows[i]["Name"].ToString(), dt.Rows[i]["CoverImage"].ToString(), dt.Rows[i]["Category"].ToString(), dt.Rows[i]["Brand"].ToString(), dt.Rows[i]["Price"].ToString(), dt.Rows[i]["Price1"].ToString()
-                , dt.Rows[i]["Price2"].ToString(), dt.Rows[i]["Price3"].ToString(), dt.Rows[i]["Price4"].ToString(), dt.Rows[i]["Price5"].ToString(), dt.Rows[i]["Warranty"].ToString(), dt.Rows[i]["WebPrice"].ToString(), dt.Rows[i]["WebPrice1"].ToString(), dt.Rows[i]["WebPrice2"].ToString()
-                , dt.Rows[i]["WebPrice3"].ToString(), dt.Rows[i]["WebPrice4"].ToString(), dt.Rows[i]["WebPrice5"].ToString(), dt.Rows[i]["WebWarranty"].ToString(), dt.Rows[i]["Cost"].ToString()));
+                WebPrice, WebPrice1, WebPrice2, WebPrice3, WebPrice4, WebPrice5, WebWarranty, Cost, Barcode, Sync) 
+                VALUES ('{0}','{1}','{2}','{3}','{4}','{5}',{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},'{21}', 1)"
+                , Param.ShopId, dt.Rows[i]["ID"].ToString(), dt.Rows[i]["Name"].ToString(), dt.Rows[i]["CoverImage"].ToString(), dt.Rows[i]["Category"].ToString(), dt.Rows[i]["Brand"].ToString(), 0, 0, 0, 0, 0, 0
+                , dt.Rows[i]["Warranty"].ToString(), dt.Rows[i]["WebPrice"].ToString() == "" ? "''" : dt.Rows[i]["WebPrice"].ToString(), dt.Rows[i]["WebPrice1"].ToString() == "" ? "''" : dt.Rows[i]["WebPrice1"].ToString(), dt.Rows[i]["WebPrice2"].ToString() == "" ? "''" : dt.Rows[i]["WebPrice2"].ToString()
+                , dt.Rows[i]["WebPrice3"].ToString() == "" ? "''" : dt.Rows[i]["WebPrice3"].ToString(), dt.Rows[i]["WebPrice4"].ToString() == "" ? "''" : dt.Rows[i]["WebPrice4"].ToString(), dt.Rows[i]["WebPrice5"].ToString() == "" ? "''" : dt.Rows[i]["WebPrice5"].ToString(), dt.Rows[i]["WebWarranty"].ToString() == "" ? "''" : dt.Rows[i]["WebWarranty"].ToString(), dt.Rows[i]["Cost"].ToString() == "" ? "''" : dt.Rows[i]["Cost"].ToString(), dt.Rows[i]["Barcode"].ToString()));
                 i++;
             }
-
-
-
-            if (Param.SystemConfig.SellPrice != null)
+            try
             {
-                var json = Param.SystemConfig.SellPrice;
-                Console.WriteLine(json.Price);
-                Util.DBExecute(string.Format(@"UPDATE Product SET Price = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price,0) <> {1}", Param.ShopId, json.Price));
-                //Console.WriteLine(string.Format(@"UPDATE Product SET Price = (SELECT {1} FROM Product WHERE Shop = '{2}'), Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price,0) <> {1}", Param.ShopId, json.Price, Param.ShopParent));
-                Util.DBExecute(string.Format(@"UPDATE Product SET Price1 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price1,0) <> {1}", Param.ShopId, json.Price1));
-                Util.DBExecute(string.Format(@"UPDATE Product SET Price2 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price2,0) <> {1}", Param.ShopId, json.Price2));
-                Util.DBExecute(string.Format(@"UPDATE Product SET Price3 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price3,0) <> {1}", Param.ShopId, json.Price3));
-                Util.DBExecute(string.Format(@"UPDATE Product SET Price4 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price4,0) <> {1}", Param.ShopId, json.Price4));
-                Util.DBExecute(string.Format(@"UPDATE Product SET Price5 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price5,0) <> {1}", Param.ShopId, json.Price5));
-                Util.DBExecute(string.Format(@"UPDATE Product SET Warranty = IFNULL(WebWarranty,0), Sync = 1 WHERE Shop = '{0}' AND IFNULL(WebWarranty,0) <> IFNULL(Warranty,'')", Param.ShopId));
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+                dt = Util.DBQuery("SELECT * FROM Product WHERE Sync = 1");
+
+                var azureT = Param.AzureTableClient.GetTableReference("Product");
+                TableBatchOperation batch = new TableBatchOperation();
+                for (i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow row = dt.Rows[i];
+                    dynamic d = new DynamicEntity(Param.ShopId, row["ID"].ToString());
+                    d.Brand = row["Brand"].ToString();
+                    d.Category = row["Category"].ToString();
+                    d.Name = row["Name"].ToString();
+                    d.CoverImage = row["CoverImage"].ToString();
+                    if (row["Warranty"].ToString() == "" || row["Warranty"].ToString() == null) { d.Warranty = 0; } else { d.Warranty = int.Parse(row["Warranty"].ToString()); }
+                    if (row["Price"].ToString() == "" || row["Price"].ToString() == null) { d.Price = 0; } else { d.Price = double.Parse(row["Price"].ToString()); }
+                    if (row["Price1"].ToString() == "" || row["Price1"].ToString() == null) { d.Price1 = 0; } else { d.Price1 = double.Parse(row["Price1"].ToString()); }
+                    if (row["Price2"].ToString() == "" || row["Price2"].ToString() == null) { d.Price2 = 0; } else { d.Price2 = double.Parse(row["Price2"].ToString()); }
+                    if (row["Price3"].ToString() == "" || row["Price3"].ToString() == null) { d.Price3 = 0; } else { d.Price3 = double.Parse(row["Price3"].ToString()); }
+                    if (row["Price4"].ToString() == "" || row["Price4"].ToString() == null) { d.Price4 = 0; } else { d.Price4 = double.Parse(row["Price4"].ToString()); }
+                    if (row["Price5"].ToString() == "" || row["Price5"].ToString() == null) { d.Price5 = 0; } else { d.Price5 = double.Parse(row["Price5"].ToString()); }
+                    if (row["Cost"].ToString() == "" || row["Cost"].ToString() == null) { d.Cost = 0; } else { d.Cost = double.Parse(row["Cost"].ToString()); }
+                    if (row["Quantity"].ToString() == "" || row["Quantity"].ToString() == null) { d.Quantity = 0; } else { d.Quantity = double.Parse(row["Quantity"].ToString()); }
+
+                    batch.InsertOrMerge(d);
+
+                    Util.DBExecute(string.Format("UPDATE Product SET Sync = '0' WHERE ID = '{0}' AND Shop = '{1}'", row["ID"].ToString(), Param.ShopId));
+
+                    if (batch.Count == 100)
+                    {
+                        azureT.ExecuteBatch(batch);
+                        batch = new TableBatchOperation();
+                    }
+                }
+                if (batch.Count > 0)
+                    azureT.ExecuteBatch(batch);
             }
-            else
+            catch (Exception ex)
             {
-                Util.DBExecute(string.Format(@"UPDATE Product SET Sync = 1 WHERE Shop = '{0}'",Param.ShopId));
+                Util.WriteErrorLog(ex.Message);
+                Util.WriteErrorLog(ex.StackTrace);
             }
 
+            if (Param.MemberType != "Sales")
+            {
+                if (Param.ShopId == "00000018")
+                {
+                    var json = Param.SystemConfig.SellPrice;
+                    Console.WriteLine(json.Price);
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price,0) <> {1}", Param.ShopId, json.Price));
+                    //Console.WriteLine(string.Format(@"UPDATE Product SET Price = (SELECT {1} FROM Product WHERE Shop = '{2}'), Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price,0) <> {1}", Param.ShopId, json.Price, Param.ShopParent));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price1 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price1,0) <> {1}", Param.ShopId, json.Price1));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price2 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price2,0) <> {1}", Param.ShopId, json.Price2));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price3 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price3,0) <> {1}", Param.ShopId, json.Price3));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price4 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price4,0) <> {1}", Param.ShopId, json.Price4));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price5 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price5,0) <> {1}", Param.ShopId, json.Price5));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Warranty = IFNULL(WebWarranty,0), Sync = 1 WHERE Shop = '{0}' AND IFNULL(WebWarranty,0) <> IFNULL(Warranty,'')", Param.ShopId));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price = {1},Price1 = {1},Price2 = {1},Price3 = {1},Price4 = {1},Sync = 1 WHERE Shop = '{0}' AND Category = '00001'", Param.ShopId, "99"));
+                }
+                //else if (Param.ShopId == "00000009")
+                //{
+                //    var json = Param.SystemConfig.SellPrice;
+                //    Console.WriteLine(json.Price);
+                //    Util.DBExecute(string.Format(@"UPDATE Product SET Price = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price,0) <> {1}", Param.ShopId, json.Price));
+                //    Util.DBExecute(string.Format(@"UPDATE Product SET Price1 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price1,0) <> {1}", Param.ShopId, json.Price1));
+                //    Util.DBExecute(string.Format(@"UPDATE Product SET Price2 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price2,0) <> {1}", Param.ShopId, json.Price2));
+                //    Util.DBExecute(string.Format(@"UPDATE Product SET Price3 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price3,0) <> {1}", Param.ShopId, json.Price3));
+                //    Util.DBExecute(string.Format(@"UPDATE Product SET Price4 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price4,0) <> {1}", Param.ShopId, json.Price4));
+                //    Util.DBExecute(string.Format(@"UPDATE Product SET Price5 = {1}, Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price5,0) <> {1}", Param.ShopId, json.Price5));
+                //    Util.DBExecute(string.Format(@"UPDATE Product SET Warranty = IFNULL(WebWarranty,0), Sync = 1 WHERE Shop = '{0}' AND IFNULL(WebWarranty,0) <> IFNULL(Warranty,'')", Param.ShopId));
+                //    Util.DBExecute(string.Format(@"UPDATE Product SET Price = {1},Price1 = {1},Price2 = {1},Price3 = {1},Price4 = {1},Price5 = {1} ,Sync = 1 WHERE Shop = '{0}' AND Category = '00001'", Param.ShopId, "99"));
+                //}
+                else
+                {
+                    var json = Param.SystemConfig.SellPrice;
+                    Console.WriteLine(json.Price);
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price = (SELECT p.{1} FROM Product p   WHERE Product.ID = p.ID   AND p.shop = '{2}'), Sync = 1 WHERE Shop = '{0}'", Param.ShopId, json.Price, Param.ShopParent));
+                    Console.WriteLine(string.Format(@"UPDATE Product SET Price = (SELECT {1} FROM Product WHERE Shop = '{2}'), Sync = 1 WHERE Shop = '{0}' AND IFNULL(Price,0) <> {1}", Param.ShopId, json.Price, Param.ShopParent));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price1 = (SELECT p.{1} FROM Product p   WHERE Product.ID = p.ID   AND p.shop = '{2}'), Sync = 1 WHERE Shop = '{0}' ", Param.ShopId, json.Price1, Param.ShopParent));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price2 = (SELECT p.{1} FROM Product p   WHERE Product.ID = p.ID   AND p.shop = '{2}'), Sync = 1 WHERE Shop = '{0}' ", Param.ShopId, json.Price2, Param.ShopParent));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price3 = (SELECT p.{1} FROM Product p   WHERE Product.ID = p.ID   AND p.shop = '{2}'), Sync = 1 WHERE Shop = '{0}' ", Param.ShopId, json.Price3, Param.ShopParent));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price4 = (SELECT p.{1} FROM Product p   WHERE Product.ID = p.ID   AND p.shop = '{2}'), Sync = 1 WHERE Shop = '{0}' ", Param.ShopId, json.Price4, Param.ShopParent));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Price5 = (SELECT p.{1} FROM Product p   WHERE Product.ID = p.ID   AND p.shop = '{2}'), Sync = 1 WHERE Shop = '{0}' ", Param.ShopId, json.Price5, Param.ShopParent));
+                    Util.DBExecute(string.Format(@"UPDATE Product SET Warranty = IFNULL(WebWarranty,0), Sync = 1 WHERE Shop = '{0}' AND IFNULL(WebWarranty,0) <> IFNULL(Warranty,'')", Param.ShopId));
+                }
+            }
+            //else
+            //{
+            //    Util.DBExecute(string.Format(@"UPDATE Product SET Sync = 1 WHERE Shop = '{0}'", Param.ShopId));
+            //}
+            // เพิ่มลงใน Product
+     
 
-            Util.DBExecute(string.Format(@"UPDATE Product SET Price4 = NULL, Price5 = NULL, Cost = NULL,
-                WebPrice = NULL, WebPrice1 = NULL, WebPrice2 = NULL, WebPrice3 = NULL, WebPrice4 = NULL, WebPrice5 = NULL
+            Util.DBExecute(string.Format(@"UPDATE Product SET  Price5 = NULL, Cost = NULL, WebPrice5 = NULL
                 WHERE Shop = '{0}'", Param.ShopParent));
 
             dt = Util.DBQuery(string.Format(@"SELECT ID, Name, CoverImage, Price, Price1, Price2, Price3, Price4, Price5, Warranty, IFNULL(Cost,0) Cost, Category, Brand 
@@ -396,6 +569,16 @@ namespace PowerPOS_Online
             Util.DBExecute(string.Format(@"DELETE Category WHERE Shop = '{0}'", Param.ShopParent));
             Util.DBExecute(string.Format(@"UPDATE Category SET Sync = 0 WHERE Shop = '{0}'", Param.ShopId));
             Console.WriteLine("Update category total = {0} records", dt.Rows.Count);
+
+
+
+            Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'SellTemp' (
+                'Product' VARCHAR NOT NULL,
+                'ProductName' VARCHAR NOT NULL,
+                'Price' FLOAT NOT NULL DEFAULT 0,
+                'Amount' FLOAT NOT NULL DEFAULT 0 ,
+                'TotalPrice' FLOAT NOT NULL DEFAULT 0,
+                'PriceCost' FLOAT NOT NULL DEFAULT 0)");
         }
 
         private void bwInitialShopProduct_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -473,6 +656,38 @@ namespace PowerPOS_Online
                 }
             }
             Util.DBExecute(sbb.ToString());
+
+
+            Util.DBExecute(@"CREATE TABLE IF NOT EXISTS 'ChangePrice' (
+                    'SellNo' VARCHAR NOT NULL ,
+                    'Product' VARCHAR NOT NULL,
+                    'Price' FLOAT DEFAULT 0,
+                    'ChangePrice' FLOAT DEFAULT 0,
+                    'ChangeBy' VARCHAR , 
+                    'Sync' BOOL DEFAULT 0,
+                    PRIMARY KEY ('SellNo', 'Product'))");
+
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            var azureTableCh = Param.AzureTableClient.GetTableReference("ChangePrice");
+            azureTableCh.CreateIfNotExists();
+            var queryCh = new TableQuery<ChangePriceEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId));
+            const string comman = @"INSERT OR REPLACE INTO ChangePrice (SellNo, Product, Price, ChangePrice, ChangeBy) ";
+            var sbCh = new StringBuilder(comman);
+
+            i = 0;
+            foreach (ChangePriceEntity d in azureTableCh.ExecuteQuery(queryCh))
+            {
+                if (i != 0) sbCh.Append(" UNION ALL ");
+                sbCh.Append(string.Format(@" SELECT '{0}', {1}, {2}, {3}, {4}, {5}, {6}", d.RowKey, d.Product, d.Price,  d.ChangePrice, d.ChangeBy));
+                i++;
+                if (i % 500 == 0)
+                {
+                    i = 0;
+                    Util.DBExecute(sbCh.ToString());
+                    sbCh = new StringBuilder(comman);
+                }
+            }
+            Util.DBExecute(sbCh.ToString());
         }
 
         private void LoadBrand(string shop)
@@ -534,20 +749,22 @@ namespace PowerPOS_Online
                 'Cost' FLOAT DEFAULT 0,
                 'Category' VARCHAR,
                 'Brand' VARCHAR,
+                'Barcode' VARCHAR,
+                'Quantity' FLOAT DEFAULT 0,
                 'Sync' BOOL DEFAULT 0,
                 PRIMARY KEY ('Shop', 'ID'))
             ");
 
             var azureTable = Param.AzureTableClient.GetTableReference("Product");
             var query = new TableQuery<ProductEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, shop));
-            const string command = @"INSERT OR REPLACE INTO Product (Shop, ID, Name, Price, Price1, Price2, Price3, Price4, Price5, Warranty, Cost, CoverImage, Category, Brand) ";
+            const string command = @"INSERT OR REPLACE INTO Product (Shop, ID, Name, Price, Price1, Price2, Price3, Price4, Price5, Warranty, Cost, CoverImage, Category, Brand, Barcode, Quantity) ";
             var sb = new StringBuilder(command);
             int i = 0;
             foreach (ProductEntity d in azureTable.ExecuteQuery(query))
             {
                 if (i != 0) sb.Append(" UNION ALL ");
-                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, '{11}', '{12}', '{13}'",
-                    d.PartitionKey, d.RowKey, d.Name, d.Price, d.Price1, d.Price2, d.Price3, d.Price4, d.Price5, d.Warranty, d.Cost, d.CoverImage, d.Category, d.Brand));
+                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, '{11}', '{12}', '{13}', '{14}', '{15}'",
+                    d.PartitionKey, d.RowKey, d.Name, d.Price, d.Price1, d.Price2, d.Price3, d.Price4, d.Price5, d.Warranty, d.Cost, d.CoverImage, d.Category, d.Brand, d.BuyerCode, d.Quantity == null ? 0 : d.Quantity));
               
                 i++;
                 if (i % 500 == 0)
@@ -735,7 +952,7 @@ namespace PowerPOS_Online
 
                 if (i != 0) sbd.Append(" UNION ALL ");
                 sbd.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', {3}, {4}",
-                    val[0].ToString(), val[1].ToString(), s.SellPrice, s.Quantity, s.Cost));
+                    val[0].ToString(), val[1].ToString(), s.SellPrice, s.Cost, s.Quantity));
                 i++;
                 if (i % 500 == 0)
                 {
@@ -765,6 +982,7 @@ namespace PowerPOS_Online
                 'Product' VARCHAR NOT NULL,
                 'Barcode' VARCHAR NOT NULL,
                 'SellPrice' DOUBLE NOT NULL,
+                'Quantity' INT NOT NULL,
                 'ReturnBy' VARCHAR,
                 'Sync' BOOL DEFAULT 0,
                 PRIMARY KEY ('SellNo', 'Barcode'))");
@@ -774,7 +992,7 @@ namespace PowerPOS_Online
             var azureTable = Param.AzureTableClient.GetTableReference("ReturnProduct");
             azureTable.CreateIfNotExists();
             var query = new TableQuery<ReturnEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Param.ShopId));
-            const string command = @"INSERT OR REPLACE INTO ReturnProduct ( SellNo,Barcode, ReturnDate, SellPrice, Product,  ReturnBy) ";
+            const string command = @"INSERT OR REPLACE INTO ReturnProduct ( SellNo,Barcode, ReturnDate, SellPrice, Product, ReturnBy, Quantity) ";
             var sb = new StringBuilder(command);
 
             foreach (ReturnEntity d in azureTable.ExecuteQuery(query))
@@ -782,8 +1000,8 @@ namespace PowerPOS_Online
                 string[] val = d.RowKey.Split('-');
 
                 if (i != 0) sb.Append(" UNION ALL ");
-                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', '{3}', '{4}', '{5}'",
-                val[0].ToString(), val[1].ToString(), d.ReturnDate.ToString("yyyy-MM-dd HH:mm:ss"), d.SellPrice, d.Product, d.ReturnBy));
+                sb.Append(string.Format(@" SELECT '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}'",
+                val[0].ToString(), val[1].ToString(), d.ReturnDate.ToString("yyyy-MM-dd HH:mm:ss"), d.SellPrice, d.Product, d.ReturnBy, d.Quantity));
                 i++;
                 if (i % 500 == 0)
                 {

@@ -39,6 +39,8 @@
             this.panel5 = new System.Windows.Forms.Panel();
             this.btnPrint = new System.Windows.Forms.Button();
             this.gbOrderNo = new System.Windows.Forms.GroupBox();
+            this.rbtNoSerial = new System.Windows.Forms.RadioButton();
+            this.rbtSerial = new System.Windows.Forms.RadioButton();
             this.cbNoPrice = new System.Windows.Forms.CheckBox();
             this.cbNoStock = new System.Windows.Forms.CheckBox();
             this.btnSearch = new System.Windows.Forms.Button();
@@ -48,6 +50,14 @@
             this.pnlPrice = new System.Windows.Forms.Panel();
             this.lblCategory = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.txtPercent4 = new System.Windows.Forms.TextBox();
+            this.txtPercent3 = new System.Windows.Forms.TextBox();
+            this.txtPrice4 = new System.Windows.Forms.TextBox();
+            this.txtPrice3 = new System.Windows.Forms.TextBox();
+            this.nudPrice4 = new System.Windows.Forms.NumericUpDown();
+            this.nudPrice3 = new System.Windows.Forms.NumericUpDown();
             this.btnSave = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.lblCost = new System.Windows.Forms.Label();
@@ -85,9 +95,13 @@
             this.clPrice = new XPTable.Models.NumberColumn();
             this.clPrice1 = new XPTable.Models.NumberColumn();
             this.clPrice2 = new XPTable.Models.NumberColumn();
+            this.clPrice3 = new XPTable.Models.NumberColumn();
+            this.clPrice4 = new XPTable.Models.NumberColumn();
             this.clWebPrice = new XPTable.Models.NumberColumn();
             this.clWebPrice1 = new XPTable.Models.NumberColumn();
             this.clWebPrice2 = new XPTable.Models.NumberColumn();
+            this.clWebPrice3 = new XPTable.Models.NumberColumn();
+            this.clWebPrice4 = new XPTable.Models.NumberColumn();
             this.tableModel1 = new XPTable.Models.TableModel();
             this.table1 = new XPTable.Models.Table();
             this.panel1.SuspendLayout();
@@ -96,6 +110,8 @@
             this.gbOrderNo.SuspendLayout();
             this.pnlPrice.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPrice4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPrice3)).BeginInit();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrice2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrice1)).BeginInit();
@@ -183,7 +199,6 @@
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(233, 41);
             this.panel5.TabIndex = 1;
-            this.panel5.Paint += new System.Windows.Forms.PaintEventHandler(this.panel5_Paint);
             // 
             // btnPrint
             // 
@@ -198,6 +213,8 @@
             // 
             // gbOrderNo
             // 
+            this.gbOrderNo.Controls.Add(this.rbtNoSerial);
+            this.gbOrderNo.Controls.Add(this.rbtSerial);
             this.gbOrderNo.Controls.Add(this.cbNoPrice);
             this.gbOrderNo.Controls.Add(this.cbNoStock);
             this.gbOrderNo.Controls.Add(this.btnSearch);
@@ -207,16 +224,40 @@
             this.gbOrderNo.Dock = System.Windows.Forms.DockStyle.Top;
             this.gbOrderNo.Location = new System.Drawing.Point(7, 10);
             this.gbOrderNo.Name = "gbOrderNo";
-            this.gbOrderNo.Size = new System.Drawing.Size(233, 156);
+            this.gbOrderNo.Size = new System.Drawing.Size(233, 206);
             this.gbOrderNo.TabIndex = 0;
             this.gbOrderNo.TabStop = false;
             this.gbOrderNo.Text = "ค้นหาข้อมูล";
+            // 
+            // rbtNoSerial
+            // 
+            this.rbtNoSerial.AutoSize = true;
+            this.rbtNoSerial.Location = new System.Drawing.Point(14, 44);
+            this.rbtNoSerial.Name = "rbtNoSerial";
+            this.rbtNoSerial.Size = new System.Drawing.Size(122, 17);
+            this.rbtNoSerial.TabIndex = 8;
+            this.rbtNoSerial.Text = "สินค้าแบบไม่มี Serial";
+            this.rbtNoSerial.UseVisualStyleBackColor = true;
+            this.rbtNoSerial.CheckedChanged += new System.EventHandler(this.rbtNoSerial_CheckedChanged);
+            // 
+            // rbtSerial
+            // 
+            this.rbtSerial.AutoSize = true;
+            this.rbtSerial.Checked = true;
+            this.rbtSerial.Location = new System.Drawing.Point(14, 21);
+            this.rbtSerial.Name = "rbtSerial";
+            this.rbtSerial.Size = new System.Drawing.Size(109, 17);
+            this.rbtSerial.TabIndex = 7;
+            this.rbtSerial.TabStop = true;
+            this.rbtSerial.Text = "สินค้าแบบมี Serial";
+            this.rbtSerial.UseVisualStyleBackColor = true;
+            this.rbtSerial.CheckedChanged += new System.EventHandler(this.rbtSerial_CheckedChanged);
             // 
             // cbNoPrice
             // 
             this.cbNoPrice.AutoSize = true;
             this.cbNoPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.cbNoPrice.Location = new System.Drawing.Point(14, 111);
+            this.cbNoPrice.Location = new System.Drawing.Point(14, 157);
             this.cbNoPrice.Name = "cbNoPrice";
             this.cbNoPrice.Size = new System.Drawing.Size(125, 20);
             this.cbNoPrice.TabIndex = 6;
@@ -228,7 +269,7 @@
             // 
             this.cbNoStock.AutoSize = true;
             this.cbNoStock.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.cbNoStock.Location = new System.Drawing.Point(14, 133);
+            this.cbNoStock.Location = new System.Drawing.Point(14, 179);
             this.cbNoStock.Name = "cbNoStock";
             this.cbNoStock.Size = new System.Drawing.Size(103, 20);
             this.cbNoStock.TabIndex = 5;
@@ -240,7 +281,7 @@
             // 
             this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.btnSearch.Image = global::PowerPOS_Online.Properties.Resources.magnifier_left;
-            this.btnSearch.Location = new System.Drawing.Point(187, 78);
+            this.btnSearch.Location = new System.Drawing.Point(187, 125);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(31, 31);
             this.btnSearch.TabIndex = 4;
@@ -254,7 +295,7 @@
             this.cbbBrand.FormattingEnabled = true;
             this.cbbBrand.Items.AddRange(new object[] {
             "เลขที่ใบสั่งซื้อ"});
-            this.cbbBrand.Location = new System.Drawing.Point(14, 49);
+            this.cbbBrand.Location = new System.Drawing.Point(14, 95);
             this.cbbBrand.Name = "cbbBrand";
             this.cbbBrand.Size = new System.Drawing.Size(204, 24);
             this.cbbBrand.TabIndex = 3;
@@ -267,7 +308,7 @@
             this.cbbCategory.FormattingEnabled = true;
             this.cbbCategory.Items.AddRange(new object[] {
             "เลขที่ใบสั่งซื้อ"});
-            this.cbbCategory.Location = new System.Drawing.Point(14, 19);
+            this.cbbCategory.Location = new System.Drawing.Point(14, 65);
             this.cbbCategory.Name = "cbbCategory";
             this.cbbCategory.Size = new System.Drawing.Size(204, 24);
             this.cbbCategory.TabIndex = 0;
@@ -278,7 +319,7 @@
             this.txtSearch.BackColor = System.Drawing.Color.Azure;
             this.txtSearch.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSearch.ForeColor = System.Drawing.Color.MidnightBlue;
-            this.txtSearch.Location = new System.Drawing.Point(14, 79);
+            this.txtSearch.Location = new System.Drawing.Point(14, 125);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(167, 29);
             this.txtSearch.TabIndex = 1;
@@ -311,6 +352,14 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label12);
+            this.groupBox1.Controls.Add(this.label13);
+            this.groupBox1.Controls.Add(this.txtPercent4);
+            this.groupBox1.Controls.Add(this.txtPercent3);
+            this.groupBox1.Controls.Add(this.txtPrice4);
+            this.groupBox1.Controls.Add(this.txtPrice3);
+            this.groupBox1.Controls.Add(this.nudPrice4);
+            this.groupBox1.Controls.Add(this.nudPrice3);
             this.groupBox1.Controls.Add(this.btnSave);
             this.groupBox1.Controls.Add(this.panel4);
             this.groupBox1.Controls.Add(this.btnConfig);
@@ -334,17 +383,107 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Left;
             this.groupBox1.Location = new System.Drawing.Point(129, 5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(484, 119);
+            this.groupBox1.Size = new System.Drawing.Size(640, 119);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "ราคาขาย";
+            // 
+            // label12
+            // 
+            this.label12.Location = new System.Drawing.Point(367, 11);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(66, 13);
+            this.label12.TabIndex = 26;
+            this.label12.Text = "ส่ง 4";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label13
+            // 
+            this.label13.Location = new System.Drawing.Point(298, 11);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(66, 13);
+            this.label13.TabIndex = 25;
+            this.label13.Text = "ส่ง 3";
+            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // txtPercent4
+            // 
+            this.txtPercent4.Font = new System.Drawing.Font("Arial", 9.75F);
+            this.txtPercent4.Location = new System.Drawing.Point(370, 85);
+            this.txtPercent4.Name = "txtPercent4";
+            this.txtPercent4.ReadOnly = true;
+            this.txtPercent4.Size = new System.Drawing.Size(66, 22);
+            this.txtPercent4.TabIndex = 23;
+            this.txtPercent4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // txtPercent3
+            // 
+            this.txtPercent3.Font = new System.Drawing.Font("Arial", 9.75F);
+            this.txtPercent3.Location = new System.Drawing.Point(298, 85);
+            this.txtPercent3.Name = "txtPercent3";
+            this.txtPercent3.ReadOnly = true;
+            this.txtPercent3.Size = new System.Drawing.Size(66, 22);
+            this.txtPercent3.TabIndex = 21;
+            this.txtPercent3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // txtPrice4
+            // 
+            this.txtPrice4.Font = new System.Drawing.Font("Arial", 9.75F);
+            this.txtPrice4.Location = new System.Drawing.Point(370, 27);
+            this.txtPrice4.Name = "txtPrice4";
+            this.txtPrice4.ReadOnly = true;
+            this.txtPrice4.Size = new System.Drawing.Size(66, 22);
+            this.txtPrice4.TabIndex = 24;
+            this.txtPrice4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // txtPrice3
+            // 
+            this.txtPrice3.Font = new System.Drawing.Font("Arial", 9.75F);
+            this.txtPrice3.Location = new System.Drawing.Point(298, 27);
+            this.txtPrice3.Name = "txtPrice3";
+            this.txtPrice3.ReadOnly = true;
+            this.txtPrice3.Size = new System.Drawing.Size(66, 22);
+            this.txtPrice3.TabIndex = 22;
+            this.txtPrice3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // nudPrice4
+            // 
+            this.nudPrice4.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudPrice4.Location = new System.Drawing.Point(370, 55);
+            this.nudPrice4.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            0});
+            this.nudPrice4.Name = "nudPrice4";
+            this.nudPrice4.Size = new System.Drawing.Size(66, 22);
+            this.nudPrice4.TabIndex = 20;
+            this.nudPrice4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.nudPrice4.ThousandsSeparator = true;
+            this.nudPrice4.ValueChanged += new System.EventHandler(this.nudPrice4_ValueChanged);
+            // 
+            // nudPrice3
+            // 
+            this.nudPrice3.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudPrice3.Location = new System.Drawing.Point(298, 55);
+            this.nudPrice3.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            0});
+            this.nudPrice3.Name = "nudPrice3";
+            this.nudPrice3.Size = new System.Drawing.Size(66, 22);
+            this.nudPrice3.TabIndex = 19;
+            this.nudPrice3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.nudPrice3.ThousandsSeparator = true;
+            this.nudPrice3.ValueChanged += new System.EventHandler(this.nudPrice3_ValueChanged);
             // 
             // btnSave
             // 
             this.btnSave.Enabled = false;
             this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.btnSave.Image = global::PowerPOS_Online.Properties.Resources.disk_return_black;
-            this.btnSave.Location = new System.Drawing.Point(448, 53);
+            this.btnSave.Location = new System.Drawing.Point(598, 53);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(29, 24);
             this.btnSave.TabIndex = 18;
@@ -356,7 +495,7 @@
             this.panel4.Controls.Add(this.lblCost);
             this.panel4.Controls.Add(this.label11);
             this.panel4.Controls.Add(this.label10);
-            this.panel4.Location = new System.Drawing.Point(298, 24);
+            this.panel4.Location = new System.Drawing.Point(448, 24);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(146, 29);
             this.panel4.TabIndex = 17;
@@ -395,7 +534,7 @@
             // 
             this.btnConfig.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.btnConfig.Image = global::PowerPOS_Online.Properties.Resources.gear;
-            this.btnConfig.Location = new System.Drawing.Point(448, 83);
+            this.btnConfig.Location = new System.Drawing.Point(598, 83);
             this.btnConfig.Name = "btnConfig";
             this.btnConfig.Size = new System.Drawing.Size(29, 24);
             this.btnConfig.TabIndex = 13;
@@ -405,7 +544,7 @@
             // btnUsePercentPrice
             // 
             this.btnUsePercentPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.btnUsePercentPrice.Location = new System.Drawing.Point(298, 83);
+            this.btnUsePercentPrice.Location = new System.Drawing.Point(448, 83);
             this.btnUsePercentPrice.Name = "btnUsePercentPrice";
             this.btnUsePercentPrice.Size = new System.Drawing.Size(146, 24);
             this.btnUsePercentPrice.TabIndex = 13;
@@ -416,7 +555,7 @@
             // btnUseWebPrice
             // 
             this.btnUseWebPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.btnUseWebPrice.Location = new System.Drawing.Point(298, 53);
+            this.btnUseWebPrice.Location = new System.Drawing.Point(448, 53);
             this.btnUseWebPrice.Name = "btnUseWebPrice";
             this.btnUseWebPrice.Size = new System.Drawing.Size(146, 24);
             this.btnUseWebPrice.TabIndex = 12;
@@ -620,9 +759,13 @@
             this.clPrice,
             this.clPrice1,
             this.clPrice2,
+            this.clPrice3,
+            this.clPrice4,
             this.clWebPrice,
             this.clWebPrice1,
-            this.clWebPrice2});
+            this.clWebPrice2,
+            this.clWebPrice3,
+            this.clWebPrice4});
             // 
             // clNo
             // 
@@ -712,6 +855,22 @@
             this.clPrice2.Text = "ราคาส่ง 2";
             this.clPrice2.Visible = false;
             // 
+            // clPrice3
+            // 
+            this.clPrice3.Alignment = XPTable.Models.ColumnAlignment.Right;
+            this.clPrice3.Format = "#,###";
+            this.clPrice3.IsTextTrimmed = false;
+            this.clPrice3.Text = "ราคาส่ง 3";
+            this.clPrice3.Visible = false;
+            // 
+            // clPrice4
+            // 
+            this.clPrice4.Alignment = XPTable.Models.ColumnAlignment.Right;
+            this.clPrice4.Format = "#,###";
+            this.clPrice4.IsTextTrimmed = false;
+            this.clPrice4.Text = "ราคาส่ง 4";
+            this.clPrice4.Visible = false;
+            // 
             // clWebPrice
             // 
             this.clWebPrice.IsTextTrimmed = false;
@@ -724,8 +883,19 @@
             // 
             // clWebPrice2
             // 
+            this.clWebPrice2.AutoResizeMode = XPTable.Models.ColumnAutoResizeMode.Shrink;
             this.clWebPrice2.IsTextTrimmed = false;
             this.clWebPrice2.Visible = false;
+            // 
+            // clWebPrice3
+            // 
+            this.clWebPrice3.IsTextTrimmed = false;
+            this.clWebPrice3.Visible = false;
+            // 
+            // clWebPrice4
+            // 
+            this.clWebPrice4.IsTextTrimmed = false;
+            this.clWebPrice4.Visible = false;
             // 
             // table1
             // 
@@ -772,6 +942,8 @@
             this.pnlPrice.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPrice4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPrice3)).EndInit();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrice2)).EndInit();
@@ -845,5 +1017,19 @@
         private XPTable.Models.Table table1;
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Button btnPrint;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox txtPercent4;
+        private System.Windows.Forms.TextBox txtPercent3;
+        private System.Windows.Forms.TextBox txtPrice4;
+        private System.Windows.Forms.TextBox txtPrice3;
+        private System.Windows.Forms.NumericUpDown nudPrice4;
+        private System.Windows.Forms.NumericUpDown nudPrice3;
+        private XPTable.Models.NumberColumn clPrice3;
+        private XPTable.Models.NumberColumn clPrice4;
+        private XPTable.Models.NumberColumn clWebPrice3;
+        private XPTable.Models.NumberColumn clWebPrice4;
+        private System.Windows.Forms.RadioButton rbtNoSerial;
+        private System.Windows.Forms.RadioButton rbtSerial;
     }
 }

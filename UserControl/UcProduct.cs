@@ -20,6 +20,7 @@ namespace PowerPOS_Online
         public static string barcode;
         string id;
         int row = -1;
+        DataTable dt;
         public UcProduct()
         {
             InitializeComponent();
@@ -41,6 +42,24 @@ namespace PowerPOS_Online
 
         private void LoadData()
         {
+            if (Param.ShopId == "00000015")
+            {
+                txtPrice3.Visible = false;
+                txtPercent4.Visible = false;
+                txtPrice4.Visible = false;
+                nudPrice3.Visible = false;
+                txtPercent3.Visible = false;
+                txtPercent.Visible = false;
+                txtPercent1.Visible = false;
+                txtPercent2.Visible = false;
+                nudPrice4.Visible = false;
+                panel4.Visible = false;
+                label12.Visible = false;
+                label13.Visible = false;
+                label9.Visible = false;
+                groupBox1.Enabled = false;
+
+            }
             DataTable dt = Util.DBQuery(string.Format(@"SELECT Name FROM Category WHERE Shop = '{0}' ORDER BY Priority, Name", Param.ShopId));
             cbbCategory.Items.Clear();
             cbbCategory.Items.Add("หมวดหมู่สินค้าทั้งหมด");
@@ -109,12 +128,16 @@ namespace PowerPOS_Online
 
 
                     lblCost.Text = double.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[7].Data.ToString()).ToString("#,##0.00");
-                    txtPrice.Text = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[11].Data.ToString()).ToString("#,##0");
-                    txtPrice1.Text = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[12].Data.ToString()).ToString("#,##0");
-                    txtPrice2.Text = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[13].Data.ToString()).ToString("#,##0");
+                    txtPrice.Text = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[13].Data.ToString()).ToString("#,##0");
+                    txtPrice1.Text = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[14].Data.ToString()).ToString("#,##0");
+                    txtPrice2.Text = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[15].Data.ToString()).ToString("#,##0");
+                    txtPrice3.Text = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[16].Data.ToString()).ToString("#,##0");
+                    txtPrice4.Text = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[17].Data.ToString()).ToString("#,##0");
                     nudPrice.Value = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[8].Data.ToString());
                     nudPrice1.Value = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[9].Data.ToString());
                     nudPrice2.Value = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[10].Data.ToString());
+                    nudPrice3.Value = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[11].Data.ToString());
+                    nudPrice4.Value = int.Parse(table1.TableModel.Rows[_ROW_INDEX].Cells[12].Data.ToString());
                     nudPrice_ValueChanged(sender, e);
                     nudPrice1_ValueChanged(sender, e);
                     nudPrice2_ValueChanged(sender, e);
@@ -154,11 +177,29 @@ namespace PowerPOS_Online
             btnSave.Enabled = true;
         }
 
+        private void nudPrice3_ValueChanged(object sender, EventArgs e)
+        {
+            var percent = (((int)nudPrice3.Value * 1.00 / double.Parse(lblCost.Text.Replace(",", "")) * 100) - 100);
+            txtPercent3.Text = ((int)nudPrice3.Value == 0 || lblCost.Text == "0.00") ? "∞" : percent.ToString("#,##0.00");
+            nudPrice3.ForeColor = percent < 0 ? Color.Red : Color.Black;
+            btnSave.Enabled = true;
+        }
+
+        private void nudPrice4_ValueChanged(object sender, EventArgs e)
+        {
+            var percent = (((int)nudPrice4.Value * 1.00 / double.Parse(lblCost.Text.Replace(",", "")) * 100) - 100);
+            txtPercent4.Text = ((int)nudPrice4.Value == 0 || lblCost.Text == "0.00") ? "∞" : percent.ToString("#,##0.00");
+            nudPrice4.ForeColor = percent < 0 ? Color.Red : Color.Black;
+            btnSave.Enabled = true;
+        }
+
         private void btnUseWebPrice_Click(object sender, EventArgs e)
         {
             nudPrice.Value = int.Parse(txtPrice.Text.Replace(",", ""));
             nudPrice1.Value = int.Parse(txtPrice1.Text.Replace(",", ""));
             nudPrice2.Value = int.Parse(txtPrice2.Text.Replace(",", ""));
+            nudPrice3.Value = int.Parse(txtPrice3.Text.Replace(",", ""));
+            nudPrice4.Value = int.Parse(txtPrice4.Text.Replace(",", ""));
         }
 
         private void btnUsePercentPrice_Click(object sender, EventArgs e)
@@ -173,6 +214,8 @@ namespace PowerPOS_Online
                 nudPrice.Value = (int)Math.Ceiling((100 + double.Parse(dt.Rows[0]["Price"].ToString())) * double.Parse(lblCost.Text.Replace(",", "")) / 100);
                 nudPrice1.Value = (int)Math.Ceiling((100 + double.Parse(dt.Rows[0]["Price1"].ToString())) * double.Parse(lblCost.Text.Replace(",", "")) / 100);
                 nudPrice2.Value = (int)Math.Ceiling((100 + double.Parse(dt.Rows[0]["Price2"].ToString())) * double.Parse(lblCost.Text.Replace(",", "")) / 100);
+                nudPrice3.Value = (int)Math.Ceiling((100 + double.Parse(dt.Rows[0]["Price3"].ToString())) * double.Parse(lblCost.Text.Replace(",", "")) / 100);
+                nudPrice4.Value = (int)Math.Ceiling((100 + double.Parse(dt.Rows[0]["Price4"].ToString())) * double.Parse(lblCost.Text.Replace(",", "")) / 100);
             }
         }
 
@@ -193,13 +236,17 @@ namespace PowerPOS_Online
 
         private void SearchData()
         {
-            DataTable dt;
+            
             if (!_FIRST_LOAD)
             {
-                if (Param.SystemConfig.SellPrice != null)
+                if (rbtSerial.Checked == true)
                 {
-                    dt = Util.DBQuery(string.Format(@"SELECT DISTINCT p.ID, p.Name, c.Name Category, b.Name Brand, IFNULL(cnt.Cost,0) Cost,  IFNULL(p.Warranty, 0)  Warranty,   
-                    IFNULL(p.Price, 0) Price, IFNULL(p.Price1, 0)  Price1,IFNULL(p.Price2, 0)  Price2, IFNULL(p.WebPrice,0) WebPrice, IFNULL(p.WebPrice1,0) WebPrice1, IFNULL(p.WebPrice2,0) WebPrice2, IFNULL(cnt.ProductCount, 0) ProductCount
+                    if (Param.MemberType != "Sales")
+                    {
+                        dt = Util.DBQuery(string.Format(@"SELECT DISTINCT p.ID, p.Name, c.Name Category, b.Name Brand, IFNULL(cnt.Cost,0) Cost,  IFNULL(p.Warranty, 0)  Warranty,   
+                    IFNULL(p.Price, 0) Price, IFNULL(p.Price1, 0)  Price1,IFNULL(p.Price2, 0)  Price2, IFNULL(p.Price3, 0)  Price3,IFNULL(p.Price4, 0)  Price4, 
+                    IFNULL(p.WebPrice,0) WebPrice, IFNULL(p.WebPrice1,0) WebPrice1, IFNULL(p.WebPrice2,0) WebPrice2, IFNULL(p.WebPrice3,0) WebPrice3, IFNULL(p.WebPrice4,0) WebPrice4, 
+                    IFNULL(cnt.ProductCount, 0) ProductCt, IFNULL(cntP.Quantity,0) PC,  IFNULL(cnt.ProductCount, 0) + IFNULL(cntP.Quantity,0) ProductCount                    
                     FROM Barcode b
                         LEFT JOIN Product p
                             ON b.Product = p.ID
@@ -213,23 +260,33 @@ namespace PowerPOS_Online
                         LEFT JOIN (
                             SELECT Product, AVG(Cost+OperationCost) Cost, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
                         ) cnt
-		            ON p.ID = cnt.Product
+		                ON p.ID = cnt.Product
+                        LEFT JOIN 
+                        (
+                            SELECT id, Quantity, Name FROM Product WHERE shop = '{0}'
+                        ) cntP
+                        ON cntP.id = p.ID
 		            WHERE (p.ID LIKE '%{1}%' OR p.Name LIKE '%{1}%') {2} {3} {4} {5}
                     ORDER BY p.Name", Param.ShopId, txtSearch.Text.Trim(),
-                            (cbbCategory.SelectedIndex != 0) ? "AND c.Name = '" + cbbCategory.SelectedItem.ToString() + "'" : "",
-                            (cbbBrand.SelectedIndex != 0) ? "AND b.Name = '" + cbbBrand.SelectedItem.ToString() + "'" : "",
-                            (cbNoPrice.Checked) ? "AND p.Price = 0" : "",
-                            (cbNoStock.Checked) ? "AND IFNULL(cnt.ProductCount, 0) = 0" : ""
-                        ));
-                }
-                else
-                {
-                    dt = Util.DBQuery(string.Format(@"SELECT DISTINCT p.ID, p.Name, c.Name Category, b.Name Brand,  IFNULL(cnt.Cost,0) Cost,  IFNULL(p.Warranty, 0)  Warranty,   
-                    IFNULL(p.Price, 0) Price, IFNULL(p.Price1, 0)  Price1,IFNULL(p.Price2, 0)  Price2,IFNULL(p.WebPrice,0) WebPrice, IFNULL(p.WebPrice1,0) WebPrice1, IFNULL(p.WebPrice2,0) WebPrice2, IFNULL(cnt.ProductCount, 0) ProductCount
+                                   (cbbCategory.SelectedIndex != 0) ? "AND c.Name = '" + cbbCategory.SelectedItem.ToString() + "'" : "",
+                                   (cbbBrand.SelectedIndex != 0) ? "AND b.Name = '" + cbbBrand.SelectedItem.ToString() + "'" : "",
+                                   (cbNoPrice.Checked) ? "AND p.Price = 0" : "",
+                                   (cbNoStock.Checked) ? "AND IFNULL(cnt.ProductCount, 0) = 0" : ""
+                               ));
+                    }
+                    else if (Param.ShopId == "00000010")
+                    {
+                        dt = Util.DBQuery(string.Format(@"SELECT DISTINCT p.ID, p.Name, c.Name Category, b.Name Brand,  IFNULL(cnt.Cost,0) Cost,  IFNULL(p.Warranty, 0)  Warranty,   
+                    IFNULL(p.Price, 0) Price, IFNULL(p.Price1, 0)  Price1,IFNULL(p.Price2, 0)  Price2,  IFNULL(p.Price3, 0)  Price3,IFNULL(p.Price4, 0)  Price4,
+                    IFNULL(pp.Price,0) WebPrice, IFNULL(pp.Price1,0) WebPrice1, IFNULL(pp.Price2,0) WebPrice2,IFNULL(pp.Price3,0) WebPrice3, IFNULL(pp.Price4,0) WebPrice4,
+                    IFNULL(cnt.ProductCount, 0) ProductCt, IFNULL(cntP.Quantity,0) PC,  IFNULL(cnt.ProductCount, 0) + IFNULL(cntP.Quantity,0) ProductCount                     
                     FROM Barcode b
                         LEFT JOIN Product p
                             ON b.Product = p.ID
                             AND p.Shop = '{0}'
+                          LEFT JOIN Product pp
+                            ON b.Product = pp.ID
+                            AND pp.Shop = '{6}'
                         LEFT JOIN Category c
                             ON p.Category = c.ID
                             AND p.Shop = c.Shop
@@ -239,24 +296,64 @@ namespace PowerPOS_Online
                         LEFT JOIN (
                             SELECT Product, AVG(Cost+OperationCost) Cost, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
                         ) cnt
-		            ON p.ID = cnt.Product
+		                ON p.ID = cnt.Product
+                        LEFT JOIN 
+                        (
+                            SELECT id, Quantity, Name FROM Product WHERE shop = '{0}'
+                        ) cntP
+                        ON cntP.id = p.ID
 		            WHERE (p.ID LIKE '%{1}%' OR p.Name LIKE '%{1}%') {2} {3} {4} {5}
                     ORDER BY p.Name", Param.ShopId, txtSearch.Text.Trim(),
-                           (cbbCategory.SelectedIndex != 0) ? "AND c.Name = '" + cbbCategory.SelectedItem.ToString() + "'" : "",
-                           (cbbBrand.SelectedIndex != 0) ? "AND b.Name = '" + cbbBrand.SelectedItem.ToString() + "'" : "",
-                           (cbNoPrice.Checked) ? "AND (p.Price = 0 OR p.Price = '' OR p.Price = null)" : "",
-                           (cbNoStock.Checked) ? "AND IFNULL(cnt.ProductCount, 0) = 0" : ""
-                       ));
-                }
-
-                table1.BeginUpdate();
-                tableModel1.Rows.Clear();
-                tableModel1.RowHeight = 22;
-                for (int i = 0; i < dt.Rows.Count; i++)
-                {
-                    int warranty = int.Parse(dt.Rows[i]["Warranty"].ToString());
-                    tableModel1.Rows.Add(new Row(
-                        new Cell[] {
+                             (cbbCategory.SelectedIndex != 0) ? "AND c.Name = '" + cbbCategory.SelectedItem.ToString() + "'" : "",
+                             (cbbBrand.SelectedIndex != 0) ? "AND b.Name = '" + cbbBrand.SelectedItem.ToString() + "'" : "",
+                             (cbNoPrice.Checked) ? "AND (p.Price = 0 OR p.Price = '' OR p.Price = null)" : "",
+                             (cbNoStock.Checked) ? "AND IFNULL(cnt.ProductCount, 0) = 0" : "", Param.ShopParent
+                         ));
+                    }
+                    else
+                    {
+                        dt = Util.DBQuery(string.Format(@"SELECT DISTINCT p.ID, p.Name, c.Name Category, b.Name Brand,  IFNULL(cnt.Cost,0) Cost,  IFNULL(p.Warranty, 0)  Warranty,   
+                    IFNULL(p.Price, 0) Price, IFNULL(p.Price1, 0)  Price1,IFNULL(p.Price2, 0)  Price2, IFNULL(p.Price3, 0)  Price3,IFNULL(p.Price4, 0)  Price4, 
+                    IFNULL(pp.Price,0) WebPrice, IFNULL(pp.Price1,0) WebPrice1, IFNULL(pp.Price2,0) WebPrice2, IFNULL(pp.Price3,0) WebPrice3, IFNULL(pp.Price4,0) WebPrice4,
+                    IFNULL(cnt.ProductCount, 0) ProductCt, IFNULL(cntP.Quantity,0) PC,  IFNULL(cnt.ProductCount, 0) + IFNULL(cntP.Quantity,0) ProductCount
+                    FROM Barcode b
+                        LEFT JOIN Product p
+                            ON b.Product = p.ID
+                            AND p.Shop = '{0}'
+                          LEFT JOIN Product pp
+                            ON b.Product = pp.ID
+                            AND pp.Shop = '{6}'
+                        LEFT JOIN Category c
+                            ON p.Category = c.ID
+                            AND p.Shop = c.Shop
+                        LEFT JOIN Brand b
+                            ON p.Brand = b.ID
+                            AND p.Shop = b.Shop
+                        LEFT JOIN (
+                            SELECT Product, AVG(Cost+OperationCost) Cost, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                        ) cnt
+		                ON p.ID = cnt.Product
+                        LEFT JOIN 
+                        (
+                            SELECT id, Quantity, Name FROM Product WHERE shop = '{0}'
+                        ) cntP
+                        ON cntP.id = p.ID
+		            WHERE (p.ID LIKE '%{1}%' OR p.Name LIKE '%{1}%') {2} {3} {4} {5}
+                    ORDER BY p.Name", Param.ShopId, txtSearch.Text.Trim(),
+                               (cbbCategory.SelectedIndex != 0) ? "AND c.Name = '" + cbbCategory.SelectedItem.ToString() + "'" : "",
+                               (cbbBrand.SelectedIndex != 0) ? "AND b.Name = '" + cbbBrand.SelectedItem.ToString() + "'" : "",
+                               (cbNoPrice.Checked) ? "AND (p.Price = 0 OR p.Price = '' OR p.Price = null)" : "",
+                               (cbNoStock.Checked) ? "AND IFNULL(cnt.ProductCount, 0) = 0" : "", Param.ShopParent
+                           ));
+                    }
+                    table1.BeginUpdate();
+                    tableModel1.Rows.Clear();
+                    tableModel1.RowHeight = 22;
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                        {
+                            int warranty = int.Parse(dt.Rows[i]["Warranty"].ToString());
+                            tableModel1.Rows.Add(new Row(
+                                new Cell[] {
                     new Cell("" + (i+1)),
                     new Cell(dt.Rows[i]["ID"].ToString()),
                     new Cell(dt.Rows[i]["Name"].ToString()),
@@ -268,14 +365,151 @@ namespace PowerPOS_Online
                     new Cell(double.Parse(dt.Rows[i]["Price"].ToString())),
                     new Cell(double.Parse(dt.Rows[i]["Price1"].ToString())),
                     new Cell(double.Parse(dt.Rows[i]["Price2"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["Price3"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["Price4"].ToString())),
                     new Cell(double.Parse(dt.Rows[i]["WebPrice"].ToString())),
                     new Cell(double.Parse(dt.Rows[i]["WebPrice1"].ToString())),
-                    new Cell(double.Parse(dt.Rows[i]["WebPrice2"].ToString()))
-                        }));
-                }
-                table1.EndUpdate();
+                    new Cell(double.Parse(dt.Rows[i]["WebPrice2"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["WebPrice3"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["WebPrice4"].ToString()))
+                                }));
+                        }
+                        table1.EndUpdate();
+                    lblRecords.Text = dt.Rows.Count.ToString("#,##0");
 
-                lblRecords.Text = dt.Rows.Count.ToString("#,##0");
+                }
+                else if (rbtNoSerial.Checked == true)
+                {
+                    if (Param.MemberType != "Sales")
+                    {
+                        dt = Util.DBQuery(string.Format(@"SELECT DISTINCT p.ID, p.Name, c.Name Category, b.Name Brand, IFNULL(cnt.Cost,0) Cost,  IFNULL(p.Warranty, 0)  Warranty,   
+                    IFNULL(p.Price, 0) Price, IFNULL(p.Price1, 0)  Price1,IFNULL(p.Price2, 0)  Price2, IFNULL(p.Price3, 0)  Price3,IFNULL(p.Price4, 0)  Price4, 
+                    IFNULL(p.WebPrice,0) WebPrice, IFNULL(p.WebPrice1,0) WebPrice1, IFNULL(p.WebPrice2,0) WebPrice2, IFNULL(p.WebPrice3,0) WebPrice3, IFNULL(p.WebPrice4,0) WebPrice4, 
+                    IFNULL(cnt.ProductCount, 0) ProductCt, IFNULL(cntP.Quantity,0) PC,  IFNULL(cnt.ProductCount, 0) + IFNULL(cntP.Quantity,0) ProductCount                    
+                    FROM PurchaseOrder b
+                        LEFT JOIN Product  p
+                            ON b.Product = p.ID
+                            AND p.Shop = '{0}'
+                        LEFT JOIN Category c
+                            ON p.Category = c.ID
+                        LEFT JOIN Brand b
+                            ON p.Brand = b.ID
+                        LEFT JOIN (
+                            SELECT Product, AVG(Cost+OperationCost) Cost, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                        ) cnt
+		                ON p.ID = cnt.Product
+                        LEFT JOIN 
+                        (
+                            SELECT id, Quantity, Name FROM Product WHERE shop = '{0}'
+                        ) cntP
+                        ON cntP.id = p.ID
+		            WHERE (p.ID LIKE '%{1}%' OR p.Name LIKE '%{1}%') {2} {3} {4} {5}
+                    ORDER BY p.Name", Param.ShopId, txtSearch.Text.Trim(),
+                                   (cbbCategory.SelectedIndex != 0) ? "AND c.Name = '" + cbbCategory.SelectedItem.ToString() + "'" : "",
+                                   (cbbBrand.SelectedIndex != 0) ? "AND b.Name = '" + cbbBrand.SelectedItem.ToString() + "'" : "",
+                                   (cbNoPrice.Checked) ? "AND p.Price = 0" : "",
+                                   (cbNoStock.Checked) ? "AND IFNULL(cnt.ProductCount, 0) = 0" : ""
+                               ));
+                    }
+                    else if (Param.ShopId == "00000010")
+                    {
+                        dt = Util.DBQuery(string.Format(@"SELECT DISTINCT p.ID, p.Name, c.Name Category, b.Name Brand,  IFNULL(cnt.Cost,0) Cost,  IFNULL(p.Warranty, 0)  Warranty,   
+                    IFNULL(p.Price, 0) Price, IFNULL(p.Price1, 0)  Price1,IFNULL(p.Price2, 0)  Price2,  IFNULL(p.Price3, 0)  Price3,IFNULL(p.Price4, 0)  Price4,
+                    IFNULL(pp.Price,0) WebPrice, IFNULL(pp.Price1,0) WebPrice1, IFNULL(pp.Price2,0) WebPrice2,IFNULL(pp.Price3,0) WebPrice3, IFNULL(pp.Price4,0) WebPrice4,
+                    IFNULL(cnt.ProductCount, 0) ProductCt, IFNULL(cntP.Quantity,0) PC,  IFNULL(cnt.ProductCount, 0) + IFNULL(cntP.Quantity,0) ProductCount                     
+                    FROM PurchaseOrder b
+                        LEFT JOIN Product p
+                            ON b.Product = p.ID
+                            AND p.Shop = '{0}'
+                          LEFT JOIN Product pp
+                            ON b.Product = pp.ID
+                            AND pp.Shop = '{6}'
+                        LEFT JOIN Category c
+                            ON p.Category = c.ID
+                        LEFT JOIN Brand b
+                            ON p.Brand = b.ID
+                        LEFT JOIN (
+                            SELECT Product, AVG(Cost+OperationCost) Cost, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                        ) cnt
+		                ON p.ID = cnt.Product
+                        LEFT JOIN 
+                        (
+                            SELECT id, Quantity, Name FROM Product WHERE shop = '{0}'
+                        ) cntP
+                        ON cntP.id = p.ID
+		            WHERE (p.ID LIKE '%{1}%' OR p.Name LIKE '%{1}%') {2} {3} {4} {5}
+                    ORDER BY p.Name", Param.ShopId, txtSearch.Text.Trim(),
+                             (cbbCategory.SelectedIndex != 0) ? "AND c.Name = '" + cbbCategory.SelectedItem.ToString() + "'" : "",
+                             (cbbBrand.SelectedIndex != 0) ? "AND b.Name = '" + cbbBrand.SelectedItem.ToString() + "'" : "",
+                             (cbNoPrice.Checked) ? "AND (p.Price = 0 OR p.Price = '' OR p.Price = null)" : "",
+                             (cbNoStock.Checked) ? "AND IFNULL(cnt.ProductCount, 0) = 0" : "", Param.ShopParent
+                         ));
+                    }
+                    else
+                    {
+                        dt = Util.DBQuery(string.Format(@"SELECT DISTINCT p.ID, p.Name, c.Name Category, b.Name Brand,  IFNULL(cnt.Cost,0) Cost,  IFNULL(p.Warranty, 0)  Warranty,   
+                    IFNULL(p.Price, 0) Price, IFNULL(p.Price1, 0)  Price1,IFNULL(p.Price2, 0)  Price2, IFNULL(p.Price3, 0)  Price3,IFNULL(p.Price4, 0)  Price4, 
+                    IFNULL(pp.Price,0) WebPrice, IFNULL(pp.Price1,0) WebPrice1, IFNULL(pp.Price2,0) WebPrice2, IFNULL(pp.Price3,0) WebPrice3, IFNULL(pp.Price4,0) WebPrice4,
+                    IFNULL(cnt.ProductCount, 0) ProductCt, IFNULL(cntP.Quantity,0) PC,  IFNULL(cnt.ProductCount, 0) + IFNULL(cntP.Quantity,0) ProductCount
+                    FROM PurchaseOrder b
+                        LEFT JOIN Product p
+                            ON b.Product = p.ID
+                            AND p.Shop = '{0}'
+                          LEFT JOIN Product pp
+                            ON b.Product = pp.ID
+                            AND pp.Shop = '{6}'
+                        LEFT JOIN Category c
+                            ON p.Category = c.ID
+                        LEFT JOIN Brand b
+                            ON p.Brand = b.ID
+                        LEFT JOIN (
+                            SELECT Product, AVG(Cost+OperationCost) Cost, COUNT(*) ProductCount FROM Barcode WHERE ReceivedDate IS NOT NULL AND (SellNo = '' OR SellNo IS NULL) GROUP BY Product
+                        ) cnt
+		                ON p.ID = cnt.Product
+                        LEFT JOIN 
+                        (
+                            SELECT id, Quantity, Name FROM Product WHERE shop = '{0}'
+                        ) cntP
+                        ON cntP.id = p.ID
+		            WHERE (p.ID LIKE '%{1}%' OR p.Name LIKE '%{1}%') {2} {3} {4} {5}
+                    ORDER BY p.Name", Param.ShopId, txtSearch.Text.Trim(),
+                               (cbbCategory.SelectedIndex != 0) ? "AND c.Name = '" + cbbCategory.SelectedItem.ToString() + "'" : "",
+                               (cbbBrand.SelectedIndex != 0) ? "AND b.Name = '" + cbbBrand.SelectedItem.ToString() + "'" : "",
+                               (cbNoPrice.Checked) ? "AND (p.Price = 0 OR p.Price = '' OR p.Price = null)" : "",
+                               (cbNoStock.Checked) ? "AND IFNULL(cnt.ProductCount, 0) = 0" : "", Param.ShopParent
+                           ));
+                    }
+                    table1.BeginUpdate();
+                    tableModel1.Rows.Clear();
+                    tableModel1.RowHeight = 22;
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                        {
+                            int warranty = int.Parse(dt.Rows[i]["Warranty"].ToString());
+                            tableModel1.Rows.Add(new Row(
+                                new Cell[] {
+                    new Cell("" + (i+1)),
+                    new Cell(dt.Rows[i]["ID"].ToString()),
+                    new Cell(dt.Rows[i]["Name"].ToString()),
+                    new Cell(int.Parse(dt.Rows[i]["ProductCount"].ToString())),
+                    new Cell(dt.Rows[i]["Category"].ToString()),
+                    new Cell(dt.Rows[i]["Brand"].ToString()),
+                    new Cell((warranty == 365) ? "1 ปี" : ((warranty == 0) ? "-" : ((warranty%30 == 0) ? warranty/30+" เดือน" : warranty+" วัน"))),
+                    new Cell(double.Parse(dt.Rows[i]["Cost"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["Price"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["Price1"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["Price2"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["Price3"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["Price4"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["WebPrice"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["WebPrice1"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["WebPrice2"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["WebPrice3"].ToString())),
+                    new Cell(double.Parse(dt.Rows[i]["WebPrice4"].ToString()))
+                                }));
+                        }
+                        table1.EndUpdate();
+                    lblRecords.Text = dt.Rows.Count.ToString("#,##0");
+                }
             }
         }
 
@@ -324,14 +558,19 @@ namespace PowerPOS_Online
         {
             if (MessageBox.Show("คุณแน่ใจหรือไม่ ที่จะกำหนดสินค้านี้ ?", "ยืนยันข้อมูล", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                Util.DBExecute(string.Format(@"UPDATE Product SET Cost = '" + lblCost.Text + "' , Price = '" + nudPrice.Value.ToString() + "', Price1 = '" + nudPrice1.Value.ToString() + "', Price2 = '" + nudPrice2.Value.ToString() + "',Sync = 1 WHERE ID = '{0}' AND shop = '{1}'",id,Param.ShopId));
+                Util.DBExecute(string.Format(@"UPDATE Product SET Cost = '" + lblCost.Text + "' , Price = '" + nudPrice.Value.ToString() + "', Price1 = '" + nudPrice1.Value.ToString() + "', Price2 = '" + nudPrice2.Value.ToString() + "',Price3 = '" + nudPrice3.Value.ToString() + "',Price4 = '" + nudPrice4.Value.ToString() + "',Sync = 1 WHERE ID = '{0}' AND shop = '{1}'", id,Param.ShopId));
                 SearchData();
             }
         }
 
-        private void panel5_Paint(object sender, PaintEventArgs e)
+        private void rbtSerial_CheckedChanged(object sender, EventArgs e)
         {
+            SearchData();
+        }
 
+        private void rbtNoSerial_CheckedChanged(object sender, EventArgs e)
+        {
+            SearchData();
         }
     }
 }

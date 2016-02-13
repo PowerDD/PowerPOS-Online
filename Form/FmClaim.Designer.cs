@@ -184,6 +184,7 @@
             this.btnCustomer.TabIndex = 15;
             this.btnCustomer.Text = "ค้นหาข้อมูลลูกค้า";
             this.btnCustomer.UseVisualStyleBackColor = true;
+            this.btnCustomer.Click += new System.EventHandler(this.btnCustomer_Click);
             // 
             // txtEmail
             // 

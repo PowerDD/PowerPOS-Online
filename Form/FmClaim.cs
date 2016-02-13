@@ -132,5 +132,18 @@ namespace PowerPOS_Online
             txtMobile.Text = "";
             txtEmail.Text = "";
         }
+
+        private void btnCustomer_Click(object sender, EventArgs e)
+        {
+            FmSelectCustomer ul = new FmSelectCustomer();
+            var result = ul.ShowDialog(this);
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                txtName.Text = FmSelectCustomer.Firstname;
+                txtLastname.Text = FmSelectCustomer.Lastname;
+                txtNickname.Text = FmSelectCustomer.Nickname;
+                txtMobile.Text = FmSelectCustomer.tel;
+            }
+        }
     }
 }

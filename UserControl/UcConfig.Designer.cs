@@ -34,8 +34,6 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.gbxBill = new System.Windows.Forms.GroupBox();
             this.btnSaveBill = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.cbxPrinter = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.txtBillFooter = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -59,16 +57,18 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.bwUploadLogo = new System.ComponentModel.BackgroundWorker();
             this.bwDownloadLogo = new System.ComponentModel.BackgroundWorker();
+            this.cbxPrinter = new System.Windows.Forms.ComboBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.gbxBill.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbLogo)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrintCount)).BeginInit();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -140,29 +140,6 @@
             this.btnSaveBill.UseVisualStyleBackColor = true;
             this.btnSaveBill.Click += new System.EventHandler(this.btnSaveBill_Click);
             // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.cbxPrinter);
-            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.groupBox4.Location = new System.Drawing.Point(8, 341);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(8, 3, 8, 8);
-            this.groupBox4.Size = new System.Drawing.Size(299, 53);
-            this.groupBox4.TabIndex = 13;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "เครื่องพิมพ์";
-            // 
-            // cbxPrinter
-            // 
-            this.cbxPrinter.Dock = System.Windows.Forms.DockStyle.Top;
-            this.cbxPrinter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbxPrinter.FormattingEnabled = true;
-            this.cbxPrinter.Location = new System.Drawing.Point(8, 18);
-            this.cbxPrinter.Name = "cbxPrinter";
-            this.cbxPrinter.Size = new System.Drawing.Size(283, 24);
-            this.cbxPrinter.TabIndex = 9;
-            this.cbxPrinter.SelectedIndexChanged += new System.EventHandler(this.cbxPrinter_SelectedIndexChanged);
-            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.txtBillFooter);
@@ -229,13 +206,13 @@
             this.mniResetLogo,
             this.mniChangeLogo});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(184, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(177, 48);
             // 
             // mniResetLogo
             // 
             this.mniResetLogo.Image = global::PowerPOS_Online.Properties.Resources.arrow_circle_225_left;
             this.mniResetLogo.Name = "mniResetLogo";
-            this.mniResetLogo.Size = new System.Drawing.Size(183, 22);
+            this.mniResetLogo.Size = new System.Drawing.Size(176, 22);
             this.mniResetLogo.Text = "ใช้ภาพเริ่มต้นของระบบ";
             this.mniResetLogo.Click += new System.EventHandler(this.mniResetLogo_Click);
             // 
@@ -243,7 +220,7 @@
             // 
             this.mniChangeLogo.Image = global::PowerPOS_Online.Properties.Resources.image;
             this.mniChangeLogo.Name = "mniChangeLogo";
-            this.mniChangeLogo.Size = new System.Drawing.Size(183, 22);
+            this.mniChangeLogo.Size = new System.Drawing.Size(176, 22);
             this.mniChangeLogo.Text = "เปลี่ยนภาพ";
             this.mniChangeLogo.Click += new System.EventHandler(this.mniChangeLogo_Click);
             // 
@@ -405,6 +382,29 @@
             this.bwDownloadLogo.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwDownloadLogo_DoWork);
             this.bwDownloadLogo.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwDownloadLogo_RunWorkerCompleted);
             // 
+            // cbxPrinter
+            // 
+            this.cbxPrinter.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cbxPrinter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxPrinter.FormattingEnabled = true;
+            this.cbxPrinter.Location = new System.Drawing.Point(8, 18);
+            this.cbxPrinter.Name = "cbxPrinter";
+            this.cbxPrinter.Size = new System.Drawing.Size(283, 24);
+            this.cbxPrinter.TabIndex = 9;
+            this.cbxPrinter.SelectedIndexChanged += new System.EventHandler(this.cbxPrinter_SelectedIndexChanged);
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.cbxPrinter);
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox4.Location = new System.Drawing.Point(8, 341);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(8, 3, 8, 8);
+            this.groupBox4.Size = new System.Drawing.Size(299, 53);
+            this.groupBox4.TabIndex = 13;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "เครื่องพิมพ์";
+            // 
             // UcConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -419,7 +419,6 @@
             this.panel2.ResumeLayout(false);
             this.gbxBill.ResumeLayout(false);
             this.gbxBill.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -429,6 +428,7 @@
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrintCount)).EndInit();
+            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -454,8 +454,6 @@
         private System.Windows.Forms.RadioButton rdbNotPrint;
         private System.Windows.Forms.RadioButton rdbPrint;
         private System.Windows.Forms.RadioButton rdbAlert;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.ComboBox cbxPrinter;
         private System.ComponentModel.BackgroundWorker bwUpdateConfig;
         private System.Windows.Forms.Button btnSaveBill;
         private System.Windows.Forms.PictureBox ptbLogo;
@@ -465,5 +463,7 @@
         private System.Windows.Forms.ToolStripMenuItem mniResetLogo;
         private System.ComponentModel.BackgroundWorker bwDownloadLogo;
         private System.Windows.Forms.ToolStripMenuItem mniChangeLogo;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.ComboBox cbxPrinter;
     }
 }

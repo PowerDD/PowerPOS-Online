@@ -61,6 +61,7 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.pnlBarcode = new System.Windows.Forms.Panel();
             this.table1 = new XPTable.Models.Table();
+            this.cAmount = new XPTable.Models.NumberColumn();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbProduct)).BeginInit();
             this.panel2.SuspendLayout();
@@ -102,6 +103,7 @@
             this.cNo,
             this.cSellDate,
             this.cCustomerName,
+            this.cAmount,
             this.cSellPrice});
             // 
             // cNo
@@ -342,6 +344,12 @@
             this.table1.Text = "table1";
             this.table1.UnfocusedBorderColor = System.Drawing.Color.Black;
             // 
+            // cAmount
+            // 
+            this.cAmount.Alignment = XPTable.Models.ColumnAlignment.Center;
+            this.cAmount.IsTextTrimmed = false;
+            this.cAmount.Text = "จำนวนสินค้า";
+            // 
             // UcReturn
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -397,5 +405,6 @@
         private XPTable.Models.TextColumn cCustomerName;
         private XPTable.Models.Table table1;
         private XPTable.Models.TextColumn cSellPrice;
+        private XPTable.Models.NumberColumn cAmount;
     }
 }

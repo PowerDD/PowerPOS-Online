@@ -102,7 +102,7 @@
             this.pictureBox1.ContextMenuStrip = this.contextMenuStrip2;
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.pictureBox1.Image = global::PowerPOS_Online.Properties.Resources.daily;
-            this.pictureBox1.Location = new System.Drawing.Point(7, 106);
+            this.pictureBox1.Location = new System.Drawing.Point(7, 102);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(233, 348);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -127,7 +127,7 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel2.Location = new System.Drawing.Point(7, 96);
+            this.panel2.Location = new System.Drawing.Point(7, 92);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(233, 10);
             this.panel2.TabIndex = 3;
@@ -139,7 +139,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(7, 10);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(233, 86);
+            this.groupBox1.Size = new System.Drawing.Size(233, 82);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "ค้นหาข้อมูล";
@@ -161,11 +161,13 @@
             this.cbbReportType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.cbbReportType.FormattingEnabled = true;
             this.cbbReportType.Items.AddRange(new object[] {
-            "สรุปยอดขายรายวัน"});
+            "สรุปยอดขายรายวัน",
+            "รายงานสถิติ"});
             this.cbbReportType.Location = new System.Drawing.Point(14, 19);
             this.cbbReportType.Name = "cbbReportType";
             this.cbbReportType.Size = new System.Drawing.Size(204, 24);
             this.cbbReportType.TabIndex = 0;
+            this.cbbReportType.SelectedIndexChanged += new System.EventHandler(this.CheckChange);
             // 
             // columnModel1
             // 
@@ -190,16 +192,16 @@
             this.textColumn5.Alignment = XPTable.Models.ColumnAlignment.Center;
             this.textColumn5.Editable = false;
             this.textColumn5.IsTextTrimmed = false;
-            this.textColumn5.Text = "วันที่";
-            this.textColumn5.Width = 135;
+            this.textColumn5.Text = "วันที่ขาย";
+            this.textColumn5.Width = 150;
             // 
             // textColumn2
             // 
             this.textColumn2.Alignment = XPTable.Models.ColumnAlignment.Center;
             this.textColumn2.Editable = false;
             this.textColumn2.IsTextTrimmed = false;
-            this.textColumn2.Text = "เลขที่คำสั่งซื้อ";
-            this.textColumn2.Width = 90;
+            this.textColumn2.Text = "เลขที่ขาย";
+            this.textColumn2.Width = 150;
             // 
             // textColumn3
             // 
@@ -222,7 +224,7 @@
             this.numberColumn1.Format = "#,##0.00";
             this.numberColumn1.IsTextTrimmed = false;
             this.numberColumn1.Text = "ยอดขาย";
-            this.numberColumn1.Width = 90;
+            this.numberColumn1.Width = 100;
             // 
             // table1
             // 

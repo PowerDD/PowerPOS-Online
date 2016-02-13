@@ -121,45 +121,50 @@ namespace PowerPOS_Online
 
         private void txtBarcode_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
+            try
             {
-                DataTable dt = Util.DBQuery(string.Format(@"SELECT p.ID, p.CoverImage, IFNULL(SellDate, '') SellDate,b.Stock 
+                
+                    if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
+                {
+                    DataTable dt = Util.DBQuery(string.Format(@"SELECT p.ID, p.CoverImage, IFNULL(SellDate, '') SellDate,b.Stock 
                     FROM Barcode b LEFT JOIN Product p ON b.product = p.id
-                    WHERE Barcode = '{0}'  AND p.Shop = '{1}' AND SellDate IS NULL", txtBarcode.Text, Param.ShopId));
+                    WHERE b.Barcode = '{0}'  AND p.Shop = '{1}' AND SellDate IS NULL", txtBarcode.Text, Param.ShopId));
 
-                lblStatus.Visible = true;
+                    lblStatus.Visible = true;
 
-                if (dt.Rows.Count == 0)
-                {
-                    lblStatus.ForeColor = Color.Red;
-                    //lblStatus.Text = "ไม่พบข้อมูลสินค้าชิ้นนี้ในระบบ";
-                    MessageBox.Show("ไม่พบข้อมูลสินค้าชิ้นนี้ในระบบ", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    //_SKU = "0";
-                }
-                else
-                {
-                    Param.ProductId = dt.Rows[0]["ID"].ToString();
-
-                    if (dt.Rows[0]["Stock"].ToString() != "0")
+                    if (dt.Rows.Count == 0)
                     {
                         lblStatus.ForeColor = Color.Red;
-                        //lblStatus.Text = "เคยตรวจสอบสินค้าชิ้นนี้แล้ว";
-                        MessageBox.Show("เคยตรวจสอบสินค้าชิ้นนี้แล้ว", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        SearchData();
+                        //lblStatus.Text = "ไม่พบข้อมูลสินค้าชิ้นนี้ในระบบ";
+                        MessageBox.Show("ไม่พบข้อมูลสินค้าชิ้นนี้ในระบบ", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        //_SKU = "0";
                     }
                     else
                     {
-                        Util.DBExecute(string.Format(@"UPDATE Barcode SET Stock = 1, Sync = 1 WHERE Barcode = '{0}'", txtBarcode.Text));
-                        SearchData();
+                        Param.ProductId = dt.Rows[0]["ID"].ToString();
 
-                        lblStatus.ForeColor = Color.Green;
-                        lblStatus.Text = "ตรวจสอบสินค้าเรียบร้อยแล้ว";
+                        if (dt.Rows[0]["Stock"].ToString() != "0")
+                        {
+                            lblStatus.ForeColor = Color.Red;
+                            //lblStatus.Text = "เคยตรวจสอบสินค้าชิ้นนี้แล้ว";
+                            MessageBox.Show("เคยตรวจสอบสินค้าชิ้นนี้แล้ว", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            SearchData();
+                        }
+                        else
+                        {
+                            Util.DBExecute(string.Format(@"UPDATE Barcode SET Stock = 1, Sync = 1 WHERE Barcode = '{0}'", txtBarcode.Text));
+                            SearchData();
+
+                            lblStatus.ForeColor = Color.Green;
+                            lblStatus.Text = "ตรวจสอบสินค้าเรียบร้อยแล้ว";
+                        }
+
                     }
-
+                    txtBarcode.Text = "";
+                    txtBarcode.Focus();
                 }
-                txtBarcode.Text = "";
-                txtBarcode.Focus();
             }
+            catch { }
         }
 
         private void btnPrint_Click(object sender, EventArgs e)
@@ -302,7 +307,7 @@ namespace PowerPOS_Online
         {
             if (MessageBox.Show("คุณแน่ใจหรือไม่ ที่จะเริ่มนับสต็อกสินค้าใหม่ ?", "ยืนยันการนับสต็อกสินค้า", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                Util.DBExecute(string.Format(@"UPDATE Barcode SET Stock = '0' ,Sync = 1 WHERE  (SellDate IS NULL OR SellDate = '') "));
+                Util.DBExecute(string.Format(@"UPDATE Barcode SET Stock = 0 ,Sync = 1 WHERE  (SellDate IS NULL OR SellDate = '') "));
                 SearchData();
                 progressBar1.Value = 0;
                 lblStatus.Text = "";

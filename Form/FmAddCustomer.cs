@@ -34,6 +34,8 @@ namespace PowerPOS_Online
                 cbbSellPrice.Items.Add("ปลีก");
                 cbbSellPrice.Items.Add("ส่ง1");
                 cbbSellPrice.Items.Add("ส่ง2");
+                cbbSellPrice.Items.Add("ส่ง3");
+                cbbSellPrice.Items.Add("ส่ง4");
                 cbbSellPrice.SelectedIndex = 0;
             }
         }

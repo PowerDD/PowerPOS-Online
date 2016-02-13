@@ -17,7 +17,7 @@ namespace PowerPOS_Online
         public enum StatusIcon { None, Loading, Success, Info };
 
         public static UcSell UcSell;
-        public static string ApiUrl;
+        public static string ApiUrl = "http://api-test.powerdd.com";
         public static string ApiKey;
         public static bool ApiChecked;
         public static string LicenseKey;
@@ -33,9 +33,14 @@ namespace PowerPOS_Online
         public static string DevicePrefix;
         public static string DevicePrinter;
         public static string MemberType;
+        public static string Code;
         public static SQLiteConnection SQLiteConnection;
         public const string SQLiteFileName = "System.dll";
         public static bool InitialFinished = false;
+
+        public static string BarcodeNo;
+        public static string status;
+
 
         public const string LoadingImageLocal = @"Resource/Images/Loading.gif";
         public const string LoadingImageUrl = "http://a.lnwpic.com/et1xpc.gif";

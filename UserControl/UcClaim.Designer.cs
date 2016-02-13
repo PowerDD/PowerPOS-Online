@@ -35,7 +35,6 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
             this.btnCheckClaim = new System.Windows.Forms.Button();
-            this.btnReceivedClaim = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.ptbProduct = new System.Windows.Forms.PictureBox();
             this.panel4 = new System.Windows.Forms.Panel();
@@ -108,11 +107,10 @@
             // panel5
             // 
             this.panel5.Controls.Add(this.btnCheckClaim);
-            this.panel5.Controls.Add(this.btnReceivedClaim);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel5.Location = new System.Drawing.Point(7, 444);
+            this.panel5.Location = new System.Drawing.Point(7, 480);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(233, 83);
+            this.panel5.Size = new System.Drawing.Size(233, 47);
             this.panel5.TabIndex = 10;
             // 
             // btnCheckClaim
@@ -125,16 +123,6 @@
             this.btnCheckClaim.Text = "ตรวจสอบการเคลมสินค้า";
             this.btnCheckClaim.UseVisualStyleBackColor = true;
             this.btnCheckClaim.Click += new System.EventHandler(this.btnCheckClaim_Click);
-            // 
-            // btnReceivedClaim
-            // 
-            this.btnReceivedClaim.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.btnReceivedClaim.Location = new System.Drawing.Point(0, 47);
-            this.btnReceivedClaim.Name = "btnReceivedClaim";
-            this.btnReceivedClaim.Size = new System.Drawing.Size(233, 33);
-            this.btnReceivedClaim.TabIndex = 6;
-            this.btnReceivedClaim.Text = "รับเข้าสินค้าเคลม";
-            this.btnReceivedClaim.UseVisualStyleBackColor = true;
             // 
             // panel2
             // 
@@ -423,7 +411,6 @@
         private System.ComponentModel.BackgroundWorker bwGetCustomerName;
         private XPTable.Models.TextColumn clSellDate;
         private XPTable.Models.TextColumn clReceivedDate;
-        private System.Windows.Forms.Button btnReceivedClaim;
         private System.Windows.Forms.Panel panel5;
         private XPTable.Models.TextColumn clBarcodeClaim;
         private System.Windows.Forms.Button btnCheckClaim;

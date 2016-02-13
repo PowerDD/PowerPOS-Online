@@ -36,16 +36,22 @@
             this.nudPrice2 = new System.Windows.Forms.NumericUpDown();
             this.nudPrice1 = new System.Windows.Forms.NumericUpDown();
             this.nudPrice = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.nudPrice4 = new System.Windows.Forms.NumericUpDown();
+            this.nudPrice3 = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrice2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrice1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrice)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPrice4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPrice3)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSave
             // 
             this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.btnSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnSave.Location = new System.Drawing.Point(134, 80);
+            this.btnSave.Location = new System.Drawing.Point(278, 80);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(87, 32);
             this.btnSave.TabIndex = 27;
@@ -63,7 +69,7 @@
             "เลขที่ใบสั่งซื้อ"});
             this.cbCategory.Location = new System.Drawing.Point(11, 9);
             this.cbCategory.Name = "cbCategory";
-            this.cbCategory.Size = new System.Drawing.Size(210, 24);
+            this.cbCategory.Size = new System.Drawing.Size(354, 24);
             this.cbCategory.TabIndex = 26;
             this.cbCategory.SelectedIndexChanged += new System.EventHandler(this.cbCategory_SelectedIndexChanged);
             // 
@@ -142,11 +148,63 @@
             this.nudPrice.ThousandsSeparator = true;
             this.nudPrice.ValueChanged += new System.EventHandler(this.nudPrice_ValueChanged);
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(293, 36);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(66, 13);
+            this.label1.TabIndex = 31;
+            this.label1.Text = "ส่ง 4";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(224, 36);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(66, 13);
+            this.label2.TabIndex = 30;
+            this.label2.Text = "ส่ง 3";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // nudPrice4
+            // 
+            this.nudPrice4.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudPrice4.Location = new System.Drawing.Point(299, 52);
+            this.nudPrice4.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            0});
+            this.nudPrice4.Name = "nudPrice4";
+            this.nudPrice4.Size = new System.Drawing.Size(66, 22);
+            this.nudPrice4.TabIndex = 29;
+            this.nudPrice4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.nudPrice4.ThousandsSeparator = true;
+            // 
+            // nudPrice3
+            // 
+            this.nudPrice3.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudPrice3.Location = new System.Drawing.Point(227, 52);
+            this.nudPrice3.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            0});
+            this.nudPrice3.Name = "nudPrice3";
+            this.nudPrice3.Size = new System.Drawing.Size(66, 22);
+            this.nudPrice3.TabIndex = 28;
+            this.nudPrice3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.nudPrice3.ThousandsSeparator = true;
+            // 
             // FmProfitConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(235, 115);
+            this.ClientSize = new System.Drawing.Size(377, 118);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.nudPrice4);
+            this.Controls.Add(this.nudPrice3);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.cbCategory);
             this.Controls.Add(this.label7);
@@ -162,6 +220,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudPrice2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrice1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPrice)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPrice4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPrice3)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -176,5 +236,9 @@
         private System.Windows.Forms.NumericUpDown nudPrice2;
         private System.Windows.Forms.NumericUpDown nudPrice1;
         private System.Windows.Forms.NumericUpDown nudPrice;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.NumericUpDown nudPrice4;
+        private System.Windows.Forms.NumericUpDown nudPrice3;
     }
 }

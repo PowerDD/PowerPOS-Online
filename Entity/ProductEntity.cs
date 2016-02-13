@@ -30,5 +30,8 @@ namespace PowerPOS_Online
         public double Price4 { get; set; }
         public double Price5 { get; set; }
         public int Warranty { get; set; }
+        public string BuyerCode { get; set; }
+        public double Quantity { get; set; }
+
     }
 }

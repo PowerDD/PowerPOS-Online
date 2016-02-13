@@ -26,6 +26,7 @@ namespace PowerPOS_Online
         public string Barcode { get; set; }
         public string Product { get; set; }
         public double SellPrice { get; set; }
+        public int Quantity { get; set; }
         public string ReturnBy { get; set; }
     }
 

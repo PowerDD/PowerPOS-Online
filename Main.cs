@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +10,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,11 +23,13 @@ namespace PowerPOS_Online
         public Main()
         {
             InitializeComponent();
-            DevExpress.LookAndFeel.UserLookAndFeel.Default.SkinName = "DevExpress Dark Style";
+            //DevExpress.LookAndFeel.UserLookAndFeel.Default.SkinName = "DevExpress Dark Style";
             Param.UserId = "0000";
             Util.ConnectSQLiteDatabase();
             this.Opacity = 0;
             this.ShowInTaskbar = false;
+
+
         }
 
         private void Main_Load(object sender, EventArgs e)
@@ -74,7 +78,7 @@ namespace PowerPOS_Online
 
         private void mniLogout_Click(object sender, EventArgs e)
         {
-
+            //this.Close();
         }
 
         private void mniExit_Click(object sender, EventArgs e)
@@ -172,7 +176,8 @@ namespace PowerPOS_Online
 
             if (opdImportBarcode.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
             {
-                DataTable dt = Util.DBQuery(string.Format(@"SELECT IFNULL(SUBSTR(MAX(SellNo), 1, 5)||SUBSTR('0000'||(SUBSTR(MAX(SellNo), 6, 4)+1), -4, 4), SUBSTR(STRFTIME('%Y%m{0}'), 3)||'0001') SellNo
+                DataTable dt, dPrice;
+                dt = Util.DBQuery(string.Format(@"SELECT IFNULL(SUBSTR(MAX(SellNo), 1, 5)||SUBSTR('0000'||(SUBSTR(MAX(SellNo), 6, 4)+1), -4, 4), SUBSTR(STRFTIME('%Y%m{0}'), 3)||'0001') SellNo
                     FROM Barcode
                     WHERE SUBSTR(SellNo, 1, 4) = SUBSTR(STRFTIME('%Y%m'), 3, 4)
                     AND SUBSTR(SellNo, 5, 1) = '{0}'", "Z"));
@@ -193,9 +198,9 @@ namespace PowerPOS_Online
                         SellFinished = 1 ,
                         Sync = 1,
                         Customer = '000000',
-                        SellPrice = (SELECT  Price  FROM Product WHERE shop = '00000002' AND id = (SELECT Product FROM Barcode  WHERE Barcode   = {1}))
+                        SellPrice = (SELECT  Price  FROM Product WHERE shop = '{3}' AND ID = (SELECT Product FROM Barcode  WHERE Barcode   = '{1}'))
                         WHERE Barcode = {1}
-                    ",date,barcode,SellNo));
+                    ", date,barcode,SellNo,Param.ShopId));
 
                     Console.WriteLine(barcode);
                     barcode = sr.ReadLine();
@@ -203,11 +208,12 @@ namespace PowerPOS_Online
                 dt = Util.DBQuery(string.Format(@"SELECT COUNT(*) count FROM Barcode WHERE SellNo = '{0}'", SellNo));
                 if (Convert.ToInt32(dt.Rows[0]["count"].ToString()) > 0)
                 {
+                    dPrice = Util.DBQuery(string.Format(@"SELECT SUM(SellPrice) Total FROM Barcode WHERE SellNo = '{0}'", SellNo));
 
-                    Util.DBExecute(string.Format(@"INSERT INTO SellHeader (SellNo, Profit, TotalPrice, Cash, Customer, CustomerSex, CustomerAge, SellDate, SellBy,Sync)
+                    Util.DBExecute(string.Format(@"INSERT INTO SellHeader (SellNo, Profit, TotalPrice, Cash, Customer, CustomerSex, CustomerAge, SellDate, SellBy,   Paid , PayType ,Sync)
                     SELECT '{0}', (SELECT SUM(SellPrice-Cost-OperationCost) FROM Barcode WHERE SellNo = '{0}'),
-                    (SELECT SUM(SellPrice) FROM Barcode WHERE SellNo = '{0}'),(SELECT SUM(SellPrice) FROM Barcode WHERE SellNo = '{0}'), '000000', '', 0, '{1}', '{2}',1",
-                       SellNo, date, Param.UserId));
+                    '{3}','{3}', '000000', '', 0, '{1}', '{2}',1,1,1",
+                       SellNo, date, Param.UserId, dPrice.Rows[0]["Total"].ToString()));
 
                     Util.DBExecute(string.Format(@"INSERT INTO SellDetail (SellNo, Product, SellPrice, Cost, Quantity, Sync)
                     SELECT '{0}', Product, SUM(SellPrice), SUM(Cost), COUNT(*), 1 FROM Barcode WHERE SellNo = '{0}' GROUP BY Product",

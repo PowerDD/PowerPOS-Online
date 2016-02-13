@@ -41,10 +41,10 @@ namespace PowerPOS_Online
                 LEFT JOIN Customer c
                 ON h.Customer = c.ID
                 WHERE SellDate LIKE '{0}%'
-                  AND h.Customer <> 'Z000000'
+                  AND h.Customer NOT IN ('Z000000','000001')
                   AND (h.Comment <> 'คืนสินค้า' OR h.Comment IS Null)   
                 ORDER BY SellDate DESC
-            ", dtpStartDate.Value.ToString("yyyy-MM-dd") ));
+            ",  dtpStartDate.Value.ToString("yyyy-MM-dd") ));
 
 
             table1.BeginUpdate();
@@ -114,6 +114,24 @@ namespace PowerPOS_Online
             catch { }
         }
 
+        private void CheckChange(object sender, EventArgs e)
+        {
+            if (cbbReportType.SelectedIndex == 0)
+            {
+                dtpStartDate.Visible = true;
+                pictureBox1.Visible = true;
+                table1.Visible = true;
+                groupBox1.Height = 82;
+            }
+            else
+            {
+                dtpStartDate.Visible = false;
+                pictureBox1.Visible = false;
+                tableModel1.Table.Visible = false;
+                groupBox1.Height = 54;
+            }
+        }
+
         private void dtpStartDate_ValueChanged(object sender, EventArgs e)
         {
             LoadData();
@@ -151,35 +169,43 @@ namespace PowerPOS_Online
                 stringSize = g.MeasureString(measureString, stringFont);
                 g.DrawString(measureString, stringFont, drawBrush, (pictureBox1.Image.Width - stringSize.Width - 50) , 334);
 
-                if (Param.SystemConfig.SellPrice == null)
+                if (Param.ShopId == "00000015")
+                {
+                    measureString = "0";
+                    stringSize = g.MeasureString(measureString, stringFont);
+                    g.DrawString(measureString, stringFont, drawBrush, (pictureBox1.Image.Width - stringSize.Width - 50), 428);
+                }
+                else if (Param.SystemConfig.SellPrice == null)
                 {
                     measureString = sumProfit.ToString("#,##0");
                     stringSize = g.MeasureString(measureString, stringFont);
                     g.DrawString(measureString, stringFont, drawBrush, (pictureBox1.Image.Width - stringSize.Width - 50), 428);
                 }
-
-                drawBrush = new SolidBrush(ColorTranslator.FromHtml("#fa3711"));
-                measureString = avgPrice.ToString("#,##0");
-                stringSize = g.MeasureString(measureString, stringFont);
-                g.DrawString(measureString, stringFont, drawBrush, (pictureBox1.Image.Width - stringSize.Width) / 2, 618);
-
-                var startX = 48;
-                var startY = 780;
-                var width = 40;
-                var gab = 5;
-                var maxHeight = 250;
-                var whiteBrush = new SolidBrush(ColorTranslator.FromHtml("#ffa1d6"));
-                for (int i = 0; i < chart.Count; i++)
+                if (Param.ShopId != "00000002")
                 {
-                    drawBrush = new SolidBrush(ColorTranslator.FromHtml(i != chart.Count - 1 ? "#af18b1" : ((chart[i] > avgPrice) ? "#207a2b" : "#d31a1a")));
-                    var h = (int)(chart[i] * maxHeight / max);
-                    g.FillRectangle(drawBrush, new Rectangle(startX + ((width + gab) * i), startY + maxHeight - h, width, h));
-                    g.DrawRectangle(new Pen(whiteBrush), new Rectangle(startX + ((width + gab) * i), startY + maxHeight - h, width, h));
-                }
-                if (avgPrice > 0)
-                {
-                    var y = (int)(avgPrice * maxHeight / max);
-                    g.DrawLine(new Pen(new SolidBrush(ColorTranslator.FromHtml("#ffffff")), 1.0f), startX, startY + maxHeight - y, 672, startY + maxHeight - y);
+                    drawBrush = new SolidBrush(ColorTranslator.FromHtml("#fa3711"));
+                    measureString = avgPrice.ToString("#,##0");
+                    stringSize = g.MeasureString(measureString, stringFont);
+                    g.DrawString(measureString, stringFont, drawBrush, (pictureBox1.Image.Width - stringSize.Width) / 2, 618);
+
+                    var startX = 48;
+                    var startY = 780;
+                    var width = 40;
+                    var gab = 5;
+                    var maxHeight = 250;
+                    var whiteBrush = new SolidBrush(ColorTranslator.FromHtml("#ffa1d6"));
+                    for (int i = 0; i < chart.Count; i++)
+                    {
+                        drawBrush = new SolidBrush(ColorTranslator.FromHtml(i != chart.Count - 1 ? "#af18b1" : ((chart[i] > avgPrice) ? "#207a2b" : "#d31a1a")));
+                        var h = (int)(chart[i] * maxHeight / max);
+                        g.FillRectangle(drawBrush, new Rectangle(startX + ((width + gab) * i), startY + maxHeight - h, width, h));
+                        g.DrawRectangle(new Pen(whiteBrush), new Rectangle(startX + ((width + gab) * i), startY + maxHeight - h, width, h));
+                    }
+                    if (avgPrice > 0)
+                    {
+                        var y = (int)(avgPrice * maxHeight / max);
+                        g.DrawLine(new Pen(new SolidBrush(ColorTranslator.FromHtml("#ffffff")), 1.0f), startX, startY + maxHeight - y, 672, startY + maxHeight - y);
+                    }
                 }
                 //g.DrawLine(new Pen(new SolidBrush(ColorTranslator.FromHtml("#ffffff")), 1.0f), startX, startY + maxHeight, 672, startY + maxHeight);
 

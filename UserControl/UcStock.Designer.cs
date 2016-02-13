@@ -244,6 +244,7 @@
             this.btnNewCount.TabIndex = 0;
             this.btnNewCount.Text = "เริ่มต้นนับสต็อกสินค้าใหม่";
             this.btnNewCount.UseVisualStyleBackColor = true;
+            this.btnNewCount.Visible = false;
             this.btnNewCount.Click += new System.EventHandler(this.btnNewCount_Click);
             // 
             // groupBox1

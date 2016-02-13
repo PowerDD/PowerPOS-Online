@@ -31,14 +31,15 @@
             XPTable.Models.DataSourceColumnBinder dataSourceColumnBinder1 = new XPTable.Models.DataSourceColumnBinder();
             XPTable.Renderers.DragDropRenderer dragDropRenderer1 = new XPTable.Renderers.DragDropRenderer();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.lblTotal = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.lblCustomer = new System.Windows.Forms.Label();
-            this.lblSellDate = new System.Windows.Forms.Label();
-            this.lblSellNo = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.gbHeader = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.lblTotal = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.lblCustomer = new System.Windows.Forms.Label();
+            this.lblSellNo = new System.Windows.Forms.Label();
+            this.lblSellDate = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.table1 = new XPTable.Models.Table();
             this.columnModel1 = new XPTable.Models.ColumnModel();
@@ -51,12 +52,11 @@
             this.tableModel1 = new XPTable.Models.TableModel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.gbHeader = new System.Windows.Forms.GroupBox();
             this.panel1.SuspendLayout();
+            this.gbHeader.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.table1)).BeginInit();
             this.panel3.SuspendLayout();
-            this.gbHeader.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -65,88 +65,104 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(619, 78);
+            this.panel1.Size = new System.Drawing.Size(722, 78);
             this.panel1.TabIndex = 0;
             // 
-            // lblTotal
+            // gbHeader
             // 
-            this.lblTotal.AutoSize = true;
-            this.lblTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.lblTotal.Location = new System.Drawing.Point(376, 37);
-            this.lblTotal.Name = "lblTotal";
-            this.lblTotal.Size = new System.Drawing.Size(55, 18);
-            this.lblTotal.TabIndex = 7;
-            this.lblTotal.Text = "lblTotal";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.label5.Location = new System.Drawing.Point(307, 37);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(63, 18);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "ยอดรวม :";
-            // 
-            // lblCustomer
-            // 
-            this.lblCustomer.AutoSize = true;
-            this.lblCustomer.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.lblCustomer.Location = new System.Drawing.Point(59, 37);
-            this.lblCustomer.Name = "lblCustomer";
-            this.lblCustomer.Size = new System.Drawing.Size(88, 18);
-            this.lblCustomer.TabIndex = 5;
-            this.lblCustomer.Text = "lblCustomer";
-            // 
-            // lblSellDate
-            // 
-            this.lblSellDate.AutoSize = true;
-            this.lblSellDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.lblSellDate.Location = new System.Drawing.Point(376, 13);
-            this.lblSellDate.Name = "lblSellDate";
-            this.lblSellDate.Size = new System.Drawing.Size(77, 18);
-            this.lblSellDate.TabIndex = 4;
-            this.lblSellDate.Text = "lblSellDate";
-            // 
-            // lblSellNo
-            // 
-            this.lblSellNo.AutoSize = true;
-            this.lblSellNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.lblSellNo.Location = new System.Drawing.Point(94, 13);
-            this.lblSellNo.Name = "lblSellNo";
-            this.lblSellNo.Size = new System.Drawing.Size(66, 18);
-            this.lblSellNo.TabIndex = 3;
-            this.lblSellNo.Text = "lblSellNo";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.label3.Location = new System.Drawing.Point(8, 37);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(45, 18);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "ลูกค้า :";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.label2.Location = new System.Drawing.Point(307, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(63, 18);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "วันที่ขาย :";
+            this.gbHeader.Controls.Add(this.label1);
+            this.gbHeader.Controls.Add(this.lblTotal);
+            this.gbHeader.Controls.Add(this.label2);
+            this.gbHeader.Controls.Add(this.label5);
+            this.gbHeader.Controls.Add(this.label3);
+            this.gbHeader.Controls.Add(this.lblCustomer);
+            this.gbHeader.Controls.Add(this.lblSellNo);
+            this.gbHeader.Controls.Add(this.lblSellDate);
+            this.gbHeader.Location = new System.Drawing.Point(12, 3);
+            this.gbHeader.Name = "gbHeader";
+            this.gbHeader.Size = new System.Drawing.Size(707, 63);
+            this.gbHeader.TabIndex = 8;
+            this.gbHeader.TabStop = false;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.label1.Location = new System.Drawing.Point(8, 13);
+            this.label1.Location = new System.Drawing.Point(34, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(87, 18);
             this.label1.TabIndex = 0;
             this.label1.Text = "เลขที่การขาย :";
+            // 
+            // lblTotal
+            // 
+            this.lblTotal.AutoSize = true;
+            this.lblTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.lblTotal.Location = new System.Drawing.Point(433, 37);
+            this.lblTotal.Name = "lblTotal";
+            this.lblTotal.Size = new System.Drawing.Size(55, 18);
+            this.lblTotal.TabIndex = 7;
+            this.lblTotal.Text = "lblTotal";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.label2.Location = new System.Drawing.Point(364, 13);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(63, 18);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "วันที่ขาย :";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.label5.Location = new System.Drawing.Point(364, 37);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(63, 18);
+            this.label5.TabIndex = 6;
+            this.label5.Text = "ยอดรวม :";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.label3.Location = new System.Drawing.Point(33, 37);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(45, 18);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "ลูกค้า :";
+            // 
+            // lblCustomer
+            // 
+            this.lblCustomer.AutoSize = true;
+            this.lblCustomer.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.lblCustomer.Location = new System.Drawing.Point(85, 37);
+            this.lblCustomer.Name = "lblCustomer";
+            this.lblCustomer.Size = new System.Drawing.Size(88, 18);
+            this.lblCustomer.TabIndex = 5;
+            this.lblCustomer.Text = "lblCustomer";
+            // 
+            // lblSellNo
+            // 
+            this.lblSellNo.AutoSize = true;
+            this.lblSellNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.lblSellNo.Location = new System.Drawing.Point(120, 13);
+            this.lblSellNo.Name = "lblSellNo";
+            this.lblSellNo.Size = new System.Drawing.Size(66, 18);
+            this.lblSellNo.TabIndex = 3;
+            this.lblSellNo.Text = "lblSellNo";
+            // 
+            // lblSellDate
+            // 
+            this.lblSellDate.AutoSize = true;
+            this.lblSellDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.lblSellDate.Location = new System.Drawing.Point(433, 13);
+            this.lblSellDate.Name = "lblSellDate";
+            this.lblSellDate.Size = new System.Drawing.Size(77, 18);
+            this.lblSellDate.TabIndex = 4;
+            this.lblSellDate.Text = "lblSellDate";
             // 
             // panel2
             // 
@@ -155,7 +171,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 78);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(619, 316);
+            this.panel2.Size = new System.Drawing.Size(722, 379);
             this.panel2.TabIndex = 1;
             // 
             // table1
@@ -177,7 +193,7 @@
             this.table1.Name = "table1";
             this.table1.NoItemsText = "";
             this.table1.SelectionStyle = XPTable.Models.SelectionStyle.Grid;
-            this.table1.Size = new System.Drawing.Size(619, 278);
+            this.table1.Size = new System.Drawing.Size(722, 341);
             this.table1.TabIndex = 13;
             this.table1.TableModel = this.tableModel1;
             this.table1.Text = "table1";
@@ -233,9 +249,9 @@
             // 
             this.panel3.Controls.Add(this.btnCancel);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel3.Location = new System.Drawing.Point(0, 278);
+            this.panel3.Location = new System.Drawing.Point(0, 341);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(619, 38);
+            this.panel3.Size = new System.Drawing.Size(722, 38);
             this.panel3.TabIndex = 14;
             // 
             // btnCancel
@@ -243,7 +259,7 @@
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.btnCancel.Image = global::PowerPOS_Online.Properties.Resources.arrow_circle_225_left;
             this.btnCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCancel.Location = new System.Drawing.Point(549, 3);
+            this.btnCancel.Location = new System.Drawing.Point(646, 3);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(66, 32);
             this.btnCancel.TabIndex = 16;
@@ -252,27 +268,11 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // gbHeader
-            // 
-            this.gbHeader.Controls.Add(this.label1);
-            this.gbHeader.Controls.Add(this.lblTotal);
-            this.gbHeader.Controls.Add(this.label2);
-            this.gbHeader.Controls.Add(this.label5);
-            this.gbHeader.Controls.Add(this.label3);
-            this.gbHeader.Controls.Add(this.lblCustomer);
-            this.gbHeader.Controls.Add(this.lblSellNo);
-            this.gbHeader.Controls.Add(this.lblSellDate);
-            this.gbHeader.Location = new System.Drawing.Point(12, 3);
-            this.gbHeader.Name = "gbHeader";
-            this.gbHeader.Size = new System.Drawing.Size(595, 63);
-            this.gbHeader.TabIndex = 8;
-            this.gbHeader.TabStop = false;
-            // 
             // FmSellDetial
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(619, 394);
+            this.ClientSize = new System.Drawing.Size(722, 457);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "FmSellDetial";
@@ -280,11 +280,11 @@
             this.Text = "รายละเอียดการขาย";
             this.Load += new System.EventHandler(this.FmSellDetial_Load);
             this.panel1.ResumeLayout(false);
+            this.gbHeader.ResumeLayout(false);
+            this.gbHeader.PerformLayout();
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.table1)).EndInit();
             this.panel3.ResumeLayout(false);
-            this.gbHeader.ResumeLayout(false);
-            this.gbHeader.PerformLayout();
             this.ResumeLayout(false);
 
         }

@@ -25,6 +25,7 @@ namespace PowerPOS_Online
         public static string OrderNo;
         public static string ProductName;
 
+
         public UcReceiveProduct()
         {
             InitializeComponent();
@@ -80,6 +81,24 @@ namespace PowerPOS_Online
                     }
                 }
                 cbbOrder.SelectedIndex = 0;
+
+
+                DataTable dtNo = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM PurchaseOrder po WHERE po.Quantity <> po.ReceivedQty  ORDER BY OrderNo");
+                cbbOrderNoSerial.Items.Clear();
+                cbbOrderNoSerial.Items.Add("เลขที่ใบสั่งซื้อ");
+                if (dtNo.Rows.Count == 0)
+                {
+                    cbbOrderNoSerial.Enabled = false;
+                }
+                else
+                {
+                    cbbOrderNoSerial.Enabled = true;
+                    for (int i = 0; i < dtNo.Rows.Count; i++)
+                    {
+                        cbbOrderNoSerial.Items.Add(dtNo.Rows[i]["OrderNo"].ToString());
+                    }
+                }
+                cbbOrderNoSerial.SelectedIndex = 0;
             }
             else
             {
@@ -116,8 +135,27 @@ namespace PowerPOS_Online
                     }
                 }
                 cbbOrder.SelectedIndex = 0;
+
+                DataTable dtNo = Util.DBQuery(@"SELECT DISTINCT OrderNo FROM PurchaseOrder po WHERE po.Quantity <> po.ReceivedQty  ORDER BY OrderNo");
+                cbbOrderNoSerial.Items.Clear();
+                cbbOrderNoSerial.Items.Add("เลขที่ใบสั่งซื้อ");
+                if (dtNo.Rows.Count == 0)
+                {
+                    cbbOrderNoSerial.Enabled = false;
+                }
+                else
+                {
+                    cbbOrderNoSerial.Enabled = true;
+                    for (int i = 0; i < dtNo.Rows.Count; i++)
+                    {
+                        cbbOrderNoSerial.Items.Add(dtNo.Rows[i]["OrderNo"].ToString());
+                    }
+                }
+
+                cbbOrderNoSerial.SelectedIndex = 0;
+
             }
-          
+
 
             _FIRST_LOAD = false;
         }
@@ -270,6 +308,68 @@ namespace PowerPOS_Online
             txtBarcode.Focus();
         }
 
+        private void SearchDataNoSerial()
+        {
+            if (cbbOrderNoSerial.SelectedIndex == 0)
+            {
+                //table1.BeginUpdate();
+                //tableModel1.Rows.Clear();
+                //table1.EndUpdate();
+
+                //gbOrderNo.Height = 53;
+                //progressBar1.Visible = false;
+                //gbCost.Visible = false;
+            }
+            else if (!_FIRST_LOAD)
+            {
+                _QTY = 0;
+                _RECEIVED = 0;
+                DataTable dt = Util.DBQuery(string.Format(@"
+                    SELECT po.*, p.Name FROM PurchaseOrder po
+                    LEFT JOIN Product p
+                    ON po.Product = p.ID
+                    WHERE OrderNo = '{1}'
+                    AND p.shop = '{0}'
+                    ORDER BY p.Name
+                ", Param.ShopId, cbbOrderNoSerial.SelectedItem.ToString(), Param.UserId));
+                table1.BeginUpdate();
+                tableModel1.Rows.Clear();
+                tableModel1.RowHeight = 22;
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    var progress = (float.Parse(dt.Rows[i]["ReceivedQty"].ToString()) * 100.0f) / float.Parse(dt.Rows[i]["Quantity"].ToString()) ;
+                    tableModel1.Rows.Add(new Row(
+                        new Cell[] {
+                        new Cell("" + (i+1)),
+                        new Cell(dt.Rows[i]["Product"].ToString()),
+                        new Cell(dt.Rows[i]["Name"].ToString()),
+                        new Cell(int.Parse(dt.Rows[i]["Quantity"].ToString()).ToString("#,##0")),
+                        new Cell(int.Parse(dt.Rows[i]["ReceivedQty"].ToString()).ToString("#,##0")),
+                        new Cell((int)progress)
+                        }));
+                    _QTY += int.Parse(dt.Rows[i]["Quantity"].ToString());
+                    _RECEIVED += int.Parse(dt.Rows[i]["ReceivedQty"].ToString());
+                }
+                table1.EndUpdate();
+
+                ptbProduct.Visible = false;
+                if (_QTY == 0 || _RECEIVED == 0)
+                {
+                    gbOrderNoSerial.Height = 53;
+                    progressBar2.Visible = false;
+                    gbCost.Visible = false;
+                }
+                else if (_RECEIVED != 0)
+                {
+                    gbCost.Visible = true;
+                    gbOrderNoSerial.Height = 79;
+                    progressBar2.Visible = true;
+                    progressBar2.Maximum = _QTY;
+                    progressBar2.Value = _RECEIVED;
+                }
+            }
+            txtBarcode.Focus();
+        }
         private void table1_EndSort(object sender, XPTable.Events.ColumnEventArgs e)
         {
             for (int i = 0; i < table1.TableModel.Rows.Count; i++)
@@ -280,73 +380,106 @@ namespace PowerPOS_Online
 
         private void txtBarcode_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
+            try
             {
-                DataTable dt = Util.DBQuery(string.Format(@"SELECT OrderNo, p.ID, p.CoverImage, IFNULL(ReceivedDate, '') ReceivedDate 
-                    FROM Barcode b LEFT JOIN Product p ON b.product = p.id
-                    WHERE Barcode = '{0}'", txtBarcode.Text));
-
-                lblStatus.Visible = true;
-
-                if (dt.Rows.Count == 0)
-                {
-                    lblStatus.ForeColor = Color.Red;
-                    lblStatus.Text = "ไม่พบข้อมูลสินค้าชิ้นนี้ในระบบ";
-                    //_SKU = "0";
-                }
-                else
-                {
-                    Param.ProductId = dt.Rows[0]["ID"].ToString();
-
-                    if (cbbOrderNo.SelectedItem.ToString() != dt.Rows[0]["OrderNo"].ToString())
+                //if (txtBarcode.Text != "")
+                //{
+                    if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
                     {
-                        cbbOrderNo.SelectedIndex = cbbOrderNo.FindString(dt.Rows[0]["OrderNo"].ToString());
-                    }
+                        Param.BarcodeNo = txtBarcode.Text;
 
-                    if (dt.Rows[0]["ReceivedDate"].ToString() != "")
-                    {
-                        lblStatus.ForeColor = Color.Red;
-                        lblStatus.Text = "เคยรับสินค้าชิ้นนี้เข้าระบบแล้ว";
-                        SearchData();
-                    }
-                    else
-                    {
-                        Util.DBExecute(string.Format(@"UPDATE Barcode SET ReceivedDate = STRFTIME('%Y-%m-%d %H:%M:%S', 'NOW'), ReceivedBy = '{1}', Sync = 1
-                            WHERE Barcode = '{0}'", txtBarcode.Text, Param.UserId));
-                        SearchData();
+                        DataTable dt = Util.DBQuery(string.Format(@"SELECT b.OrderNo, p.ID, p.CoverImage, IFNULL(b.ReceivedDate, '') ReceivedDate 
+                    FROM Barcode b LEFT JOIN Product p ON b.product = p.id WHERE b.Barcode = '{0}'", txtBarcode.Text));
 
-                        lblStatus.ForeColor = Color.Green;
-                        lblStatus.Text = "รับสินค้าเข้าระบบเรียบร้อยแล้ว";
+                        lblStatus.Visible = true;
 
-                        ptbProduct.Visible = true;
-                        ptbProduct.Image = null;
-
-                        var filename = @"Resource/Images/Product/" + Param.ProductId + ".jpg";
-                        if (!File.Exists(filename))
+                        if (dt.Rows.Count == 0)
                         {
-                            if (dt.Rows[0]["CoverImage"].ToString() != "")
+                            dt = Util.DBQuery(string.Format(@"SELECT Barcode FROM Product WHERE Barcode LIKE '%{0}%'", txtBarcode.Text));
+                            Console.WriteLine(txtBarcode.Text + "" + Param.BarcodeNo + "" + dt.Rows.Count.ToString());
+                            if (dt.Rows.Count == 0)
                             {
-                                DownloadImage(dt.Rows[0]["CoverImage"].ToString(), @"Resource/Images/Product/", Param.ProductId + ".jpg");
+                                lblStatus.ForeColor = Color.Red;
+                                lblStatus.Text = "ไม่พบข้อมูลสินค้าชิ้นนี้ในระบบ";
                             }
+                            else
+                            {
+                                Param.status = "Received";
+                                OrderNo = cbbOrderNoSerial.SelectedItem.ToString();
+                                FmSelectProduct frm = new FmSelectProduct();
+                                var result = frm.ShowDialog(this);
+                                if (result == System.Windows.Forms.DialogResult.OK)
+                                {
+                                    SearchDataNoSerial();
+                                }
+
+
+                                //lblStatus.ForeColor = Color.Pink;
+                                //lblStatus.Text = "พบข้อมูลสินค้าชิ้นนี้ในระบบ";
+                            }
+                            //_SKU = "0";
                         }
                         else
                         {
-                            try { ptbProduct.Image = Image.FromFile(filename); }
-                            catch
+                            Param.ProductId = dt.Rows[0]["ID"].ToString();
+
+                            if (cbbOrderNo.SelectedItem.ToString() != dt.Rows[0]["OrderNo"].ToString())
                             {
-                                if (dt.Rows[0]["CoverImage"].ToString() != "")
-                                {
-                                    DownloadImage(dt.Rows[0]["CoverImage"].ToString(), @"Resource/Images/Product/", Param.ProductId + ".jpg");
-                                }
+                                cbbOrderNo.SelectedIndex = cbbOrderNo.FindString(dt.Rows[0]["OrderNo"].ToString());
                             }
+
+                            if (dt.Rows[0]["ReceivedDate"].ToString() != "")
+                            {
+                                lblStatus.ForeColor = Color.Red;
+                                lblStatus.Text = "เคยรับสินค้าชิ้นนี้เข้าระบบแล้ว";
+                                SearchData();
+                            }
+                            else
+                            {
+                                Util.DBExecute(string.Format(@"UPDATE Barcode SET ReceivedDate = STRFTIME('%Y-%m-%d %H:%M:%S', 'NOW'), ReceivedBy = '{1}', Sync = 1
+                        WHERE Barcode = '{0}'", txtBarcode.Text, Param.UserId));
+                                SearchData();
+
+                                lblStatus.ForeColor = Color.Green;
+                                lblStatus.Text = "รับสินค้าเข้าระบบเรียบร้อยแล้ว";
+
+                                ptbProduct.Visible = true;
+                                ptbProduct.Image = null;
+
+                                var filename = @"Resource/Images/Product/" + Param.ProductId + ".jpg";
+                                if (!File.Exists(filename))
+                                {
+                                    if (dt.Rows[0]["CoverImage"].ToString() != "")
+                                    {
+                                        DownloadImage(dt.Rows[0]["CoverImage"].ToString(), @"Resource/Images/Product/", Param.ProductId + ".jpg");
+                                    }
+                                }
+                                else
+                                {
+                                    try { ptbProduct.Image = Image.FromFile(filename); }
+                                    catch
+                                    {
+                                        if (dt.Rows[0]["CoverImage"].ToString() != "")
+                                        {
+                                            DownloadImage(dt.Rows[0]["CoverImage"].ToString(), @"Resource/Images/Product/", Param.ProductId + ".jpg");
+                                        }
+                                    }
+                                }
+
+                            }
+
                         }
-
+                        txtBarcode.Text = "";
+                        txtBarcode.Focus();
                     }
-
-                }
-                txtBarcode.Text = "";
-                txtBarcode.Focus();
+                //}
+                //else
+                //{
+                //    MessageBox.Show("กรุณากรอกข้อมูลบาร์โค้ด", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //}
             }
+            catch { }
+           
         }
         private void DownloadImage(string url, string savePath, string fileName)
         {
@@ -462,6 +595,12 @@ namespace PowerPOS_Online
             {
                 MessageBox.Show("กรุณาเลือกรายการที่ต้องการดูรายละเอียดการขาย", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void cbbOrderNoSerial_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ptbProduct.Visible = false;
+            SearchDataNoSerial();
         }
     }
 }

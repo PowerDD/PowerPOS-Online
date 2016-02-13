@@ -30,6 +30,7 @@
         {
             XPTable.Models.DataSourceColumnBinder dataSourceColumnBinder1 = new XPTable.Models.DataSourceColumnBinder();
             XPTable.Renderers.DragDropRenderer dragDropRenderer1 = new XPTable.Renderers.DragDropRenderer();
+            XPTable.Models.Row row1 = new XPTable.Models.Row();
             this.lblStatus = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
             this.lblPrice = new System.Windows.Forms.Label();
@@ -293,7 +294,6 @@
             // clQty
             // 
             this.clQty.Alignment = XPTable.Models.ColumnAlignment.Center;
-            this.clQty.Editable = false;
             this.clQty.Format = "#,###";
             this.clQty.IsTextTrimmed = false;
             this.clQty.Minimum = new decimal(new int[] {
@@ -353,6 +353,15 @@
             this.table1.TabStop = false;
             this.table1.Text = "table1";
             this.table1.UnfocusedBorderColor = System.Drawing.Color.Black;
+            this.table1.CellDoubleClick += new XPTable.Events.CellMouseEventHandler(this.table1_CellDoubleClick);
+            // 
+            // tableModel1
+            // 
+            row1.ChildIndex = 0;
+            row1.ExpandSubRows = true;
+            row1.Height = 15;
+            this.tableModel1.Rows.AddRange(new XPTable.Models.Row[] {
+            row1});
             // 
             // label8
             // 
@@ -469,7 +478,7 @@
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(233, 38);
             this.btnConfirm.TabIndex = 11;
-            this.btnConfirm.Text = "ยืนยันการขาย";
+            this.btnConfirm.Text = "ยืนยันการขาย (F1)";
             this.btnConfirm.UseVisualStyleBackColor = true;
             this.btnConfirm.Click += new System.EventHandler(this.btnConfirm_Click);
             // 
@@ -489,7 +498,7 @@
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(233, 38);
             this.btnCancel.TabIndex = 12;
-            this.btnCancel.Text = "ยกเลิกการขายทั้งบิล";
+            this.btnCancel.Text = "ยกเลิกการขายทั้งบิล (F12)";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
@@ -523,7 +532,7 @@
             this.btnCancelProduct.Name = "btnCancelProduct";
             this.btnCancelProduct.Size = new System.Drawing.Size(233, 38);
             this.btnCancelProduct.TabIndex = 14;
-            this.btnCancelProduct.Text = "ยกเลิกการขายทีละรายการ";
+            this.btnCancelProduct.Text = "ยกเลิกการขายทีละรายการ (F11)";
             this.btnCancelProduct.UseVisualStyleBackColor = true;
             this.btnCancelProduct.Click += new System.EventHandler(this.btnCancelProduct_Click);
             // 
